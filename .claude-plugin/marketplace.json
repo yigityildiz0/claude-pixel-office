@@ -3,7 +3,7 @@
   "owner": { "name": "yigityildiz0" },
   "metadata": { "description": "Claude Office: Claude's work as a live pixel office in a side pane. English (pixel-office) and Turkish (piksel-ofis)." },
   "plugins": [
-    { "name": "pixel-office", "source": "./pixel-office", "description": "English: Claude's work as a live pixel office in a side pane, with a limit clock, a context tank and auto-compact.", "version": "0.3.1", "license": "MIT" },
-    { "name": "piksel-ofis", "source": "./piksel-ofis", "description": "Türkçe: Claude'un çalışmasını yan panelde canlı bir piksel ofis olarak gösterir; limit saati, bağlam tankı ve oto-sıkıştırma.", "version": "0.3.1", "license": "MIT" }
+    { "name": "pixel-office", "source": "./pixel-office", "description": "English: Claude's work as a live pixel office in a side pane, with a limit clock, a context tank and auto-compact.", "version": "0.3.2", "license": "MIT" },
+    { "name": "piksel-ofis", "source": "./piksel-ofis", "description": "Türkçe: Claude'un çalışmasını yan panelde canlı bir piksel ofis olarak gösterir; limit saati, bağlam tankı ve oto-sıkıştırma.", "version": "0.3.2", "license": "MIT" }
   ]
 }

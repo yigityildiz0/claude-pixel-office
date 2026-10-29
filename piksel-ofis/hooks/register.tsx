@@ -79,30 +79,36 @@ const currentTool = new Map<string, string>()
 const warned = new Set<string>()
 
 // —— the drawing, held steady ——
-// Each new drawing is a new image the app swaps in, which showed as a flicker while
-// Claude worked. So the office is drawn again at most every FRAME_MS, and only when
-// what it shows has changed (the motion itself runs inside the image).
+// The overview is not drawn from the live values: each change to them (every tool
+// call, every measurement) redrew the pane, and the app reloads the image on every
+// draw, which flickered while Claude worked. A timer paints a new frame instead, at
+// most every FRAME_MS and only when the picture has changed; the pane draws only
+// when a new frame lands (the motion runs inside the image).
 const FRAME_MS = 4000
-let lastFrame: { key: string; hud: ReturnType<typeof hudSvg>; at: number; size: string } | undefined
-let frameNudge: { cancel: () => void } | null = null
+type Snap = { workers: Worker[]; feed: FeedItem[]; usage: Usage; turn: Turn; stats: Stats }
+type Size = { width: number; fill: number; theme: 'dark' | 'light'; motion: boolean; auto: { isOn: boolean; at: number }; key: string }
+let snap: Snap | undefined
+let size: Size | undefined
+let frame: { key: string; hud: ReturnType<typeof hudSvg>; at: number; size: string } | undefined
 
-function steadyHud($: $, now: number, size: string, draw: () => ReturnType<typeof hudSvg>): ReturnType<typeof hudSvg> {
-  if (lastFrame && lastFrame.size === size && now - lastFrame.at < FRAME_MS) {
-    if (!frameNudge) {
-      frameNudge = $.clock.after(FRAME_MS - (now - lastFrame.at), () => {
-        frameNudge = null
-        void update($, frameA, n => n + 1).catch(() => undefined)
-      })
-    }
+function drawFrame(s: Snap, at: Size, now: number): ReturnType<typeof hudSvg> {
+  useHudTheme(at.theme)
 
-    return lastFrame.hud
-  }
-  const fresh = draw()
+  return hudSvg({ ...s, now, motion: at.motion, width: at.width, fill: at.fill, autoCompact: at.auto })
+}
+
+async function paint($: $): Promise<void> {
+  const [workers, feed, usage, turn, stats] = await Promise.all([read($, workersA), read($, feedA), read($, usageA), read($, turnA), read($, statsA)])
+  snap = { workers, feed, usage, turn, stats }
+  if (!size) return
+  const now = await $.clock.now()
+  if (frame && frame.size === size.key && now - frame.at < FRAME_MS) return
+  const hud = drawFrame(snap, size, now)
   // the animations' start times differ on every draw: what is shown is the rest
-  const key = fresh.svg.replace(/animation:[^;"]*/g, '')
-  if (!lastFrame || lastFrame.key !== key || lastFrame.size !== size) lastFrame = { key, hud: fresh, at: now, size }
-
-  return lastFrame.hud
+  const key = hud.svg.replace(/animation:[^;"]*/g, '')
+  if (frame && frame.size === size.key && frame.key === key) return
+  frame = { key, hud, at: now, size: size.key }
+  await update($, frameA, n => n + 1)
 }
 
 // —— auto compact ——
@@ -525,6 +531,7 @@ export const register: Register = (on, options) => {
     await update($, statsA, s => (s.sessionStart ? s : { ...s, sessionStart: now }))
     await $.command.register({ name: 'ofis', description: 'Claude Ofis panelini açar: canlı piksel ofis, ekip, akış ve bağlam.' })
     $.clock.every(2000, () => void tick($).catch(() => undefined))
+    $.clock.every(1000, () => void paint($).catch(() => undefined))
     // the auto compact setting may change from kota-bandi's band; the theme from the app
     await syncAuto($).catch(() => undefined)
     await syncTheme($)
@@ -771,18 +778,19 @@ export const register: Register = (on, options) => {
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
     const els = $.ui.resolve(e)
     const { Box, Text, Button } = els
-    const [workers, feedList, usage, turn, prefs, stats, breakdown] = await Promise.all([
-      read($, workersA),
-      read($, feedA),
-      read($, usageA),
-      read($, turnA),
-      read($, prefsA),
-      read($, statsA),
-      read($, breakdownA),
-    ])
+    const prefs = await read($, prefsA)
     const auto = await read($, autoA)
+    const theme = e.surface === 'desktop' ? await read($, themeA) : 'dark'
     await read($, frameA)
-    useHudTheme(e.surface === 'desktop' ? await read($, themeA) : 'dark')
+    const isOverview = (prefs.tab === 'akis' ? 'ofis' : prefs.tab) === 'ofis' && e.surface !== 'terminal'
+    // off the overview the live values are read (and redraw the pane); on it, the last frame's
+    const live = isOverview && snap ? snap : await (async () => {
+      const [workers, feed, usage, turn, stats] = await Promise.all([read($, workersA), read($, feedA), read($, usageA), read($, turnA), read($, statsA)])
+      return { workers, feed, usage, turn, stats }
+    })()
+    const { workers, usage, turn, stats } = live
+    const breakdown = isOverview ? null : await read($, breakdownA)
+    useHudTheme(theme)
     const now = await $.clock.now()
     const bossW = workers.find(w => w.id === 'boss')
     const team = workers.filter(w => w.id !== 'boss')
@@ -894,10 +902,13 @@ export const register: Register = (on, options) => {
       )
     }
 
-    const theme = e.surface === 'desktop' ? await read($, themeA) : 'dark'
-    const hud = steadyHud($, now, `${width}x${fill}:${theme}:${prefs.motion}`, () =>
-      hudSvg({ workers, feed: feedList, usage, turn, stats, now, motion: prefs.motion, width, fill, autoCompact: auto }),
-    )
+    size = { width, fill, theme, motion: prefs.motion, auto, key: `${width}x${fill}:${theme}:${prefs.motion}:${auto.isOn}:${auto.at}` }
+    if (!frame || frame.size !== size.key) {
+      const at = await $.clock.now()
+      const fresh = drawFrame(live, size, at)
+      frame = { key: fresh.svg.replace(/animation:[^;"]*/g, ''), hud: fresh, at, size: size.key }
+    }
+    const hud = frame.hud
 
     return (
       <Box flexDirection="column" gap={1}>

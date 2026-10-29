@@ -185,3 +185,20 @@ test('auto compact is set from the pane, shared, and runs once past the threshol
   expect(Object.values(written).some(t => t.includes('"at":75'))).toBe(true)
   await ui.unmount()
 })
+
+test('the overview holds its frame while Claude works, then paints the news', async ($, on) => {
+  const clock = mock.clock(on)
+  engine(on)
+
+  await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
+  await clock.advance(1200)
+  const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
+  const first = String((await ui.find({ type: 'Svg' }))?.props.source)
+  await $.tool.call({ tool: 'Read', file_path: 'C:/proje/yeni.ts' })
+  await clock.advance(1500)
+  // a burst of work does not redraw the picture at once
+  expect(String((await ui.find({ type: 'Svg' }))?.props.source)).toBe(first)
+  await clock.advance(4000)
+  expect(String((await ui.find({ type: 'Svg' }))?.props.source)).toContain('okudu · yeni.ts')
+  await ui.unmount()
+})

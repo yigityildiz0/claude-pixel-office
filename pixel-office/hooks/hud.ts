@@ -3,7 +3,7 @@
 // any window size and the layout reflows (two columns when wide, one when narrow).
 import type { Breakdown, FeedItem, FeedKind, Stats, Turn, Usage, Worker } from '../types'
 import { clip, fmtDuration, fmtTokens, istanbul, limitLabel } from './logic'
-import { SCENE_W, STYLE, activityBadge, activityLabel, esc, sceneParts, starburst } from './scene'
+import { SCENE_W, STYLE, activityBadge, activityLabel, esc, phaseLock, sceneParts, starburst } from './scene'
 
 // Claude's own look, as its app, site and posters draw it: warm graphite or ivory
 // paper, clay as the one loud colour, hairline rules, a serif for the headlines
@@ -125,8 +125,9 @@ export function isBusy(turn: Turn, boss: Worker | undefined): boolean {
 
 export function hudSvg(input: HudInput): { svg: string; alt: string; width: number; height: number } {
   const full = buildHud(input, false)
+  const hud = full.svg.length <= SVG_ROOM ? full : buildHud(input, true)
 
-  return full.svg.length <= SVG_ROOM ? full : buildHud(input, true)
+  return { ...hud, svg: phaseLock(hud.svg, input.now) }
 }
 
 function buildHud(input: HudInput, lite: boolean): { svg: string; alt: string; width: number; height: number } {

@@ -9,7 +9,7 @@
 [![English](https://img.shields.io/badge/🇬🇧_English-read-6A9BCC?style=for-the-badge)](#-english)
 [![ZIP indir · Download ZIP](https://img.shields.io/badge/⬇_ZIP_indir_·_Download-141413?style=for-the-badge)](https://github.com/yigityildiz0/claude-pixel-office/archive/refs/heads/main.zip)
 
-![Version](https://img.shields.io/badge/version-0.3.0-D4A27F?style=flat-square)
+![Version](https://img.shields.io/badge/version-0.3.1-D4A27F?style=flat-square)
 ![Claude Code](https://img.shields.io/badge/Claude_Code-mod-D97757?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-788C5D?style=flat-square)
 

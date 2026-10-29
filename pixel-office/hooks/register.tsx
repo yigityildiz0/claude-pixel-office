@@ -55,6 +55,8 @@ const prefsA = atom({ plugin: 'pixel-office', key: 'prefs' } as const, { tab: 'o
 })
 // auto compact as this chat has it (shared with kota-bandi when that is installed)
 const autoA = atom({ plugin: 'pixel-office', key: 'auto' } as const, { isOn: false, at: 80 }, { shape: 'auto-1' })
+// bumped when a held-back drawing is due, so the pane draws it
+const frameA = atom({ plugin: 'pixel-office', key: 'frame' } as const, 0, { shape: 'frame-1' })
 // the app's own light or dark theme
 const themeA = atom({ plugin: 'pixel-office', key: 'theme' } as const, 'dark' as 'dark' | 'light', { shape: 'theme-1' })
 const statsA = atom(
@@ -75,6 +77,33 @@ let flushTimer: { cancel: () => void } | null = null
 const thinking = new Map<string, { text: string; pushedAt: number; kind?: string; textSeen: boolean }>()
 const currentTool = new Map<string, string>()
 const warned = new Set<string>()
+
+// —— the drawing, held steady ——
+// Each new drawing is a new image the app swaps in, which showed as a flicker while
+// Claude worked. So the office is drawn again at most every FRAME_MS, and only when
+// what it shows has changed (the motion itself runs inside the image).
+const FRAME_MS = 4000
+let lastFrame: { key: string; hud: ReturnType<typeof hudSvg>; at: number; size: string } | undefined
+let frameNudge: { cancel: () => void } | null = null
+
+function steadyHud($: $, now: number, size: string, draw: () => ReturnType<typeof hudSvg>): ReturnType<typeof hudSvg> {
+  if (lastFrame && lastFrame.size === size && now - lastFrame.at < FRAME_MS) {
+    if (!frameNudge) {
+      frameNudge = $.clock.after(FRAME_MS - (now - lastFrame.at), () => {
+        frameNudge = null
+        void update($, frameA, n => n + 1).catch(() => undefined)
+      })
+    }
+
+    return lastFrame.hud
+  }
+  const fresh = draw()
+  // the animations' start times differ on every draw: what is shown is the rest
+  const key = fresh.svg.replace(/animation:[^;"]*/g, '')
+  if (!lastFrame || lastFrame.key !== key || lastFrame.size !== size) lastFrame = { key, hud: fresh, at: now, size }
+
+  return lastFrame.hud
+}
 
 // —— auto compact ——
 const AT_MIN = 15
@@ -752,6 +781,7 @@ export const register: Register = (on, options) => {
       read($, breakdownA),
     ])
     const auto = await read($, autoA)
+    await read($, frameA)
     useHudTheme(e.surface === 'desktop' ? await read($, themeA) : 'dark')
     const now = await $.clock.now()
     const bossW = workers.find(w => w.id === 'boss')
@@ -864,7 +894,10 @@ export const register: Register = (on, options) => {
       )
     }
 
-    const hud = hudSvg({ workers, feed: feedList, usage, turn, stats, now, motion: prefs.motion, width, fill, autoCompact: auto })
+    const theme = e.surface === 'desktop' ? await read($, themeA) : 'dark'
+    const hud = steadyHud($, now, `${width}x${fill}:${theme}:${prefs.motion}`, () =>
+      hudSvg({ workers, feed: feedList, usage, turn, stats, now, motion: prefs.motion, width, fill, autoCompact: auto }),
+    )
 
     return (
       <Box flexDirection="column" gap={1}>

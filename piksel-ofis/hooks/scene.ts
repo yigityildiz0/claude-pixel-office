@@ -129,6 +129,21 @@ export function anim(name: string, seconds: number, delay = 0, extra = 'infinite
   return `animation:${name} ${seconds}s ${delay ? `${n1(delay)}s ` : ''}${extra}`
 }
 
+/**
+ * Every looping animation picks up where the wall clock says it is: a redraw then
+ * continues the motion instead of starting it over, which looked like a flicker.
+ */
+export function phaseLock(svg: string, now: number): string {
+  const t = now / 1000
+
+  return svg.replace(/animation:([\w-]+) ([\d.]+)s (?:(-?[\d.]+)s )?([^;"]*infinite)/g, (_, name: string, dur: string, delay: string | undefined, rest: string) => {
+    const d = Number(dur)
+    const at = n1(Number(delay ?? 0) - (t % d))
+
+    return `animation:${name} ${dur}s ${at}s ${rest}`
+  })
+}
+
 function phase(seed: string, period: number): number {
   return -((hash(seed) % 1000) / 1000) * period
 }
@@ -222,7 +237,7 @@ export function activityBadge(w: Pick<Worker, 'activity' | 'think' | 'site'>, x:
     case 'waiting':
       return `<g style="${anim('pulse', 1.1)}"><circle cx="${x + 7}" cy="${y + 7}" r="7" fill="#F59E0B"/><text x="${x + 7}" y="${y + 11}" text-anchor="middle" class="t" font-size="11" font-weight="800" fill="#3A332D">?</text></g>`
     case 'done':
-      return `<g class="fb" style="animation:pop .5s ease-out both"><circle cx="${x + 7}" cy="${y + 7}" r="7" fill="#22C55E"/><path d="M${x + 3.5} ${y + 7.5} L${x + 6} ${y + 10} L${x + 10.5} ${y + 4.5}" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></g>`
+      return `<g class="fb"><circle cx="${x + 7}" cy="${y + 7}" r="7" fill="#22C55E"/><path d="M${x + 3.5} ${y + 7.5} L${x + 6} ${y + 10} L${x + 10.5} ${y + 4.5}" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></g>`
     case 'failed':
       return `<g style="${anim('shake', 0.4)}"><circle cx="${x + 7}" cy="${y + 7}" r="7" fill="#EF4444"/><path d="M${x + 7} ${y + 3} V${y + 8.5}" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="${x + 7}" cy="${y + 11}" r="1.1" fill="#fff"/></g>`
     case 'compacting':
@@ -594,7 +609,7 @@ export function seatXY(seat: number): { x: number; y: number } {
 /** The scene as a standalone document: what tests and previews draw. */
 export function sceneSvg(input: SceneInput): { svg: string; alt: string; height: number } {
   const parts = sceneParts(input, false)
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${parts.height}" width="${W}" height="${parts.height}"><style>${STYLE}</style><defs>${parts.defs}</defs>${parts.body}</svg>`
+  const svg = phaseLock(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${parts.height}" width="${W}" height="${parts.height}"><style>${STYLE}</style><defs>${parts.defs}</defs>${parts.body}</svg>`, input.now)
 
   return { svg, alt: parts.alt, height: parts.height }
 }

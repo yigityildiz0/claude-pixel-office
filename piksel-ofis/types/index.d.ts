@@ -142,6 +142,7 @@ declare module 'claude-code' {
       stats: Shaped<Stats>
       auto: Shaped<{ isOn: boolean; at: number }>
       theme: Shaped<'dark' | 'light'>
+      frame: Shaped<number>
     }
   }
 }

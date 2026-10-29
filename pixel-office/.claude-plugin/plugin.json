@@ -1,0 +1,14 @@
+{
+  "name": "pixel-office",
+  "version": "0.3.0",
+  "description": "Claude's work as a live pixel office in a side pane: Clawd the crowned boss, subagents at their desks, a limit clock, the context tank, auto-compact and a live feed.",
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "autoOpen": {
+      "type": "boolean",
+      "title": "Open the pane automatically",
+      "description": "Opens the office pane when a session starts.",
+      "default": true
+    }
+  }
+}

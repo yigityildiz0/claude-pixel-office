@@ -2,6 +2,13 @@
   "name": "pixel-office",
   "version": "0.3.0",
   "description": "Claude's work as a live pixel office in a side pane: Clawd the crowned boss, subagents at their desks, a limit clock, the context tank, auto-compact and a live feed.",
+  "author": {
+    "name": "yigityildiz0",
+    "url": "https://github.com/yigityildiz0"
+  },
+  "homepage": "https://github.com/yigityildiz0/claude-pixel-office",
+  "repository": "https://github.com/yigityildiz0/claude-pixel-office",
+  "license": "MIT",
   "types": "./types/index.d.ts",
   "userConfig": {
     "autoOpen": {

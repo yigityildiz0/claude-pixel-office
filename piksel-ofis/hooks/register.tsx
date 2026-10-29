@@ -84,7 +84,7 @@ const warned = new Set<string>()
 // draw, which flickered while Claude worked. A timer paints a new frame instead, at
 // most every FRAME_MS and only when the picture has changed; the pane draws only
 // when a new frame lands (the motion runs inside the image).
-const FRAME_MS = 4000
+const FRAME_MS = 8000
 type Snap = { workers: Worker[]; feed: FeedItem[]; usage: Usage; turn: Turn; stats: Stats }
 type Size = { width: number; fill: number; theme: 'dark' | 'light'; motion: boolean; auto: { isOn: boolean; at: number }; key: string }
 let snap: Snap | undefined
@@ -902,7 +902,12 @@ export const register: Register = (on, options) => {
       )
     }
 
-    size = { width, fill, theme, motion: prefs.motion, auto, key: `${width}x${fill}:${theme}:${prefs.motion}:${auto.isOn}:${auto.at}` }
+    // the pane's reported size wobbles by a row or a few columns while Claude works (the spinner,
+    // the composer): a small change keeps the old size, so the picture is not drawn again for it
+    const steady = size && Math.abs(size.width - width) < 48 && Math.abs(size.fill - fill) < 110
+    const useW = steady && size ? size.width : width
+    const useF = steady && size ? size.fill : fill
+    size = { width: useW, fill: useF, theme, motion: prefs.motion, auto, key: `${useW}x${useF}:${theme}:${prefs.motion}:${auto.isOn}:${auto.at}` }
     if (!frame || frame.size !== size.key) {
       const at = await $.clock.now()
       const fresh = drawFrame(live, size, at)

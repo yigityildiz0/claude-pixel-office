@@ -119,7 +119,7 @@ export type Breakdown = {
 
 export type Tab = 'ofis' | 'ekip' | 'akis' | 'baglam'
 
-export type UiPrefs = { tab: Tab; motion: boolean; compact: boolean }
+export type UiPrefs = { tab: Tab; motion: boolean; compact: boolean; hints?: boolean }
 
 export type Stats = {
   tools: Record<string, number>

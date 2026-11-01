@@ -825,6 +825,11 @@ export const register: Register = (on, options) => {
           label={prefs.motion ? 'Hareket: açık' : 'Hareket: kapalı'}
           onPress={() => void update($, prefsA, p => ({ ...p, motion: !p.motion }))}
         />
+        <Button
+          key="hints"
+          label={prefs.hints === true ? 'İpuçları: açık (titreyebilir)' : 'İpuçları: kapalı'}
+          onPress={() => void update($, prefsA, p => ({ ...p, hints: p.hints !== true }))}
+        />
       </Box>
     )
     const SvgEl = e.surface !== 'terminal' && 'Svg' in els && els.Svg ? els.Svg : null
@@ -863,7 +868,7 @@ export const register: Register = (on, options) => {
 
       return (
         <Box flexDirection="column" gap={1}>
-          <SvgEl source={card.svg} alt={card.alt} width={card.width} height={card.height} isInteractive />
+          <SvgEl source={card.svg} alt={card.alt} width={card.width} height={card.height} isInteractive={prefs.hints === true} />
           <Box flexDirection="row" gap={1} alignItems="center">
             <Button key="ctx-refresh" label="Yenile" onPress={() => void refreshBreakdown($).catch(() => undefined)} />
             <Text dimColor>{`Son hesap ${istanbul(breakdown.at).text.slice(0, 5)} · kesin sayım için /context`}</Text>
@@ -918,7 +923,9 @@ export const register: Register = (on, options) => {
     return (
       <Box flexDirection="column" gap={1}>
         {toolbar}
-        <SvgEl source={hud.svg} alt={hud.alt} width={hud.width} height={hud.height} isInteractive />
+        {/* an image by default: the interactive mode draws the picture in a sandboxed frame that
+            loads again from blank on every change, which is the pane's blinking */}
+        <SvgEl source={hud.svg} alt={hud.alt} width={hud.width} height={hud.height} isInteractive={prefs.hints === true} />
       </Box>
     )
   })

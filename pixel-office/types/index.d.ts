@@ -87,7 +87,12 @@ export type Usage = {
   at: number
   /** the context % at each change, the latest last, for the sparkline */
   history?: number[]
+  /** each limit's readings [time, %] in its current window, shared across chats (limit pace) */
+  samples?: Record<string, Array<[number, number]>>
 }
+
+/** What today has cost across every chat this mod ran in (API-equivalent dollars). */
+export type Daily = { day: string; usd: number; sessions: number; at: number }
 
 export type Turn = {
   active: boolean
@@ -119,7 +124,7 @@ export type Breakdown = {
 
 export type Tab = 'ofis' | 'ekip' | 'akis' | 'baglam'
 
-export type UiPrefs = { tab: Tab; motion: boolean; compact: boolean; hints?: boolean }
+export type UiPrefs = { tab: Tab; motion: boolean; compact: boolean; hints?: boolean; settings?: boolean }
 
 export type Stats = {
   tools: Record<string, number>
@@ -143,6 +148,7 @@ declare module 'claude-code' {
       auto: Shaped<{ isOn: boolean; at: number }>
       theme: Shaped<'dark' | 'light'>
       frame: Shaped<number>
+      daily: Shaped<Daily>
     }
   }
 }

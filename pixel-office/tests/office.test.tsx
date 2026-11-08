@@ -20,7 +20,7 @@ const PANE = {
 } as const
 
 function engine(on: Parameters<Parameters<typeof test>[1]>[1]) {
-  on('command.register', () => ({ value: { command: 'ofis' } }))
+  on('command.register', () => ({ value: { command: 'office' } }))
   on('ui.open', () => ({ value: { isPlaced: true } }))
   on('session.surfaces', () => ({ value: ['desktop'] }))
   on('session.usage', () => ({
@@ -41,24 +41,178 @@ function engine(on: Parameters<Parameters<typeof test>[1]>[1]) {
   on('agent.spawn', () => ({ model: 'claude-opus-5-5', agentId: 'a1' }))
 }
 
-test('the office speaks English', async ($, on) => {
+test('the boss reads, hires a worker, and the HUD and tabs show it in plain words', async ($, on) => {
   const clock = mock.clock(on)
   engine(on)
 
   await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
   await $.tool.call({ tool: 'Read', file_path: 'C:/proje/app.tsx' })
-  await $.tool.call({ tool: 'Bash', command: 'npm run build', description: 'Build the project' })
+  await $.tool.call({ tool: 'Bash', command: 'npm run build -- --verbose', description: 'Build the project' })
   await $.agent.spawn({ prompt: 'Scan the logs', description: 'Scan the logs', subagentType: 'Explore' })
   await clock.advance(1200)
 
   const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
-  const source = String((await ui.find({ type: 'Svg' }))?.props.source)
+  const hud = await ui.find({ type: 'Svg' })
+  const source = String(hud?.props.source)
+  // drawn to the pane's own size: 160 cells wide, filling 60 rows
+  expect(hud?.props.width).toBe(1280)
+  expect(Number(hud?.props.height)).toBeGreaterThanOrEqual(60 * 17 - 64)
+  // an image, not the sandboxed frame that reloads from blank on each change
+  expect(hud?.props.isInteractive).toBeFalsy()
   expect(source).toContain('Claude Office')
+  expect(source).toContain('BOSS')
   expect(source).toContain('Ada · Explorer')
   expect(source).toContain('started · Scan the logs')
   expect(source).toContain('read · app.tsx')
+  // the feed says what was done, never the raw command
   expect(source).toContain('ran a command · Build the project')
-  expect(source).not.toMatch(/[çğışöüİ]/)
-  expect((await ui.find({ key: 'auto' }))?.props.label).toMatch(/Auto-compact: off/)
+  expect(source).not.toContain('npm run build')
+
+  await ui.press({ key: 'tab-ekip' })
+  const row = await ui.find({ key: 'w-a1' })
+  expect(row?.text).toMatch(/Ada/)
+  expect(row?.text).toMatch(/Explorer/)
+  expect((await ui.find({ key: 'w-boss' }))?.text).toMatch(/Boss/)
   await ui.unmount()
+})
+
+test('a narrow pane stacks the HUD at its own width', async ($, on) => {
+  const clock = mock.clock(on)
+  engine(on)
+
+  await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
+  await clock.advance(1200)
+  const ui = await $.ui.mount({ ...PANE, props: { ...PANE.props, bodyColumns: 50, scroll: { offset: 0, bodyRows: 30 } }, surface: 'desktop' })
+  const hud = await ui.find({ type: 'Svg' })
+  expect(hud?.props.width).toBe(400)
+  expect(String(hud?.props.source)).toContain('viewBox="0 0 400 ')
+  await ui.unmount()
+})
+
+test('a terminal draws the office as text', async ($, on) => {
+  const clock = mock.clock(on)
+  engine(on)
+
+  await $.session.start({ cwd: '/', surface: 'terminal', isInteractive: true })
+  await clock.advance(1200)
+  const ui = await $.ui.mount({ ...PANE, surface: 'terminal' })
+  expect((await ui.find({ type: 'Text', text: /Context 21%/ }))?.text).toMatch(/211k \/ 1\.0M\) · 5 hour 55%/)
+  expect((await ui.find({ type: 'Text', text: /^Boss: / }))?.text).toMatch(/Idle/)
+  await ui.unmount()
+})
+
+test('thoughts, tools and sites are read the way the office shows them', async () => {
+  expect(thinkKind('First I will outline the steps, then implement.')).toBe('plan')
+  expect(thinkKind('The test is failing with a TypeError, let me fix it.')).toBe('debug')
+  expect(thinkKind('Renk paleti ve yerleşim tasarım için önemli.')).toBe('design')
+  expect(siteOf('https://www.reddit.com/r/ClaudeAI')).toBe('reddit')
+  expect(siteOf('https://youtu.be/abc')).toBe('youtube')
+  expect(siteOf('https://x.com/anthropicai')).toBe('x')
+  expect(readTool('WebFetch', { url: 'https://github.com/pablodelucca/pixel-agents' }).site).toBe('github')
+  expect(readTool('Bash', { command: 'npm test' }).activity).toBe('running')
+  expect(readTool('Bash', { command: 'rm -rf node_modules && npm ci' }).detail).not.toMatch(/rm -rf/)
+  expect(readTool('Edit', { file_path: 'C:/a/b.ts' }).bubble).toBe('Editing: b.ts')
+})
+
+test('a full office of 26 busy workers stays inside the Svg limit at every width', async () => {
+  const kinds: Activity[] = ['thinking', 'reading', 'writing', 'running', 'web', 'done', 'failed', 'waiting', 'answering', 'planning']
+  const now = 1_800_000_000_000
+  const workers: Worker[] = [
+    { id: 'boss', n: -1, name: 'Boss', role: 'Boss', task: '', color: '#FBBF24', seat: -1, activity: 'delegating', bubble: 'Ada, take a look?', detail: '', tools: 3, tokensOut: 100, since: now, joinedAt: now },
+  ]
+  for (let i = 0; i < 26; i++) {
+    workers.push({
+      id: `agent-${i}`,
+      n: i,
+      name: `Worker ${i}`,
+      role: 'Explorer',
+      task: 'A long task description '.repeat(4),
+      color: '#2DD4BF',
+      seat: i,
+      activity: kinds[i % kinds.length] as Activity,
+      think: 'research',
+      site: 'youtube',
+      bubble: 'A very long speech bubble that should be clipped',
+      detail: 'detail '.repeat(20),
+      tools: i,
+      tokensOut: 1000 * i,
+      since: now,
+      joinedAt: now - (i % 2 === 0 ? 500 : 60_000),
+      endedAt: i % 7 === 5 ? now - 1000 : undefined,
+    })
+  }
+  const usage = { ctxPct: 91, ctxTokens: 910_000, ctxWindow: 1_000_000, limits: [{ kind: 'five_hour', pct: 80 }], at: now, history: [10, 30, 55, 91] }
+  const turn = { active: true, steps: 3, turns: 2, prompt: 'Set up the office', model: 'claude-opus-5-5', effort: 'high' }
+  const scene = sceneSvg({ workers, usage, turn, now, motion: true })
+  expect(scene.svg.length).toBeLessThan(131_072)
+  expect(scene.svg).toContain('+2 more')
+
+  const feed = Array.from({ length: 60 }, (_, i) => ({ t: now - i * 1000, who: `Worker ${i % 26}`, color: '#2DD4BF', kind: 'read' as const, text: `read · file-${i}.ts` }))
+  const stats = { tools: { Read: 40, Bash: 12 }, hired: 26, outTokens: 50_000, inTokens: 900_000, cacheRead: 800_000, sessionStart: now - 3_600_000 }
+  for (const width of [340, 600, 1000, 1600, 2400]) {
+    const hud = hudSvg({ workers, feed, usage, turn, stats, now, motion: true, width, fill: 1400 })
+    expect(hud.svg.length).toBeLessThan(131_072)
+    expect(hud.width).toBe(width)
+    expect(hud.height).toBeGreaterThan(0)
+  }
+})
+
+test('auto compact is set from the pane, shared, and runs once past the threshold', async ($, on) => {
+  const clock = mock.clock(on)
+  engine(on)
+  const written: Record<string, string> = {}
+  on('fs.write', (_, e) => {
+    written[e.path] = e.text
+    return { value: undefined }
+  })
+  on('fs.read', (_, e) => {
+    if (e.path in written) return { value: written[e.path] as string }
+    throw new Error('missing')
+  })
+  let compacts = 0
+  on('session.compact', () => {
+    compacts++
+    return { value: {} }
+  })
+
+  await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
+  await clock.advance(1200)
+  const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
+  expect((await ui.find({ key: 'auto' }))?.props.label).toMatch(/off/)
+  await ui.press({ key: 'auto' })
+  expect((await ui.find({ key: 'auto' }))?.props.label).toMatch(/on · 80%/)
+  await ui.press({ key: 'autoDown' })
+  expect((await ui.find({ key: 'auto' }))?.props.label).toMatch(/75%/)
+  // the setting lands in the shared folder, where kota-bandi reads it
+  expect(Object.values(written).some(t => t.includes('"at":75'))).toBe(true)
+  await ui.unmount()
+})
+
+test('the overview holds its frame while Claude works, then paints the news', async ($, on) => {
+  const clock = mock.clock(on)
+  engine(on)
+
+  await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
+  await clock.advance(1200)
+  const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
+  const first = String((await ui.find({ type: 'Svg' }))?.props.source)
+  await $.tool.call({ tool: 'Read', file_path: 'C:/proje/yeni.ts' })
+  await clock.advance(1500)
+  // a burst of work does not redraw the picture at once
+  expect(String((await ui.find({ type: 'Svg' }))?.props.source)).toBe(first)
+  await clock.advance(8200)
+  expect(String((await ui.find({ type: 'Svg' }))?.props.source)).toContain('read · yeni.ts')
+  await ui.unmount()
+})
+
+test('an idle office draws the same picture seconds apart (the pane must not repaint for the clock hand)', async () => {
+  const now = Date.parse('2026-10-28T19:40:10Z')
+  const workers: Worker[] = [
+    { id: 'boss', n: -1, name: 'Boss', role: 'Boss', task: '', color: '#FBBF24', seat: -1, activity: 'idle', bubble: 'Coffee break.', detail: '', tools: 0, tokensOut: 0, since: now - 400_000, joinedAt: now - 99_999 },
+  ]
+  const usage = { ctxPct: 21, ctxTokens: 211_000, ctxWindow: 1_000_000, limits: [{ kind: 'five_hour', pct: 55, resetsAt: new Date(now + 37 * 60_000).toISOString() }], at: now, history: [3, 21] }
+  const turn = { active: false, steps: 0, turns: 0, prompt: '', model: 'claude-opus-5-5', effort: 'high' }
+  const stats = { tools: {}, hired: 0, outTokens: 0, inTokens: 0, cacheRead: 0, sessionStart: now - 3_600_000 }
+  const shown = (at: number) => hudSvg({ workers, feed: [], usage, turn, stats, now: at, motion: true, width: 856, fill: 761 }).svg.replace(/animation:[^;"]*/g, '').replace(/ begin="[^"]*"/g, '')
+  expect(shown(now + 7000)).toBe(shown(now))
 })

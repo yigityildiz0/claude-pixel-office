@@ -319,6 +319,108 @@ export function resetIn(resetsAt: string | undefined, now: number): string {
   return fmtDuration(at - now).replace(/ \d+s$/, '')
 }
 
+// —— limit forecast ——————————————————————————————————————————
+
+/** A limit reading at a moment: [time ms, percent used]. */
+export type Sample = [number, number]
+
+export type Forecast = {
+  /** percent per hour, at the recent pace; undefined when too few readings */
+  rate?: number
+  /** when the limit fills at that pace, if before its reset */
+  fullAt?: number
+  /** the percent it would show at reset, if it does not fill first */
+  atReset?: number
+  resetAt?: number
+  /** a short sentence for the HUD */
+  line: string
+  tone: 'ok' | 'warn' | 'bad' | 'idle'
+}
+
+const WINDOW_MS: Record<string, number> = { five_hour: 5 * 3_600_000, seven_day: 7 * 86_400_000 }
+
+/**
+ * How fast a limit is filling and when it would be full. The pace is the slope of
+ * the recent readings (the last hour for the 5-hour limit, the last day for the week),
+ * blended with the average since the window opened, so one burst does not swing it.
+ */
+export function forecast(kind: string, pct: number, resetsAt: string | undefined, samples: readonly Sample[], now: number): Forecast {
+  const resetAt = resetsAt ? Date.parse(resetsAt) : NaN
+  const hasReset = Number.isFinite(resetAt) && resetAt > now
+  const span = WINDOW_MS[kind] ?? WINDOW_MS.seven_day as number
+  const isFive = kind === 'five_hour'
+  const recentMs = isFive ? 60 * 60_000 : 48 * 3_600_000
+  // the week's slope only once its readings span a day: hours of work alone overstate a week
+  const minDt = isFive ? 4 * 60_000 : 20 * 3_600_000
+  const pts = samples.filter(([t]) => t >= now - recentMs && t <= now + 60_000)
+  let slope: number | undefined
+  if (pts.length >= 2) {
+    const t0 = (pts[0] as Sample)[0]
+    const dt = (pts[pts.length - 1] as Sample)[0] - t0
+    if (dt >= minDt) {
+      // least squares, in percent per hour
+      const xs = pts.map(([t]) => (t - t0) / 3_600_000)
+      const ys = pts.map(([, p]) => p)
+      const mx = xs.reduce((a, b) => a + b, 0) / xs.length
+      const my = ys.reduce((a, b) => a + b, 0) / ys.length
+      let num = 0
+      let den = 0
+      xs.forEach((x, i) => {
+        num += (x - mx) * ((ys[i] as number) - my)
+        den += (x - mx) ** 2
+      })
+      if (den > 0) slope = Math.max(0, num / den)
+    }
+  }
+  // the average since this window opened (the reset less the window's length)
+  let average: number | undefined
+  if (hasReset) {
+    const opened = resetAt - span
+    const hours = (now - opened) / 3_600_000
+    // at least half an hour (5-hour) or a whole day (week) under the average
+    if (hours > (isFive ? 0.1 : 0.5)) average = pct / Math.max(hours, isFive ? 0.5 : 24)
+  }
+  const rate = slope !== undefined && average !== undefined ? 0.65 * slope + 0.35 * average : slope ?? average
+  if (!hasReset) return { rate, line: pct > 0 ? 'reset time unknown' : 'starts with first message', tone: 'idle' }
+  if (rate === undefined) return { resetAt, line: `resets in ${resetIn(resetsAt, now)} · measuring pace`, tone: 'idle' }
+  if (rate < 0.05) return { rate, resetAt, atReset: pct, line: `steady · resets in ${resetIn(resetsAt, now)}`, tone: 'ok' }
+  const hoursLeft = (resetAt - now) / 3_600_000
+  const atReset = pct + rate * hoursLeft
+  if (atReset >= 100) {
+    const fullAt = now + ((100 - pct) / rate) * 3_600_000
+    const early = fmtDuration(resetAt - fullAt).replace(/ \d+s$/, '')
+    const at = isFive ? istanbul(fullAt).text.slice(0, 5) : dayTime(fullAt)
+
+    return { rate, resetAt, fullAt, line: `full at ${at} · ${early} before reset`, tone: 'bad' }
+  }
+  const tone = atReset >= 85 ? 'warn' : 'ok'
+
+  return { rate, resetAt, atReset, line: `≈${Math.round(atReset)}% at reset · in ${resetIn(resetsAt, now)}`, tone }
+}
+
+const GUN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+/** "Sal 14:20" in Istanbul time. */
+export function dayTime(t: number): string {
+  return `${GUN[new Date(t).getDay()]} ${istanbul(t).text.slice(0, 5)}`
+}
+
+/** Today's local date, YYYY-MM-DD: the key the day's cost is kept under. */
+export function dayKey(t: number): string {
+  const d = new Date(t)
+
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+/** Adds a reading, keeping the list short and only what moved (or every 5 minutes). */
+export function withSample(list: readonly Sample[] | undefined, t: number, pct: number): Sample[] {
+  const all = (list ?? []).filter(([at]) => at < t)
+  const last = all[all.length - 1]
+  if (last && Math.abs(last[1] - pct) < 0.5 && t - last[0] < 5 * 60_000) return all.slice()
+
+  return [...all, [t, Math.round(pct * 10) / 10] as Sample].slice(-80)
+}
+
 export function level(pct: number | undefined): { color: string; word: string } {
   if (pct === undefined) return { color: '#64748B', word: 'unknown' }
   if (pct >= 85) return { color: '#EF4444', word: 'critical' }

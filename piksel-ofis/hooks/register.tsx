@@ -1,7 +1,7 @@
 import { atom, read, update } from 'claude-code'
 import type { AgentInfo, EngineInterface, Register, RenderElement } from 'claude-code'
 
-import type { Breakdown, FeedItem, FeedKind, Stats, Tab, Turn, UiPrefs, Usage, Worker } from '../types'
+import type { Breakdown, Daily, FeedItem, FeedKind, Stats, Tab, Turn, UiPrefs, Usage, Worker } from '../types'
 import { breakdownHud, hudSvg, isBusy, useHudTheme } from './hud'
 import {
   QUIPS,
@@ -21,7 +21,10 @@ import {
   thinkKind,
   thoughtGist,
   istanbul,
+  dayKey,
+  withSample,
 } from './logic'
+import type { Sample } from './logic'
 import { ARRIVE_MS, LEAVE_MS, activityLabel } from './scene'
 import { isAlive, readShared, writeShared } from './shared'
 
@@ -59,6 +62,7 @@ const autoA = atom({ plugin: 'piksel-ofis', key: 'auto' } as const, { isOn: fals
 const frameA = atom({ plugin: 'piksel-ofis', key: 'frame' } as const, 0, { shape: 'frame-1' })
 // the app's own light or dark theme
 const themeA = atom({ plugin: 'piksel-ofis', key: 'theme' } as const, 'dark' as 'dark' | 'light', { shape: 'theme-1' })
+const dailyA = atom({ plugin: 'piksel-ofis', key: 'daily' } as const, { day: '', usd: 0, sessions: 0, at: 0 } as Daily, { shape: 'daily-1' })
 const statsA = atom(
   { plugin: 'piksel-ofis', key: 'stats' } as const,
   { tools: {}, hired: 0, outTokens: 0, inTokens: 0, cacheRead: 0, sessionStart: 0 } as Stats,
@@ -85,27 +89,29 @@ const warned = new Set<string>()
 // most every FRAME_MS and only when the picture has changed; the pane draws only
 // when a new frame lands (the motion runs inside the image).
 const FRAME_MS = 8000
-type Snap = { workers: Worker[]; feed: FeedItem[]; usage: Usage; turn: Turn; stats: Stats }
+type Snap = { workers: Worker[]; feed: FeedItem[]; usage: Usage; turn: Turn; stats: Stats; daily: Daily }
 type Size = { width: number; fill: number; theme: 'dark' | 'light'; motion: boolean; auto: { isOn: boolean; at: number }; key: string }
 let snap: Snap | undefined
 let size: Size | undefined
 let frame: { key: string; hud: ReturnType<typeof hudSvg>; at: number; size: string } | undefined
 
+/** What the picture shows, without the animations' start times: those differ on every draw. */
+const frameKey = (svg: string): string => svg.replace(/animation:[^;"]*/g, '').replace(/ begin="[^"]*"/g, '')
+
 function drawFrame(s: Snap, at: Size, now: number): ReturnType<typeof hudSvg> {
   useHudTheme(at.theme)
 
-  return hudSvg({ ...s, now, motion: at.motion, width: at.width, fill: at.fill, autoCompact: at.auto })
+  return hudSvg({ ...s, now, motion: at.motion, width: at.width, fill: at.fill, autoCompact: at.auto, daily: s.daily })
 }
 
 async function paint($: $): Promise<void> {
-  const [workers, feed, usage, turn, stats] = await Promise.all([read($, workersA), read($, feedA), read($, usageA), read($, turnA), read($, statsA)])
-  snap = { workers, feed, usage, turn, stats }
+  const [workers, feed, usage, turn, stats, daily] = await Promise.all([read($, workersA), read($, feedA), read($, usageA), read($, turnA), read($, statsA), read($, dailyA)])
+  snap = { workers, feed, usage, turn, stats, daily }
   if (!size) return
   const now = await $.clock.now()
   if (frame && frame.size === size.key && now - frame.at < FRAME_MS) return
   const hud = drawFrame(snap, size, now)
-  // the animations' start times differ on every draw: what is shown is the rest
-  const key = hud.svg.replace(/animation:[^;"]*/g, '')
+  const key = frameKey(hud.svg)
   if (frame && frame.size === size.key && frame.key === key) return
   frame = { key, hud, at: now, size: size.key }
   await update($, frameA, n => n + 1)
@@ -215,6 +221,73 @@ async function syncTheme($: $): Promise<void> {
   } catch {
     // unknown: dark
   }
+}
+
+// —— the day's cost and the limits' pace, shared across chats ——
+// Each chat keeps its own cost under `gun:<day>:<chat>` ({usd, base}: base is what it had
+// cost when the day began, for a chat that started yesterday); the day is their sum.
+// The limits are the account's: every chat adds its readings to one list per limit
+// (`lim`), so the pace counts what all of them spend.
+const LIM_KEY = 'lim'
+type LimStore = Record<string, { reset?: string; s: Sample[] }>
+
+async function syncDaily($: $): Promise<void> {
+  const now = await $.clock.now()
+  const day = dayKey(now)
+  const sid = await chatOf($)
+  const [usage, stats] = await Promise.all([read($, usageA), read($, statsA)])
+  const usd = usage.usd
+  if (usd !== undefined) {
+    const key = `gun:${day}:${sid}`
+    const had = (await $.store.get(key)) as { usd: number; base: number } | undefined
+    const base = had ? had.base : stats.sessionStart && dayKey(stats.sessionStart) === day ? 0 : usd
+    if (!had || Math.abs(had.usd - usd) >= 0.005) await $.store.set(key, { usd, base })
+  }
+  let total = 0
+  let sessions = 0
+  for (const key of await $.store.keys()) {
+    if (!key.startsWith('gun:')) continue
+    if (!key.startsWith(`gun:${day}:`)) {
+      // older than three days: dropped
+      const d = key.slice(4, 14)
+      if (Date.parse(d) < now - 3 * 86_400_000) await $.store.delete(key).catch(() => undefined)
+      continue
+    }
+    const v = (await $.store.get(key)) as { usd?: number; base?: number } | undefined
+    const spent = Math.max(0, (v?.usd ?? 0) - (v?.base ?? 0))
+    if (spent > 0.004) {
+      total += spent
+      sessions++
+    }
+  }
+  const was = await read($, dailyA)
+  if (was.day !== day || Math.abs(was.usd - total) >= 0.005 || was.sessions !== sessions) {
+    await update($, dailyA, () => ({ day, usd: total, sessions, at: now }))
+  }
+}
+
+/** Adds this reading of each limit to the shared list; returns every limit's list. */
+async function syncSamples($: $, limits: ReadonlyArray<{ kind: string; pct: number; resetsAt?: string }>, now: number): Promise<Record<string, Sample[]>> {
+  let all: LimStore = {}
+  try {
+    all = ((await $.store.get(LIM_KEY)) as LimStore | undefined) ?? {}
+  } catch {
+    all = {}
+  }
+  let changed = false
+  for (const l of limits) {
+    const had = all[l.kind]
+    const fresh = !had || had.reset !== l.resetsAt
+    const before = fresh ? [] : had.s
+    const s = withSample(before, now, l.pct)
+    if (fresh || s.length !== before.length) {
+      all[l.kind] = { reset: l.resetsAt, s }
+      changed = true
+    }
+  }
+  if (changed) await $.store.set(LIM_KEY, all).catch(() => undefined)
+
+  return Object.fromEntries(Object.entries(all).map(([k, v]) => [k, v.s]))
 }
 
 /** The context % trail the sparkline draws: a new point only when it moved. */
@@ -537,6 +610,8 @@ export const register: Register = (on, options) => {
     await syncTheme($)
     $.clock.every(3000, () => void syncAuto($).catch(() => undefined))
     $.clock.every(4000, () => void syncTheme($))
+    $.clock.every(60_000, () => void syncDaily($).catch(() => undefined))
+    $.clock.after(3000, () => void syncDaily($).catch(() => undefined))
     const surfaces = await $.session.surfaces()
     if (options.otomatikAc !== false && surfaces.some(s => s === 'desktop' || s === 'vscode')) {
       void $.ui.open({ id: PANE, title: TITLE })
@@ -555,6 +630,8 @@ export const register: Register = (on, options) => {
         at: now,
         history: usage.context.percent === undefined ? u.history : withHistory(u.history, usage.context.percent),
       }))
+      const samples = await syncSamples($, usage.rateLimits.map(l => ({ kind: l.kind, pct: l.percentUsed, resetsAt: l.resetsAt })), now)
+      await update($, usageA, u => ({ ...u, samples }))
     } catch {
       // Figures arrive with the first measurement instead.
     }
@@ -740,6 +817,7 @@ export const register: Register = (on, options) => {
 
   on('session.measure', async ($, e, next) => {
     const now = await $.clock.now()
+    const samples = e.rateLimits.length > 0 ? await syncSamples($, e.rateLimits.map(l => ({ kind: l.kind, pct: l.percentUsed, resetsAt: l.resetsAt })), now).catch(() => undefined) : undefined
     await update($, usageA, u => ({
       ...u,
       ctxPct: e.context.percent ?? u.ctxPct,
@@ -748,6 +826,7 @@ export const register: Register = (on, options) => {
       ctxWindow: e.context.window,
       limits: e.rateLimits.length > 0 ? e.rateLimits.map(l => ({ kind: l.kind, pct: l.percentUsed, resetsAt: l.resetsAt })) : u.limits,
       usd: e.cost?.usd ?? u.usd,
+      samples: samples ?? u.samples,
       at: now,
     }))
     await watchAuto($, e.context.percent)
@@ -785,8 +864,8 @@ export const register: Register = (on, options) => {
     const isOverview = (prefs.tab === 'akis' ? 'ofis' : prefs.tab) === 'ofis' && e.surface !== 'terminal'
     // off the overview the live values are read (and redraw the pane); on it, the last frame's
     const live = isOverview && snap ? snap : await (async () => {
-      const [workers, feed, usage, turn, stats] = await Promise.all([read($, workersA), read($, feedA), read($, usageA), read($, turnA), read($, statsA)])
-      return { workers, feed, usage, turn, stats }
+      const [workers, feed, usage, turn, stats, daily] = await Promise.all([read($, workersA), read($, feedA), read($, usageA), read($, turnA), read($, statsA), read($, dailyA)])
+      return { workers, feed, usage, turn, stats, daily }
     })()
     const { workers, usage, turn, stats } = live
     const breakdown = isOverview ? null : await read($, breakdownA)
@@ -804,13 +883,19 @@ export const register: Register = (on, options) => {
       ['ekip', `Ekip (${team.length})`],
       ['baglam', 'Bağlam'],
     ]
-    // the controls: the views, then what runs the office (auto compact, compact now, motion)
+    // the controls: the views on one row; the settings fold out from "Ayarlar"
+    const settingsOpen = prefs.settings === true
     const toolbar = (
-      <Box flexDirection="row" gap={1} flexWrap="wrap" alignItems="center">
+      <Box flexDirection="column" gap={1}>
+      <Box flexDirection="row" gap={1} alignItems="center">
         {tabs.map(([t, label]) => (
           <Button key={`tab-${t}`} label={label} variant={tab === t ? 'primary' : 'secondary'} onPress={setTab(t)} />
         ))}
         <Text dimColor>│</Text>
+        <Button key="settings" label={settingsOpen ? 'Ayarlar ▴' : 'Ayarlar ▾'} variant={settingsOpen ? 'primary' : 'secondary'} onPress={() => void update($, prefsA, p => ({ ...p, settings: p.settings !== true }))} />
+      </Box>
+      {settingsOpen ? (
+      <Box flexDirection="row" gap={1} flexWrap="wrap" alignItems="center">
         <Button
           key="auto"
           label={auto.isOn ? `Oto-sıkıştırma: açık · %${auto.at}` : 'Oto-sıkıştırma: kapalı'}
@@ -831,11 +916,13 @@ export const register: Register = (on, options) => {
           onPress={() => void update($, prefsA, p => ({ ...p, hints: p.hints !== true }))}
         />
       </Box>
+      ) : null}
+      </Box>
     )
     const SvgEl = e.surface !== 'terminal' && 'Svg' in els && els.Svg ? els.Svg : null
     const width = Math.max(340, e.props.bodyColumns * CELL_PX)
-    // less the toolbar above the drawing (about four rows)
-    const fill = Math.max(0, e.props.scroll.bodyRows * ROW_PX - 72)
+    // less the toolbar above the drawing: one row of buttons, two with the settings open
+    const fill = Math.max(0, e.props.scroll.bodyRows * ROW_PX - (settingsOpen ? 96 : 52))
 
     const teamView = (): RenderElement => {
       const rows = [...(bossW ? [bossW] : []), ...team]
@@ -899,6 +986,7 @@ export const register: Register = (on, options) => {
     }
 
     if (tab === 'ekip' || tab === 'baglam') {
+
       return (
         <Box flexDirection="column" gap={1}>
           {toolbar}
@@ -916,7 +1004,7 @@ export const register: Register = (on, options) => {
     if (!frame || frame.size !== size.key) {
       const at = await $.clock.now()
       const fresh = drawFrame(live, size, at)
-      frame = { key: fresh.svg.replace(/animation:[^;"]*/g, ''), hud: fresh, at, size: size.key }
+      frame = { key: frameKey(fresh.svg), hud: fresh, at, size: size.key }
     }
     const hud = frame.hud
 

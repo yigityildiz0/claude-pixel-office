@@ -1,9 +1,10 @@
 // The pane as one Claude-styled dashboard, drawn in real pixels: the caller gives the width
 // the pane has, one unit of the drawing is one pixel, so text keeps its size at
 // any window size and the layout reflows (two columns when wide, one when narrow).
-import type { Breakdown, FeedItem, FeedKind, Stats, Turn, Usage, Worker } from '../types'
-import { clip, fmtDuration, fmtTokens, istanbul, limitLabel } from './logic'
-import { SCENE_W, STYLE, activityBadge, activityLabel, esc, phaseLock, sceneParts, starburst } from './scene'
+import type { Breakdown, Daily, FeedItem, FeedKind, Stats, Turn, Usage, Worker } from '../types'
+import { clip, dayKey, fmtDuration, fmtTokens, forecast, istanbul } from './logic'
+import type { Forecast, Sample } from './logic'
+import { STYLE, bestCols, esc, phaseLock, sceneHeight, sceneParts, starburst } from './scene'
 
 // Claude's own look, as its app, site and posters draw it: warm graphite or ivory
 // paper, clay as the one loud colour, hairline rules, a serif for the headlines
@@ -97,7 +98,6 @@ export function prettyModel(model: string | undefined): string {
   return `${name} ${m[2]}${m[3] ? `.${m[3]}` : ''}`
 }
 
-
 const FEED_GLYPH: Record<FeedKind, string> = {
   prompt: '▶', think: '◆', read: '▤', write: '✎', run: '›', web: '◎', plan: '☰', hire: '+', done: '✓',
   fail: '✕', compact: '⇣', limit: '!', turn: '■', wait: '?',
@@ -113,10 +113,12 @@ export type HudInput = {
   motion: boolean
   /** the pane's width in pixels: the drawing's width */
   width: number
-  /** the height that fills the pane, when the layout can use it */
+  /** the pane's height in pixels: the drawing fills it exactly, never scrolls */
   fill?: number
   /** auto compact as set: marked on the context ring */
   autoCompact?: { isOn: boolean; at: number }
+  /** today's cost across chats */
+  daily?: Daily
 }
 
 export function isBusy(turn: Turn, boss: Worker | undefined): boolean {
@@ -130,171 +132,206 @@ export function hudSvg(input: HudInput): { svg: string; alt: string; width: numb
   return { ...hud, svg: phaseLock(hud.svg, input.now) }
 }
 
+const TONE = (t: Forecast['tone']) => (t === 'bad' ? C.red : t === 'warn' ? C.amber : t === 'ok' ? C.green : C.dim)
+const pctTone = (p: number) => (p >= 90 ? C.red : p >= 70 ? C.amber : C.green)
+
+/** The forecast of one limit from the readings the usage carries. */
+export function limitForecast(usage: Usage, kind: string, now: number): { pct: number; f: Forecast } | undefined {
+  const l = usage.limits.find(x => x.kind === kind)
+  if (!l) return undefined
+
+  return { pct: l.pct, f: forecast(kind, l.pct, l.resetsAt, (usage.samples?.[kind] ?? []) as Sample[], now) }
+}
+
+/** A gauge card: a title row, a big figure, then up to two lines. */
+function card(x: number, y: number, w: number, h: number, title: string, accent: string, right?: [string, string]): string {
+  let out = `<rect x="${n1(x)}" y="${n1(y)}" width="${n1(w)}" height="${h}" rx="12" fill="${C.panel}" stroke="${C.line}" filter="url(#h-lift)"/>`
+  out += `<rect x="${n1(x + 12)}" y="${n1(y + 12)}" width="3" height="10" rx="1.5" fill="${accent}"/>`
+  out += text(x + 21, y + 21, title, 9.5, C.muted, `${SANS} font-weight="800" letter-spacing="1.4"`)
+  if (right) out += text(x + w - 12, y + 21, right[0], 10, right[1], `${MONO} font-weight="700" text-anchor="end"`)
+
+  return out
+}
+
+function ctxCard(x: number, y: number, w: number, h: number, usage: Usage, auto?: { isOn: boolean; at: number }): string {
+  const pct = Math.max(0, Math.min(100, usage.ctxPct ?? 0))
+  const color = pct >= 85 ? C.red : pct >= 60 ? C.amber : C.cyan
+  let out = card(x, y, w, h, 'CONTEXT', C.cyan, [usage.ctxWindow ? `${fmtTokens(usage.ctxTokens)} / ${fmtTokens(usage.ctxWindow)}` : '', C.dim])
+  const r = Math.min(24, (h - 40) / 2)
+  const cx = x + 16 + r
+  const cy = y + 32 + r
+  const circ = 2 * Math.PI * r
+  out += `<circle cx="${n1(cx)}" cy="${n1(cy)}" r="${n1(r)}" fill="none" stroke="${C.track}" stroke-width="6"/>`
+  out += `<circle cx="${n1(cx)}" cy="${n1(cy)}" r="${n1(r)}" fill="none" stroke="${color}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${n1((circ * pct) / 100)} ${n1(circ)}" transform="rotate(-90 ${n1(cx)} ${n1(cy)})"/>`
+  if (auto?.isOn) {
+    const a = ((auto.at / 100) * 360 - 90) * (Math.PI / 180)
+    out += `<line x1="${n1(cx + (r - 6) * Math.cos(a))}" y1="${n1(cy + (r - 6) * Math.sin(a))}" x2="${n1(cx + (r + 6) * Math.cos(a))}" y2="${n1(cy + (r + 6) * Math.sin(a))}" stroke="${C.text}" stroke-width="2"/>`
+  }
+  out += text(cx, cy + 5, `${Math.round(pct)}%`, 14, C.text, `${MONO} font-weight="800" text-anchor="middle"`)
+  const tx = cx + r + 14
+  const room = x + w - 12 - tx
+  out += text(tx, y + 48, pct >= 85 ? 'nearly full' : pct >= 60 ? 'filling up' : 'room to spare', 14, color, `${SANS} font-weight="700"`)
+  out += text(tx, y + 66, clip(auto?.isOn ? `auto-compact at ${auto.at}%` : 'auto-compact off', fits(room, 11)), 11, C.muted, SANS)
+  // the trail of the context %, newest at the right
+  const hist = (usage.history ?? []).slice(-40)
+  if (hist.length > 1 && h >= 92) {
+    const sx = tx
+    const sw = room
+    const sy = y + h - 12
+    const pts = hist.map((p, i) => `${n1(sx + (i * sw) / (hist.length - 1))},${n1(sy - (p / 100) * 14)}`).join(' ')
+    out += `<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.4" opacity=".7"/>`
+  }
+
+  return out
+}
+
+function limitCard(x: number, y: number, w: number, h: number, title: string, lf: { pct: number; f: Forecast } | undefined): string {
+  if (!lf) {
+    let out = card(x, y, w, h, title, C.dim)
+    out += text(x + 14, y + 52, '—', 22, C.dim, `${MONO} font-weight="800"`)
+    out += text(x + 14, y + 72, 'after first reply', 11, C.muted, SANS)
+
+    return out
+  }
+  const { pct, f } = lf
+  const color = pctTone(pct)
+  let out = card(x, y, w, h, title, color, f.rate !== undefined ? [`${f.rate >= 10 ? Math.round(f.rate) : f.rate.toFixed(1)}%/hr`, C.dim] : undefined)
+  out += text(x + 14, y + 50, `${Math.round(pct)}%`, 22, C.text, `${MONO} font-weight="800"`)
+  // the bar: used, then the pace's projection to the reset (hatched), a mark where it fills
+  const bx = x + 74
+  const bw = x + w - 14 - bx
+  const by = y + 38
+  out += `<rect x="${n1(bx)}" y="${by}" width="${n1(bw)}" height="10" rx="5" fill="${C.track}"/>`
+  const proj = Math.min(100, f.fullAt !== undefined ? 100 : f.atReset ?? pct)
+  if (proj > pct) out += `<rect x="${n1(bx + (bw * pct) / 100)}" y="${by}" width="${n1((bw * (proj - pct)) / 100)}" height="10" fill="url(#h-hatch)" opacity=".9"><title>Projected at reset</title></rect>`
+  out += `<rect x="${n1(bx)}" y="${by}" width="${n1(Math.max(4, (bw * Math.min(100, pct)) / 100))}" height="10" rx="5" fill="${color}"/>`
+  if (f.fullAt !== undefined) out += `<rect x="${n1(bx + bw - 2)}" y="${by - 3}" width="3" height="16" rx="1" fill="${C.red}" style="animation:pulse 1.2s infinite"/>`
+  const [a, b] = f.line.split(' · ')
+  const room = fits(w - 28, 11.5)
+  out += text(x + 14, y + 70, clip(a ?? '', room), 11.5, TONE(f.tone), `${SANS} font-weight="700"`)
+  if (b && h >= 92) out += text(x + 14, y + 86, clip(b, room), 11, C.muted, SANS)
+
+  return out
+}
+
+function costCard(x: number, y: number, w: number, h: number, usage: Usage, stats: Stats, daily: Daily | undefined, now: number): string {
+  const hours = Math.max(1 / 60, (now - (stats.sessionStart || now)) / 3_600_000)
+  const session = usage.usd
+  const perHour = session !== undefined && hours >= 0.1 ? session / hours : undefined
+  let out = card(x, y, w, h, 'COST · API EQUIVALENT', C.gold, daily ? [`${daily.sessions} chats`, C.dim] : undefined)
+  const today = daily && daily.day === dayKey(now) ? daily.usd : session
+  out += text(x + 14, y + 50, today === undefined ? '—' : `$${today.toFixed(2)}`, 22, C.gold, `${MONO} font-weight="800"`)
+  out += text(x + w - 14, y + 50, 'today', 11, C.muted, `${SANS} text-anchor="end"`)
+  const room = fits(w - 28, 11.5)
+  out += text(x + 14, y + 70, clip(`this chat $${(session ?? 0).toFixed(2)}${perHour !== undefined ? ` · $${perHour.toFixed(2)}/hr` : ''}`, room), 11.5, C.text, `${SANS} font-weight="600"`)
+  if (h >= 92) out += text(x + 14, y + 86, clip(`${fmtTokens(stats.outTokens)} tokens out · ${fmtDuration(now - (stats.sessionStart || now)).replace(/ \d+s$/, '')}`, room), 11, C.muted, SANS)
+
+  return out
+}
+
 function buildHud(input: HudInput, lite: boolean): { svg: string; alt: string; width: number; height: number } {
   const { workers, feed, usage, turn, stats, now, motion } = input
   const W = Math.round(Math.max(340, Math.min(3200, input.width)))
+  const H = Math.round(Math.max(380, Math.min(4000, input.fill ?? 760)))
   const boss = workers.find(w => w.id === 'boss')
   const team = workers.filter(w => w.id !== 'boss')
   const busy = isBusy(turn, boss)
-  const scene = sceneParts({ workers, usage, turn, now, motion, stats, autoCompactAt: input.autoCompact?.isOn ? input.autoCompact.at : undefined }, lite)
-  const isWide = W >= 980
+  const five = limitForecast(usage, 'five_hour', now)
+  const week = limitForecast(usage, 'seven_day', now)
   const parts: string[] = []
 
-  // —— header ——
-  const headH = 46
-  parts.push(`<g>${starburst(PAD + 14, PAD + 17, 11, C.claude)}`)
-  parts.push(text(PAD + 34, PAD + 25, 'Claude Office', 22, C.text, `${SERIF} font-weight="500"`))
-  parts.push(`</g>`)
-  const live = busy ? C.green : C.dim
+  // —— header: the name, the model at work, the state ——
+  parts.push(`<g>${starburst(PAD + 11, PAD + 13, 9, C.claude)}</g>`)
+  parts.push(text(PAD + 28, PAD + 20, 'Claude Office', 19, C.text, `${SERIF} font-weight="500"`))
+  const EFFORT: Record<string, string> = { low: 'low', medium: 'medium', high: 'high', xhigh: 'very high', max: 'maximum' }
   const chips: Array<[string, string]> = [
-    [busy ? 'WORKING' : 'IDLE', live],
-    // the model, its effort and the time are on the room's sign and clock
+    [busy ? 'WORKING' : 'IDLE', busy ? C.green : C.dim],
+    [`${prettyModel(turn.model)}${turn.effort ? ` · ${EFFORT[turn.effort] ?? turn.effort}` : ''}`, C.orange],
     [`${team.filter(w => w.endedAt === undefined).length} agents`, C.violet],
   ]
-  const chipW = ([label]: [string, string]) => label.length * 8.6 + (label === chips[0]?.[0] ? 34 : 22) + 8
-  // a narrow pane drops the least needed first: effort, then the model, then the clock
-  while (chips.length > 1 && chips.reduce((sum, c) => sum + chipW(c), 0) > W - 2 * PAD - 190) chips.splice(chips.length === 4 ? 2 : 1, 1)
+  const chipW = (label: string, first: boolean) => label.length * 7.9 + (first ? 30 : 22)
+  while (chips.length > 1 && chips.reduce((s, [l], i) => s + chipW(l, i === 0) + 6, 0) > W - 2 * PAD - 150) chips.splice(chips.length - 1, 1)
   let cx = W - PAD
-  for (const [label, color] of [...chips].reverse()) {
-    const cw = label.length * 8.6 + (label === chips[0]?.[0] ? 34 : 22)
+  for (let i = chips.length - 1; i >= 0; i--) {
+    const [label, color] = chips[i] as [string, string]
+    const cw = chipW(label, i === 0)
     cx -= cw
-    parts.push(`<rect x="${n1(cx)}" y="${PAD + 4}" width="${n1(cw)}" height="26" rx="13" fill="${color}" fill-opacity=".12" stroke="${color}" stroke-opacity=".35"/>`)
-    if (label === chips[0]?.[0]) {
-      parts.push(`<circle cx="${n1(cx + 14)}" cy="${PAD + 17}" r="4" fill="${color}" ${busy ? ` style="animation:pulse 1.4s ${n1(-((now % 1400) / 1000))}s infinite"` : ''}/>`)
-      parts.push(text(cx + 24, PAD + 21.5, label, 12, color, `${SANS} font-weight="800" letter-spacing="1"`))
+    parts.push(`<rect x="${n1(cx)}" y="${PAD + 2}" width="${n1(cw)}" height="22" rx="11" fill="${color}" fill-opacity=".12" stroke="${color}" stroke-opacity=".35"/>`)
+    if (i === 0) {
+      parts.push(`<circle cx="${n1(cx + 12)}" cy="${PAD + 13}" r="3.5" fill="${color}"${busy ? ' style="animation:pulse 1.4s infinite"' : ''}/>`)
+      parts.push(text(cx + 21, PAD + 17, label, 11, color, `${SANS} font-weight="800" letter-spacing="1"`))
     } else {
-      parts.push(text(cx + 11, PAD + 21.5, label, 12, color, `${MONO} font-weight="700"`))
+      parts.push(text(cx + 10, PAD + 17, label, 11, color, `${SANS} font-weight="700"`))
     }
-    cx -= 8
+    cx -= 6
   }
 
-  const top = PAD + headH
-  const leftW = isWide ? Math.round((W - 2 * PAD - GAP) * 0.66) : W - 2 * PAD
-  const rightX = isWide ? PAD + leftW + GAP : PAD
-  const rightW = isWide ? W - PAD - rightX : W - 2 * PAD
+  // —— the gauges: context, both limits with their pace, the cost ——
+  const gy = PAD + 34
+  const cols = W >= 900 ? 4 : 2
+  const rows = cols === 4 ? 1 : 2
+  const gh = H >= 620 ? 96 : 82
+  const gw = (W - 2 * PAD - (cols - 1) * 10) / cols
+  const at = (i: number): [number, number] => [PAD + (i % cols) * (gw + 10), gy + Math.floor(i / cols) * (gh + 10)]
+  parts.push(ctxCard(...at(0), gw, gh, usage, input.autoCompact))
+  parts.push(limitCard(...at(1), gw, gh, '5 HOURS', five))
+  parts.push(limitCard(...at(2), gw, gh, 'WEEKLY', week))
+  parts.push(costCard(...at(3), gw, gh, usage, stats, input.daily, now))
+  const sceneTop = gy + rows * gh + (rows - 1) * 10 + GAP
 
-  // —— the office, framed ——
-  const feedMin = 44 + (isWide ? 5 : 8) * 24
-  const sceneInner = leftW - 16
-  const sceneScale = sceneInner / SCENE_W
-  // a crowded office can grow very tall: cap it, centred, so the panel stays in proportion
-  const maxSceneH = isWide ? Math.max(340, (input.fill ?? 900) - top - (16 + GAP + 64)) : 900
-  const fitScale = Math.min(sceneScale, maxSceneH / scene.height)
-  const sceneH = Math.round(scene.height * fitScale)
-  const sceneDrawW = SCENE_W * fitScale
-  // side by side the frame runs to the pane's foot, the room centred in it
-  const sceneFrameH = isWide ? Math.max(sceneH + 16, (input.fill ?? 0) - top - GAP - 64) : sceneH + 16
-  const sceneY = top + Math.round((sceneFrameH - sceneH) / 2)
-  parts.push(panel(PAD, top, leftW, sceneFrameH, undefined, C.orange))
-  parts.push(
-    `<g transform="translate(${n1(PAD + 8 + (sceneInner - sceneDrawW) / 2)} ${sceneY}) scale(${fitScale.toFixed(4)})"><clipPath id="h-sc${scene.height}"><rect width="${SCENE_W}" height="${scene.height}" rx="8"/></clipPath><g clip-path="url(#h-sc${scene.height})">${scene.body}</g></g>`,
+  // —— the office: as large as fits both ways, centred, never cut ——
+  const rowH = 22
+  const boxY = sceneTop
+  const boxW = W - 2 * PAD
+  const roomFor = H - PAD - boxY
+  // first as if the office had all the room above one ticker line
+  let boxH = Math.max(120, roomFor - 26 - GAP)
+  const deskCols = bestCols(workers, boxW - 12, boxH - 12)
+  const scene = sceneParts(
+    { workers, usage, turn, now, motion, stats, cols: deskCols, autoCompactAt: input.autoCompact?.isOn ? input.autoCompact.at : undefined, fiveFullAt: five?.f.fullAt, weekFullAt: week?.f.fullAt },
+    lite,
   )
+  const sceneW = deskCols * 160
+  void sceneHeight
+  const scale = Math.min((boxW - 12) / sceneW, (boxH - 12) / scene.height)
+  const dw = sceneW * scale
+  const dh = scene.height * scale
+  // a tall, narrow pane leaves room under the office: the latest events fill it instead of a void
+  const spare = boxH - (dh + 12)
+  const feedRows = spare > 120 ? Math.min(14, Math.floor((spare - 40) / rowH)) : 0
+  if (feedRows > 0) boxH = Math.ceil(dh + 12)
+  parts.push(`<rect x="${PAD}" y="${boxY}" width="${boxW}" height="${boxH}" rx="14" fill="${C.panel}" stroke="${C.line}" filter="url(#h-lift)"/>`)
 
-  // —— "now": one plain line of what the boss is doing ——
-  const nowY = top + sceneFrameH + GAP
-  const nowH = 64
-  parts.push(panel(PAD, nowY, leftW, nowH, undefined, C.gold))
-  if (boss) {
-    parts.push(`<g transform="translate(${PAD + 18},${nowY + 18}) scale(1.9)">${activityBadge(boss, 0, 0, 'now') || `<circle cx="7" cy="7" r="6" fill="${C.dim}"/>`}</g>`)
-  }
-  parts.push(text(PAD + 58, nowY + 27, `BOSS · ${(boss ? activityLabel(boss) : 'Idle').toUpperCase()}`, 12, C.gold, `${SANS} font-weight="800" letter-spacing="1.4"`))
-  const nowLine = boss?.bubble || (busy ? 'Working…' : 'Waiting for a new job')
-  parts.push(text(PAD + 58, nowY + 48, clip(nowLine, fits(leftW - 80, 14)), 14, C.text, `${SANS} font-weight="600"`))
-  const leftBottom = nowY + nowH
-
-  // the context and the limits live in the room itself (the tank, the limit clock,
-  // the week's calendar): the column beside it holds the session and the team
-  const limits = usage.limits.slice(0, 3)
-  let ry = isWide ? top : leftBottom + GAP
-
-  // —— session figures ——
-  const tools = Object.values(stats.tools).reduce((a, b) => a + b, 0)
-  const tiles: Array<[string, string, string]> = [
-    ['TURNS', String(turn.turns), C.text],
-    ['TOOLS', String(tools), C.cyan],
-    ['AGENTS', String(stats.hired), C.violet],
-    ['OUTPUT', fmtTokens(stats.outTokens), C.orange],
-    ['COST', usage.usd === undefined ? '—' : `$${usage.usd.toFixed(2)}`, C.gold],
-    ['TIME', fmtDuration(now - (stats.sessionStart || now)).replace(/ \d+s$/, ''), C.green],
-  ]
-  const perRow = rightW >= 420 ? 3 : 2
-  const tileW = (rightW - 36 - (perRow - 1) * 10) / perRow
-  const tileRows = Math.ceil(tiles.length / perRow)
-  const statH = 44 + tileRows * 58
-  parts.push(panel(rightX, ry, rightW, statH, 'SESSION', C.violet))
-  tiles.forEach(([label, value, color], i) => {
-    const tx = rightX + 18 + (i % perRow) * (tileW + 10)
-    const ty = ry + 40 + Math.floor(i / perRow) * 58
-    parts.push(`<rect x="${n1(tx)}" y="${ty}" width="${n1(tileW)}" height="50" rx="10" fill="${C.tile}" stroke="${C.line}"/>`)
-    parts.push(text(tx + 12, ty + 29, clip(value, fits(tileW - 20, 18, true)), 18, color, `${MONO} font-weight="800"`))
-    parts.push(text(tx + 12, ty + 43, label, 9.5, C.muted, `${SANS} font-weight="700" letter-spacing="1.2"`))
+  // —— below it: the latest events, one line when the office takes the height, a list when not ——
+  const listY = boxY + boxH + GAP
+  const listH = H - PAD - listY
+  const items = feed.slice(-Math.max(1, feedRows || 1)).reverse()
+  parts.push(`<rect x="${PAD}" y="${listY}" width="${W - 2 * PAD}" height="${n1(listH)}" rx="${feedRows ? 12 : 9}" fill="${C.panel}" stroke="${C.line}"/>`)
+  if (feedRows) parts.push(text(PAD + 14, listY + 20, 'RECENT EVENTS', 9.5, C.muted, `${SANS} font-weight="800" letter-spacing="1.4"`))
+  const firstY = feedRows ? listY + 42 : listY + n1(listH / 2) + 4
+  if (items.length === 0) parts.push(text(PAD + 12, firstY, 'Events appear as Claude works', 11.5, C.muted, SANS))
+  items.forEach((f, i) => {
+    const y = firstY + i * rowH
+    parts.push(`<g opacity="${n1(i === 0 ? 1 : Math.max(0.45, 1 - i * 0.05))}">`)
+    parts.push(text(PAD + 12, y, istanbul(f.t).text.slice(0, 5), 11, C.dim, MONO))
+    parts.push(text(PAD + 56, y, FEED_GLYPH[f.kind], 12, f.color, `${SANS} font-weight="800"`))
+    parts.push(text(PAD + 72, y, f.who, 11.5, f.color, `${SANS} font-weight="700"`))
+    const tx = PAD + 72 + Math.min(12, f.who.length) * 6.8 + 8
+    parts.push(text(tx, y, clip(f.text, fits(W - PAD - 12 - tx, 11.5)), 11.5, C.text, SANS))
+    parts.push(`</g>`)
   })
-  ry += statH + GAP
-
-  // —— team: as many rows as its height holds ——
-  const teamY = ry
-  const teamNatural = 44 + Math.max(1, Math.min(team.length, 8)) * 30 + (team.length > 8 ? 22 : 0)
-  const drawTeam = (h: number) => {
-    const fitsAll = Math.max(1, Math.floor((h - 44) / 30))
-    const shown = team.slice(0, team.length > fitsAll ? Math.max(1, Math.floor((h - 66) / 30)) : fitsAll)
-    parts.push(panel(rightX, teamY, rightW, h, `TEAM · ${team.filter(w => w.endedAt === undefined).length} ACTIVE`, C.green))
-    if (shown.length === 0) parts.push(text(rightX + 18, teamY + 62, 'Subagents show up here as they start', 13, C.muted, SANS))
-    shown.forEach((w, i) => {
-      const y = teamY + 42 + i * 30
-      const st = activityLabel(w)
-      const stColor = w.activity === 'done' ? C.green : w.activity === 'failed' ? C.red : w.activity === 'waiting' ? C.amber : C.muted
-      parts.push(`<rect x="${rightX + 18}" y="${y + 4}" width="12" height="12" rx="3" fill="${w.color}" filter="url(#h-glow)"/>`)
-      parts.push(text(rightX + 40, y + 15, w.name, 13.5, C.text, `${SANS} font-weight="700"`))
-      parts.push(text(rightX + 40 + w.name.length * 7.8 + 8, y + 15, w.role, 12, C.dim, SANS))
-      parts.push(text(rightX + rightW - 18, y + 15, clip(st, 18), 12, stColor, `${SANS} font-weight="700" text-anchor="end"`))
-    })
-    if (team.length > shown.length) parts.push(text(rightX + 18, teamY + h - 14, `+${team.length - shown.length} more`, 12, C.dim, SANS))
-  }
-
-  // —— live feed: as many of the latest events as its height holds ——
-  const rowH = 24
-  const drawFeed = (x: number, y: number, w: number, h: number) => {
-    const items = feed.slice(-Math.max(1, Math.floor((h - 44) / rowH))).reverse()
-    parts.push(panel(x, y, w, h, 'LIVE FEED', C.orange))
-    if (items.length === 0) parts.push(text(x + 18, y + 62, 'Events flow here as Claude works', 13, C.muted, SANS))
-    items.forEach((f, i) => {
-      const fy = y + 40 + i * rowH
-      const fade = i === 0 ? 1 : Math.max(0.45, 1 - i * 0.04)
-      parts.push(`<g opacity="${n1(fade)}">`)
-      parts.push(text(x + 18, fy + 13, istanbul(f.t).text.slice(0, 5), 11.5, C.dim, MONO))
-      parts.push(text(x + 64, fy + 13, FEED_GLYPH[f.kind], 13, f.color, `${SANS} font-weight="800"`))
-      parts.push(text(x + 82, fy + 13, f.who, 12.5, f.color, `${SANS} font-weight="700"`))
-      const textX = x + 82 + Math.min(12, f.who.length) * 7.2 + 8
-      parts.push(text(textX, fy + 13, clip(f.text, fits(x + w - 18 - textX, 12.5)), 12.5, C.text, SANS))
-      parts.push(`</g>`)
-    })
-  }
-
-  // side by side: the room on the left, the team and then the feed on the right;
-  // stacked: the team, then the feed down to the pane's foot
-  let bottom: number
-  if (isWide) {
-    // the room takes the left column whole; the feed runs down the right one
-    drawTeam(teamNatural)
-    const feedY = teamY + teamNatural + GAP
-    bottom = Math.max(leftBottom, feedY + feedMin, input.fill ?? 0)
-    drawFeed(rightX, feedY, rightW, bottom - feedY)
-  } else {
-    drawTeam(teamNatural)
-    const feedY = teamY + teamNatural + GAP
-    bottom = Math.max(feedY + feedMin, input.fill ?? 0)
-    drawFeed(rightX, feedY, rightW, bottom - feedY)
-  }
-
-  const H = Math.round(bottom + PAD)
+  parts.push(
+    `<g transform="translate(${n1(PAD + (boxW - dw) / 2)} ${n1(boxY + (boxH - dh) / 2)}) scale(${scale.toFixed(4)})"><clipPath id="h-sc"><rect width="${sceneW}" height="${scene.height}" rx="8"/></clipPath><g clip-path="url(#h-sc)">${scene.body}</g></g>`,
+  )
 
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">` +
-    `<style>${STYLE}</style><defs>${hudDefs()}${scene.defs}</defs>` +
+    `<style>${STYLE}</style><defs>${hudDefs()}<pattern id="h-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="6" fill="${C.amber}" opacity=".55"/></pattern>${scene.defs}</defs>` +
     `<rect width="${W}" height="${H}" rx="16" fill="${C.bg}"/>` +
     `<g class="${motion ? '' : 'still'}">${parts.join('')}</g></svg>`
 
-  const alt = `${scene.alt} Context ${Math.round(usage.ctxPct ?? 0)}%. ${limits.map(l => `${limitLabel(l.kind)} ${Math.round(l.pct)}%`).join(', ')}`
+  const lim = (label: string, lf?: { pct: number; f: Forecast }) => (lf ? `${label} ${Math.round(lf.pct)}% (${lf.f.line})` : '')
+  const alt = [scene.alt, `Context ${Math.round(usage.ctxPct ?? 0)}%.`, lim('5 hours', five), lim('Weekly', week)].filter(Boolean).join(' ')
 
   return { svg, alt, width: W, height: H }
 }

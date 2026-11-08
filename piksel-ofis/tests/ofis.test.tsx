@@ -57,6 +57,8 @@ test('the boss reads, hires a worker, and the HUD and tabs show it in plain word
   // drawn to the pane's own size: 160 cells wide, filling 60 rows
   expect(hud?.props.width).toBe(1280)
   expect(Number(hud?.props.height)).toBeGreaterThanOrEqual(60 * 17 - 64)
+  // an image, not the sandboxed frame that reloads from blank on each change
+  expect(hud?.props.isInteractive).toBeFalsy()
   expect(source).toContain('Claude Ofis')
   expect(source).toContain('PATRON')
   expect(source).toContain('Ada · Kâşif')
@@ -198,7 +200,19 @@ test('the overview holds its frame while Claude works, then paints the news', as
   await clock.advance(1500)
   // a burst of work does not redraw the picture at once
   expect(String((await ui.find({ type: 'Svg' }))?.props.source)).toBe(first)
-  await clock.advance(4000)
+  await clock.advance(8200)
   expect(String((await ui.find({ type: 'Svg' }))?.props.source)).toContain('okudu · yeni.ts')
   await ui.unmount()
+})
+
+test('an idle office draws the same picture seconds apart (the pane must not repaint for the clock hand)', async () => {
+  const now = Date.parse('2026-10-28T19:40:10Z')
+  const workers: Worker[] = [
+    { id: 'boss', n: -1, name: 'Patron', role: 'Patron', task: '', color: '#FBBF24', seat: -1, activity: 'idle', bubble: 'Kahve molası.', detail: '', tools: 0, tokensOut: 0, since: now - 400_000, joinedAt: now - 99_999 },
+  ]
+  const usage = { ctxPct: 21, ctxTokens: 211_000, ctxWindow: 1_000_000, limits: [{ kind: 'five_hour', pct: 55, resetsAt: new Date(now + 37 * 60_000).toISOString() }], at: now, history: [3, 21] }
+  const turn = { active: false, steps: 0, turns: 0, prompt: '', model: 'claude-opus-5-5', effort: 'high' }
+  const stats = { tools: {}, hired: 0, outTokens: 0, inTokens: 0, cacheRead: 0, sessionStart: now - 3_600_000 }
+  const shown = (at: number) => hudSvg({ workers, feed: [], usage, turn, stats, now: at, motion: true, width: 856, fill: 761 }).svg.replace(/animation:[^;"]*/g, '').replace(/ begin="[^"]*"/g, '')
+  expect(shown(now + 7000)).toBe(shown(now))
 })

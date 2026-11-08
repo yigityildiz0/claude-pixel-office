@@ -2,7 +2,7 @@
 // animation takes a negative delay or begin from the wall clock, so a redraw
 // picks a walk or a flight up where it was rather than restarting.
 import type { Activity, SiteKind, Stats, ThinkKind, Turn, Usage, Worker } from '../types'
-import { THINK_LABEL, clip, hash, istanbul, level } from './logic'
+import { THINK_LABEL, clip, hash, istanbul, level, pick } from './logic'
 
 export const ACTIVITY_LABEL: Record<Activity, string> = {
   idle: 'Idle',
@@ -27,7 +27,11 @@ export function activityLabel(w: Pick<Worker, 'activity' | 'think'>): string {
 
 /** The scene's own width in its units; the HUD scales it into its frame. */
 export const SCENE_W = 480
-const W = SCENE_W
+// the scene's width this draw: 480 with three desk columns, wider with more (set by sceneParts)
+let W = SCENE_W
+let COLS = 3
+/** The upper room is drawn for 480 units and centred in a wider scene by this much. */
+let OX = 0
 const BOSS_TOP = 64
 const FLOOR_Y = 184
 const COL_W = 160
@@ -121,6 +125,22 @@ export const STYLE = `
 @keyframes write{0%{stroke-dashoffset:60}100%{stroke-dashoffset:0}}
 @keyframes sweep{0%{transform:translateY(-40px);opacity:0}10%{opacity:.5}90%{opacity:.5}100%{transform:translateY(var(--sweep,400px));opacity:0}}
 @keyframes shine{0%,70%,100%{opacity:0}80%{opacity:1}}
+@keyframes catwalk{0%,6%{transform:translateX(-40px)}34%{transform:translateX(230px)}36%,58%{transform:translateX(236px)}86%,100%{transform:translateX(540px)}}
+@keyframes catlegs{0%,100%{transform:translateY(0)}50%{transform:translateY(-1px)}}
+@keyframes tail{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(18deg)}}
+@keyframes vac{0%,100%{transform:translateX(0)}48%,52%{transform:translateX(300px)}}
+@keyframes birds{0%,62%{transform:translate(-30px,0);opacity:0}64%{opacity:1}96%{transform:translate(200px,-8px);opacity:1}100%{transform:translate(220px,-9px);opacity:0}}
+@keyframes flap{0%,100%{transform:scaleY(1)}50%{transform:scaleY(-.6)}}
+@keyframes meteor{0%,88%{transform:translate(0,0);opacity:0}90%{opacity:1}100%{transform:translate(-70px,26px);opacity:0}}
+@keyframes sip{0%,55%,100%{transform:translate(0,0) rotate(0)}65%,85%{transform:translate(-30px,-14px) rotate(-28deg)}}
+@keyframes paper{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+@keyframes juggle{0%,100%{transform:translateY(0)}50%{transform:translateY(-22px)}}
+@keyframes buzz{0%,100%{transform:translateX(0)}20%{transform:translateX(-1px)}40%{transform:translateX(1px)}}
+@keyframes stretch{0%,60%,100%{transform:scaleY(1)}70%,90%{transform:scaleY(1.12)}}
+@keyframes ring{0%,100%{transform:rotate(0)}10%{transform:rotate(18deg)}20%{transform:rotate(-18deg)}30%{transform:rotate(12deg)}40%{transform:rotate(0)}}
+@keyframes confetti{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(540deg);opacity:0}}
+@keyframes drip{0%{transform:translateY(0);opacity:0}20%{opacity:1}100%{transform:translateY(10px);opacity:0}}
+@keyframes dance{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-4px) rotate(-6deg)}75%{transform:translateY(-4px) rotate(6deg)}}
 .still *{animation:none!important}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 `
@@ -456,7 +476,7 @@ function polar(cx: number, cy: number, r: number, deg: number): [number, number]
  * 5-hour limit resets (a dot there), the digital time beside it, the 5-hour % and
  * its reset written out, and the week as seven calendar days, the reset day ringed.
  */
-function limitClock(now: number, usage: Usage, cx: number, cy: number): string {
+function limitClock(now: number, usage: Usage, cx: number, cy: number, motion: boolean, fiveFullAt?: number, weekFullAt?: number): string {
   const r = 24
   const five = usage.limits.find(l => l.kind === 'five_hour')
   const week = usage.limits.find(l => l.kind === 'seven_day')
@@ -480,13 +500,19 @@ function limitClock(now: number, usage: Usage, cx: number, cy: number): string {
     out += `<path d="M${sx} ${sy} A${r - 9} ${r - 9} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${ex} ${ey}" fill="none" stroke="${color}" stroke-width="5" stroke-linecap="round" opacity=".85"/>`
     const [dx, dy] = polar(cx, cy, r + 1, a1)
     out += `<circle cx="${dx}" cy="${dy}" r="3.2" fill="${color}" stroke="#1F1E1D" stroke-width="1"><title>Reset</title></circle>`
+    if (fiveFullAt !== undefined && fiveFullAt < fiveReset) {
+      const [fx, fy] = polar(cx, cy, r + 1, dialAngle(fiveFullAt))
+      out += `<path d="M${fx} ${n1(fy - 4)} L${n1(fx + 3.5)} ${n1(fy + 2.5)} L${n1(fx - 3.5)} ${n1(fy + 2.5)} Z" fill="#E0685A" stroke="#1F1E1D" stroke-width=".8" style="${anim('pulse', 1.2)}"><title>Full at this pace</title></path>`
+    }
   }
   const { h, m, s } = istanbul(now)
   const [hx, hy] = polar(cx, cy, r - 12, ((h % 12) + m / 60) * 30)
   const [mx, my] = polar(cx, cy, r - 5, m * 6)
   out += `<line x1="${cx}" y1="${cy}" x2="${hx}" y2="${hy}" stroke="#141413" stroke-width="2.4" stroke-linecap="round"/><line x1="${cx}" y1="${cy}" x2="${mx}" y2="${my}" stroke="#141413" stroke-width="1.5" stroke-linecap="round"/>`
-  // the second hand turns on its own, started where the real second is
-  out += `<g transform="rotate(${s * 6} ${cx} ${cy})"><g style="transform-origin:${cx}px ${cy}px;animation:spin 60s linear infinite"><line x1="${cx}" y1="${cy + 3}" x2="${cx}" y2="${cy - r + 4}" stroke="${CLAUDE}" stroke-width=".8"/></g></g><circle cx="${cx}" cy="${cy}" r="1.8" fill="${CLAUDE}"/>`
+  // the second hand turns on its own, its phase taken from the clock by phaseLock. Its still
+  // angle changing every second would make a new picture every second, so it is drawn at
+  // zero and turned only where nothing animates
+  out += `<g transform="rotate(${motion ? 0 : s * 6} ${cx} ${cy})"><g style="transform-origin:${cx}px ${cy}px;animation:spin 60s linear infinite"><line x1="${cx}" y1="${cy + 3}" x2="${cx}" y2="${cy - r + 4}" stroke="${CLAUDE}" stroke-width=".8"/></g></g><circle cx="${cx}" cy="${cy}" r="1.8" fill="${CLAUDE}"/>`
   // the digital side
   const x = cx + r + 9
   out += `<text x="${x}" y="${cy - 9}" class="s" font-size="15" fill="#F0EEE6">${pad2(h)}:${pad2(m)}</text>`
@@ -494,7 +520,9 @@ function limitClock(now: number, usage: Usage, cx: number, cy: number): string {
     out += `<text x="${x}" y="${cy + 3}" class="t" font-size="7" font-weight="800" letter-spacing=".6" fill="${limitTone(fivePct)}">${fiveOn ? `5 HOUR ${Math.round(fivePct)}%` : '5 HOUR IDLE'}</text>`
     const rt = istanbul(fiveReset)
     out += fiveOn
-      ? `<text x="${x}" y="${cy + 12}" class="t" font-size="6.6" fill="#D4A27F">resets ${pad2(rt.h)}:${pad2(rt.m)}</text>`
+      ? fiveFullAt !== undefined && fiveFullAt < fiveReset
+        ? `<text x="${x}" y="${cy + 12}" class="t" font-size="6.6" font-weight="700" fill="#E0685A">${istanbul(fiveFullAt).text.slice(0, 5)} full · ${pad2(rt.h)}:${pad2(rt.m)} reset</text>`
+        : `<text x="${x}" y="${cy + 12}" class="t" font-size="6.6" fill="#D4A27F">reset at ${pad2(rt.h)}:${pad2(rt.m)}</text>`
       : `<text x="${x}" y="${cy + 12}" class="t" font-size="6.6" fill="#85837A">starts with a message</text>`
   } else {
     out += `<text x="${x}" y="${cy + 6}" class="t" font-size="6.6" fill="#85837A">limits arrive with a reply</text>`
@@ -503,13 +531,14 @@ function limitClock(now: number, usage: Usage, cx: number, cy: number): string {
   if (week) {
     const wr = week.resetsAt ? Date.parse(week.resetsAt) : NaN
     const resetDay = Number.isFinite(wr) && wr > now ? Math.min(6, Math.floor((wr - now) / 86_400_000)) : -1
+    const fullDay = weekFullAt !== undefined ? Math.min(6, Math.floor((weekFullAt - now) / 86_400_000)) : -1
     const filled = Math.round((Math.min(100, week.pct) / 100) * 7)
     const DAY = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
     const today = new Date(now).getDay()
     for (let i = 0; i < 7; i++) {
       const bx = x + i * 11
       const name = DAY[(today + i) % 7] as string
-      out += `<rect x="${bx}" y="${cy + 16}" width="9.5" height="9" rx="1.5" fill="${i < filled ? limitTone(week.pct) : '#3A3934'}" stroke="${i === resetDay ? CLAUDE : 'none'}" stroke-width="1.4"><title>${name}${i === resetDay ? ': the weekly limit resets' : ''}</title></rect>`
+      out += `<rect x="${bx}" y="${cy + 16}" width="9.5" height="9" rx="1.5" fill="${i < filled ? limitTone(week.pct) : '#3A3934'}" stroke="${i === fullDay ? '#E0685A' : i === resetDay ? CLAUDE : 'none'}" stroke-width="1.4"${i === fullDay ? ` style="${anim('pulse', 1.4)}"` : ''}><title>${name}${i === fullDay ? ': weekly limit full at this pace' : i === resetDay ? ': weekly limit resets' : ''}</title></rect>`
       out += `<text x="${n1(bx + 4.75)}" y="${cy + 22.6}" text-anchor="middle" class="t" font-size="4.6" font-weight="700" fill="${i < filled ? '#1F1E1D' : '#85837A'}">${name}</text>`
     }
     out += `<text x="${x + 50}" y="${cy - 10}" class="t" font-size="7" font-weight="800" letter-spacing=".6" fill="${limitTone(week.pct)}">WEEK ${Math.round(week.pct)}%</text>`
@@ -568,7 +597,7 @@ function bookshelf(read: number): string {
       bx += bw + 1
     }
   }
-  out += `<text x="417" y="71" text-anchor="middle" class="m" font-size="6.5" fill="#B7B4A9">${read} files read</text>`
+  out += `<text x="417" y="71" text-anchor="middle" class="m" font-size="6.5" fill="#B7B4A9">${read} files</text>`
 
   return out
 }
@@ -586,6 +615,103 @@ function plant(x: number, y: number, turns: number): string {
   return `<g transform="translate(${x},${y})"><path d="M0 0 h16 l-2 14 h-12 z" fill="#8A5A3C"/><g class="fbb" style="animation:wiggle 6s ${n1(-((Date.now() % 6000) / 1000))}s infinite">${out}</g></g>`
 }
 
+// ——— life in the office ———————————————————————————————————
+// Long CSS loops, phase-locked to the wall clock: a cat crossing, a robot vacuum,
+// birds or a shooting star in the window. They move without a single redraw.
+
+function officeCat(H: number): string {
+  const y = H - 16
+  const body = `<rect x="0" y="4" width="16" height="7" rx="3" fill="#2A2522"/><rect x="13" y="0" width="8" height="7" rx="2" fill="#2A2522"/><path d="M14 1 L15 -2 L17 1 Z M18 1 L19.5 -2 L21 1 Z" fill="#2A2522"/><rect x="18.5" y="2.5" width="1.4" height="1.4" fill="#FBBF24"/>`
+  const legs = `<g style="animation:catlegs .35s infinite">${[1, 5, 10, 14].map(x => `<rect x="${x}" y="10" width="2" height="4" fill="#2A2522"/>`).join('')}</g>`
+  const tail = `<g style="transform-origin:0px 6px;animation:tail 1.1s infinite"><path d="M0 6 Q-7 2 -6 -5" fill="none" stroke="#2A2522" stroke-width="2.4" stroke-linecap="round"/></g>`
+
+  return `<g transform="translate(0,${y})"><g style="${anim('catwalk', 75, -11, 'linear infinite')}"><title>Ofis kedisi</title>${tail}${body}${legs}</g></g>`
+}
+
+function robotVacuum(H: number): string {
+  return `<g transform="translate(110,${H - 9})"><g style="${anim('vac', 46, -7, 'ease-in-out infinite')}"><title>Robot vacuum</title><ellipse cx="9" cy="3" rx="9" ry="3.6" fill="#3A3934"/><ellipse cx="9" cy="2" rx="7" ry="2.4" fill="#4A4840"/><circle cx="9" cy="1.6" r="1" fill="#8FAE6B" style="${anim('pulse', 1.6)}"/></g></g>`
+}
+
+function windowLife(now: number, x0: number): string {
+  const { h } = istanbul(now)
+  if (h < 6 || h >= 20) {
+    return `<g style="${anim('meteor', 19, -4, 'linear infinite')}"><path d="M${x0 + 150} 14 l10 -4" stroke="#F8FAFC" stroke-width="1.2" stroke-linecap="round"/></g>`
+  }
+  const bird = (dx: number, dy: number) =>
+    `<g transform="translate(${dx},${dy})"><path class="fb" d="M0 0 Q2 -2 4 0 Q6 -2 8 0" fill="none" stroke="#1F1E1D" stroke-width="1" style="animation:flap .5s infinite"/></g>`
+
+  return `<g transform="translate(${x0},26)"><g style="${anim('birds', 31, -9, 'linear infinite')}">${bird(0, 0)}${bird(12, 4)}${bird(6, -5)}</g></g>`
+}
+
+// ——— the boss's moods ———————————————————————————————————————
+
+type Moment = { kind: 'cheer' | 'oops'; who: string; age: number }
+
+/** The newest finish or failure among the team in the last few seconds: the boss reacts to it. */
+function bossMoment(team: readonly Worker[], now: number): Moment | undefined {
+  let best: Moment | undefined
+  for (const w of team) {
+    if (w.endedAt === undefined) continue
+    const age = now - w.endedAt
+    if (age < 0 || age > 9000) continue
+    if (w.activity !== 'done' && w.activity !== 'failed' && w.activity !== 'leaving') continue
+    if (!best || age < best.age) best = { kind: w.activity === 'failed' ? 'oops' : 'cheer', who: w.name, age }
+  }
+
+  return best
+}
+
+const IDLE_ACTS = ['coffee', 'paper', 'juggle', 'phone', 'stretch', 'window'] as const
+type IdleAct = (typeof IDLE_ACTS)[number]
+const IDLE_QUIP: Record<IdleAct, string[]> = {
+  coffee: ['Coffee break', 'Great coffee.', 'One more sip…'],
+  paper: ['Tech news…', 'New models!', 'Reading the news.'],
+  juggle: ['Hop, hop!', 'Time to juggle', 'Three balls, no mistakes.'],
+  phone: ['Hello? New job?', 'Got it, noted.', 'Someone called…'],
+  stretch: ['Time to stretch.', 'My back is stiff…', 'Ready!'],
+  window: ['Nice view.', 'The city is busy.', 'Watching the clouds.'],
+}
+
+/** What the boss does with nothing to do: a new act every couple of minutes, never the same twice in a row. */
+export function idleAct(now: number): IdleAct {
+  const slot = Math.floor(now / 150_000)
+  const a = hash(`act${slot}`) % IDLE_ACTS.length
+  const prev = hash(`act${slot - 1}`) % IDLE_ACTS.length
+
+  return IDLE_ACTS[a === prev ? (a + 1) % IDLE_ACTS.length : a] as IdleAct
+}
+
+function idleProp(act: IdleAct, kx: number, ky: number): string {
+  switch (act) {
+    case 'coffee':
+      return `<g style="${anim('sip', 7, -2)}" class="fb"><path d="M${kx + 70} ${ky + 20} h10 l-1.5 8 h-7 z" fill="#F0EEE6"/><path d="M${kx + 80} ${ky + 22} q3 0 3 2.5 q0 2.5 -3 2.5" fill="none" stroke="#F0EEE6" stroke-width="1.2"/><path d="M${kx + 73} ${ky + 17} q2 -3 0 -6" fill="none" stroke="#CBD5E1" stroke-width="1" style="${anim('steam', 2)}"/></g>`
+    case 'paper':
+      return `<g class="fbb" style="${anim('paper', 3)}"><rect x="${kx + 6}" y="${ky + 8}" width="42" height="22" rx="1" fill="#F0EEE6"/><rect x="${kx + 9}" y="${ky + 11}" width="17" height="6" fill="#85837A"/><path d="M${kx + 29} ${ky + 12} H${kx + 45} M${kx + 29} ${ky + 15} H${kx + 45} M${kx + 9} ${ky + 21} H${kx + 45} M${kx + 9} ${ky + 24} H${kx + 40}" stroke="#85837A" stroke-width="1"/><text x="${kx + 27}" y="${ky + 7}" text-anchor="middle" class="s" font-size="5" fill="#F0EEE6">AI NEWS</text></g>`
+    case 'juggle':
+      return [0, 1, 2].map(i => `<circle cx="${kx + 14 + i * 12}" cy="${ky - 20}" r="3.2" fill="${['#E0685A', '#6A9BCC', '#FBBF24'][i]}" style="${anim('juggle', 0.9, -i * 0.3, 'ease-in-out infinite')}"/>`).join('')
+    case 'phone':
+      return `<g style="${anim('buzz', 0.5)}"><rect x="${kx + 48}" y="${ky + 2}" width="7" height="13" rx="1.5" fill="#1F1E1D" stroke="#D4A27F" stroke-width=".8"/><rect x="${kx + 49.5}" y="${ky + 4}" width="4" height="7" fill="#6A9BCC"/></g>${[0, 1].map(i => `<path d="M${kx + 58 + i * 3} ${ky + 3} q3 4 0 8" fill="none" stroke="#D4A27F" stroke-width=".9" style="${anim('pulse', 1, -i * 0.4)}"/>`).join('')}`
+    case 'stretch':
+      return ''
+    case 'window':
+      return `<g style="${anim('float', 3)}"><text x="${kx + 60}" y="${ky - 4}" class="t" font-size="9" fill="#D4A27F">↗</text></g>`
+  }
+}
+
+function confetti(cx: number, cy: number, age: number): string {
+  const colors = ['#D97757', '#FBBF24', '#8FAE6B', '#6A9BCC', '#A99BD0', '#F0EEE6']
+  let out = ''
+  for (let i = 0; i < 18; i++) {
+    const a = (i / 18) * Math.PI * 2
+    const r = 26 + (hash(`c${i}`) % 22)
+    const dx = n1(Math.cos(a) * r)
+    const dy = n1(Math.sin(a) * r * 0.8 + 18)
+    out += `<rect x="${cx}" y="${cy}" width="3" height="${i % 2 ? 3 : 5}" fill="${colors[i % colors.length]}" style="--dx:${dx}px;--dy:${dy}px;animation:confetti 1.5s ${n1(-age / 1000)}s 3 ease-out both"/>`
+  }
+
+  return out
+}
+
 // ——— the scene ——————————————————————————————————————————
 
 export type SceneInput = {
@@ -598,12 +724,36 @@ export type SceneInput = {
   stats?: Stats
   /** the auto compact %, drawn across the context tank */
   autoCompactAt?: number
+  /** desk columns: 3 (480 units wide) to 6 */
+  cols?: number
+  /** when the 5-hour and the weekly limit fill at the current pace, if before their reset */
+  fiveFullAt?: number
+  weekFullAt?: number
 }
 
 export type SceneParts = { body: string; defs: string; alt: string; height: number }
 
 export function seatXY(seat: number): { x: number; y: number } {
-  return { x: (seat % 3) * COL_W, y: FLOOR_Y + 8 + Math.floor(seat / 3) * ROW_H }
+  return { x: (seat % COLS) * COL_W, y: FLOOR_Y + 8 + Math.floor(seat / COLS) * ROW_H }
+}
+
+/** How tall the scene is with this many desk columns. */
+export function sceneHeight(workers: readonly Worker[], cols: number): number {
+  const team = workers.filter(w => w.id !== 'boss').slice(0, MAX_DESKS)
+  const rows = team.length === 0 ? 0 : Math.floor(Math.max(...team.map(w => w.seat)) / cols) + 1
+
+  return FLOOR_Y + (rows === 0 ? 70 : rows * ROW_H + 14) + 6
+}
+
+/** The desk columns (3 to 6) that let the scene fill a box of this shape the most. */
+export function bestCols(workers: readonly Worker[], boxW: number, boxH: number): number {
+  const scales = [3, 4, 5, 6].map(c => [c, Math.min(boxW / (c * COL_W), boxH / sceneHeight(workers, c))] as const)
+  const top = Math.max(...scales.map(([, s]) => s))
+  // the widest room that is drawn (almost) as large: it fills the frame's sides instead of leaving them empty
+  let best = 3
+  for (const [c, s] of scales) if (s >= top * 0.97) best = c
+
+  return best
 }
 
 /** The scene as a standalone document: what tests and previews draw. */
@@ -619,10 +769,13 @@ export const SCENE_DEFS = `<filter id="neon" x="-20%" y="-50%" width="140%" heig
 /** The office's markup in its own units (SCENE_W wide), without the outer element. */
 export function sceneParts(input: SceneInput, lite: boolean): SceneParts {
   const { workers, usage, turn, now, motion } = input
+  COLS = Math.max(3, Math.min(6, Math.round(input.cols ?? 3)))
+  W = COLS * COL_W
+  OX = (W - SCENE_W) / 2
   const bossW = workers.find(w => w.id === 'boss') ?? fallbackBoss(now)
   const team = workers.filter(w => w.id !== 'boss').slice(0, MAX_DESKS)
   const extra = workers.filter(w => w.id !== 'boss').length - team.length
-  const rows = team.length === 0 ? 0 : Math.floor(Math.max(...team.map(w => w.seat)) / 3) + 1
+  const rows = team.length === 0 ? 0 : Math.floor(Math.max(...team.map(w => w.seat)) / COLS) + 1
   const floorH = rows === 0 ? 70 : rows * ROW_H + 14
   const H = FLOOR_Y + floorH + 6
   const doorX = 10
@@ -638,14 +791,16 @@ export function sceneParts(input: SceneInput, lite: boolean): SceneParts {
   // the sign: who is at work (the model and its effort), and whether the office is open
   const model = /claude-(opus|sonnet|haiku|fable)-(\d+)(?:-(\d+))?/i.exec(turn.model ?? '')
   const who = model ? `${(model[1] as string).charAt(0).toUpperCase()}${(model[1] as string).slice(1)} ${model[2]}${model[3] ? `.${model[3]}` : ''}` : 'Claude'
-  const EFFORT: Record<string, string> = { low: 'low effort', medium: 'medium effort', high: 'high effort', xhigh: 'extra high effort', max: 'max effort' }
+  const EFFORT: Record<string, string> = { low: 'low', medium: 'medium', high: 'high', xhigh: 'x-high', max: 'max' }
   svg += `<g>${starburst(20, 22, 7, CLAUDE)}<text x="32" y="27" class="s" font-size="13" fill="#F0EEE6">${esc(who)}</text></g>`
   svg += `<text x="14" y="46" class="t" font-size="7.5" font-weight="800" letter-spacing=".6"><tspan fill="${turn.active ? '#8FAE6B' : '#85837A'}">${turn.active ? 'AT WORK' : 'ON BREAK'}</tspan><tspan fill="#D4A27F">${turn.effort ? ` · ${esc((EFFORT[turn.effort] ?? turn.effort).toUpperCase())}` : ''}</tspan></text>`
-  svg += limitClock(now, usage, 146, 31)
+  svg += limitClock(now, usage, 146, 31, motion, input.fiveFullAt, input.weekFullAt)
   svg += windowStrip(now, 300, W - 10)
+  if (motion && !lite) svg += windowLife(now, 300)
 
   // the throne room
   svg += `<rect y="${BOSS_TOP}" width="${W}" height="${FLOOR_Y - BOSS_TOP}" fill="#33302B"/>`
+  svg += `<g transform="translate(${n1(OX)},0)">`
   svg += `<rect x="146" y="148" width="208" height="32" rx="3" fill="#7F1D1D"/><rect x="150" y="151" width="200" height="26" rx="2" fill="none" stroke="${GOLD}" stroke-opacity=".7"/>`
   if (isNight) svg += `<path d="M252 64 L208 180 H296 Z" fill="url(#lamp)"/>`
   svg += taskBoard(bossW, turn)
@@ -653,6 +808,7 @@ export function sceneParts(input: SceneInput, lite: boolean): SceneParts {
   svg += bookshelf(input.stats?.tools.Read ?? 0)
   svg += plant(452, 162, turn.turns)
   svg += bossDesk(bossW, usage, now, motion, team)
+  svg += `</g>`
 
   // glass partition
   svg += `<rect y="${FLOOR_Y - 6}" width="${W}" height="6" fill="#D4A27F" opacity=".1"/><rect y="${FLOOR_Y - 6}" width="${W}" height="1.2" fill="#D97757" opacity=".6"/>`
@@ -672,6 +828,7 @@ export function sceneParts(input: SceneInput, lite: boolean): SceneParts {
     if (extra > 0) svg += `<text x="${W - 8}" y="${FLOOR_Y + 12}" text-anchor="end" class="t" font-size="8" fill="#94A3B8">+${extra} more</text>`
   }
 
+  if (motion && !lite) svg += robotVacuum(H) + officeCat(H)
   svg += `</g>`
 
   const busy = team.filter(w => w.endedAt === undefined).length
@@ -690,7 +847,12 @@ function bossDesk(w: Worker, usage: Usage, now: number, motion: boolean, team: r
   let out = ''
   // throne
   out += `<path d="M216 128 V84 Q216 66 252 64 Q288 66 288 84 V128 Z" fill="#3B0764" stroke="${GOLD}" stroke-width="2"/><path d="M222 126 V86 Q222 72 252 70 Q282 72 282 86 V126 Z" fill="#581C87"/><circle cx="216" cy="84" r="3.5" fill="${GOLD}"/><circle cx="288" cy="84" r="3.5" fill="${GOLD}"/><circle cx="252" cy="62" r="3" fill="${GOLD}"/>`
-  out += king(kx, ky, w)
+  {
+    const m = bossMoment(team, now)
+    const idle = w.activity === 'idle' && now - w.since > 45_000 ? idleAct(now) : undefined
+    const style = !motion ? '' : m?.kind === 'cheer' ? 'animation:dance .6s infinite' : idle === 'stretch' ? 'animation:stretch 4s infinite' : ''
+    out += style ? `<g class="fbb" style="${style}">${king(kx, ky, w)}</g>` : king(kx, ky, w)
+  }
   // desk: black glass, gold edge
   out += `<rect x="160" y="118" width="186" height="8" rx="2" fill="#1F2937"/><rect x="160" y="118" width="186" height="1.6" fill="${GOLD}"/><rect x="164" y="126" width="178" height="30" fill="#2A2522"/><rect x="164" y="126" width="178" height="30" fill="none" stroke="${GOLD}" stroke-opacity=".35"/><rect x="164" y="156" width="6" height="20" fill="#1F1C19"/><rect x="336" y="156" width="6" height="20" fill="#1F1C19"/>`
   // monitor
@@ -715,23 +877,43 @@ function bossDesk(w: Worker, usage: Usage, now: number, motion: boolean, team: r
   }</g>`
   // name plate: only the title
   out += `<rect x="222" y="134" width="62" height="14" rx="3" fill="#1F1C19" stroke="${GOLD}" stroke-width="1"/><text x="253" y="144.2" text-anchor="middle" class="t" font-size="8" font-weight="800" letter-spacing="1.6" fill="${GOLD}">BOSS</text>`
-  // badge + bubble
-  out += activityBadge(w, kx + 58, ky - 22, 'boss')
-  if (w.activity === 'idle' && now - w.since > 180_000) {
+  // badge + bubble; with nothing to do, an idle act; a finished or failed worker, a reaction
+  const moment = bossMoment(team, now)
+  const idleFor = w.activity === 'idle' ? now - w.since : 0
+  const act = idleFor > 45_000 ? idleAct(now) : undefined
+  let say = w.bubble
+  if (moment && motion) {
+    if (moment.kind === 'cheer') {
+      out += confetti(kx + 26, ky - 10, moment.age)
+      say = pick(['Well done {n}!', 'Great job {n}!', 'Nice work {n}!', 'Thanks {n}!'], moment.who + Math.floor(now / 60000)).replace('{n}', moment.who)
+    } else {
+      out += `<path d="M${kx + 50} ${ky + 2} q3 5 0 7 q-3 -2 0 -7 z" fill="#6A9BCC" style="${anim('drip', 1.4)}"/>`
+      say = pick(["{n}, let's try again.", "No worries {n}, we'll fix it.", '{n} is stuck, looking into it.'], moment.who).replace('{n}', moment.who)
+    }
+  } else if (act && motion) {
+    out += idleProp(act, kx, ky)
+    say = pick(IDLE_QUIP[act], `${act}${Math.floor(now / 150_000)}`)
+  }
+  if (w.activity === 'waiting') {
+    out += `<g style="transform-origin:${kx + 66}px ${ky - 22}px;animation:ring 1.2s infinite"><path d="M${kx + 60} ${ky - 14} q0 -10 6 -10 q6 0 6 10 z" fill="#FBBF24"/><circle cx="${kx + 66}" cy="${ky - 12}" r="1.6" fill="#FBBF24"/></g>`
+  } else {
+    out += activityBadge(w, kx + 58, ky - 22, 'boss')
+  }
+  if (w.activity === 'idle' && idleFor > 600_000) {
     out += [0, 1, 2].map(i => `<text x="${kx + 46}" y="${ky - 6}" class="t" font-size="${7 + i * 2}" font-weight="700" fill="#94A3B8" style="${anim('zz', 3, -i)}">z</text>`).join('')
   }
-  out += bubble(w.bubble, kx + 26 + 100, 46, 230, kx + 40, 150, W - 4, w.activity === 'waiting' ? 'warn' : 'royal')
+  out += bubble(say, kx + 26 + 100, 46, 230, kx + 40, 150, SCENE_W - 4, w.activity === 'waiting' ? 'warn' : 'royal')
   // paper planes: orders out to new arrivals, reports back from finishers
   if (motion) {
     for (const t of team) {
       const age = now - t.joinedAt
       if (age < ARRIVE_MS + 1200) {
         const { x, y } = seatXY(t.seat)
-        out += plane(kx + 54, ky + 14, x + 95, y + 30, -age / 1000, 1.3, 2)
+        out += plane(kx + 54, ky + 14, x - OX + 95, y + 30, -age / 1000, 1.3, 2)
       }
       if (t.endedAt !== undefined && now - t.endedAt < 3500 && (t.activity === 'done' || t.activity === 'failed')) {
         const { x, y } = seatXY(t.seat)
-        out += plane(x + 95, y + 30, kx + 54, ky + 14, -(now - t.endedAt) / 1000, 1.4, 2)
+        out += plane(x - OX + 95, y + 30, kx + 54, ky + 14, -(now - t.endedAt) / 1000, 1.4, 2)
       }
     }
   }

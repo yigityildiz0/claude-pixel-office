@@ -92,6 +92,16 @@ The mod calls no model and adds nothing to the system prompt, so it **spends no 
 
 > ⚠️ Install one language only: `pixel-office` **or** `piksel-ofis`.
 
+### 🆓 Free to use, change and share
+
+Claude Office is [MIT licensed](LICENSE): use it, change the room, ship your own version. Just keep the license
+file. Ideas and fixes are welcome, see [CONTRIBUTING.md](CONTRIBUTING.md). If it made you smile, a ⭐ helps others
+find it. Want Claude to share the work with your other AI subscriptions? Try the sister project
+[Orkestra](https://github.com/yigityildiz0/orkestra).
+
+<sub>Claude, Claude Code and Clawd are trademarks of Anthropic. This is an independent community mod, not made or
+endorsed by Anthropic.</sub>
+
 ---
 
 ## 🇹🇷 Türkçe
@@ -165,5 +175,15 @@ claude plugin install piksel-ofis --marketplace yigityildiz0/claude-pixel-office
 Mod model çağırmaz ve sistem istemine bir şey eklemez, bu yüzden **token harcamaz**. Hiçbir yere veri göndermez. Limit geçmişi ve günlük maliyet, modun bilgisayarındaki yerel deposunda tutulur. [claude-usage-band](https://github.com/yigityildiz0/claude-usage-band) de kuruluysa oto-sıkıştırma ayarı ortak kullanılır ve sohbet yalnız bir kez sıkıştırılır.
 
 > ⚠️ Tek dil kur: `piksel-ofis` **ya da** `pixel-office`.
+
+### 🆓 Özgürce kullan, değiştir, paylaş
+
+Claude Ofis [MIT lisanslıdır](LICENSE): kullan, odayı değiştir, kendi sürümünü yayımla. Yalnız lisans dosyasını
+koru. Fikir ve düzeltmelere açık: [CONTRIBUTING.md](CONTRIBUTING.md). Yüzünü güldürdüyse bir ⭐ başkalarının da
+bulmasını sağlar. Claude'un işi diğer yapay zekâ aboneliklerinle paylaşmasını istersen kardeş proje:
+[Orkestra](https://github.com/yigityildiz0/orkestra).
+
+<sub>Claude, Claude Code ve Clawd, Anthropic'in markalarıdır. Bu bağımsız bir topluluk modudur; Anthropic yapmamış
+ya da onaylamamıştır.</sub>
 
 <div align="center"><sub>MIT · <a href="LICENSE">LICENSE</a> · Illustrations made with GPT image generation · Çizimler GPT görsel üretimiyle yapıldı</sub></div>

@@ -1,13 +1,15 @@
-// The pane as one Claude-styled dashboard, drawn in real pixels: the caller gives the width
-// the pane has, one unit of the drawing is one pixel, so text keeps its size at
-// any window size and the layout reflows (two columns when wide, one when narrow).
-import type { Breakdown, Daily, FeedItem, FeedKind, Stats, Turn, Usage, Worker } from '../types'
-import { clip, dayKey, fmtDuration, fmtTokens, forecast, istanbul } from './logic'
+// The pane as one picture: the whole of it is the office (no header, no side or bottom
+// panels). The layout (layout.ts) fits the office to the pane's own size; the scene
+// (scene.ts) draws it in office units and this file scales it to the pane's pixels, so
+// the office fills the pane to its edges at any size and shape.
+import type { Breakdown, Daily, FeedItem, MascotKind, Stats, Talk, Turn, Usage, Worker } from '../types'
+import type { Box, Move, OfficeLayout } from './layout'
+import { layoutOffice } from './layout'
+import { MASCOT_INFO, clip, esc, fmtTokens, forecast, mascotFor } from './logic'
 import type { Forecast, Sample } from './logic'
-import { STYLE, bestCols, esc, phaseLock, sceneHeight, sceneParts, starburst } from './scene'
+import { STYLE, actCapFor, phaseLock, preferActs, sceneBg, sceneParts, withDefs } from './scene'
 
-// Claude's own look, as its app, site and posters draw it: warm graphite or ivory
-// paper, clay as the one loud colour, hairline rules, a serif for the headlines
+// Claude's own look for the context tab: warm graphite or ivory paper, clay as the loud colour
 type Palette = Record<'bg' | 'panel' | 'panelHi' | 'line' | 'track' | 'tile' | 'text' | 'muted' | 'dim' | 'orange' | 'claude' | 'cyan' | 'violet' | 'gold' | 'green' | 'amber' | 'red', string>
 const DARK: Palette = {
   bg: '#1F1E1D',
@@ -48,18 +50,19 @@ const LIGHT: Palette = {
   red: '#C0452F',
 }
 let C: Palette = DARK
+let THEME: 'dark' | 'light' = 'dark'
 
 /** Draws what follows in the app's theme. */
 export function useHudTheme(theme: 'dark' | 'light'): void {
+  THEME = theme
   C = theme === 'light' ? LIGHT : DARK
 }
 
 const SANS = `class="t"`
 const MONO = `class="m"`
-const SERIF = `class="s"`
 const PAD = 16
 const GAP = 14
-// the SVG element takes at most this many characters
+/** The Svg element takes at most 131072 characters; the full picture gives way to the lighter one past this. */
 const SVG_ROOM = 128_000
 
 const n1 = (v: number) => Math.round(v * 10) / 10
@@ -73,22 +76,6 @@ function fits(width: number, size: number, mono = false): number {
   return Math.max(4, Math.floor(width / (size * (mono ? 0.6 : 0.56))))
 }
 
-// kept as ids the rest of the drawing names: the glow is a soft shadow now, no neon
-const hudDefs = () => `
-<filter id="h-glow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="0" stdDeviation="0" flood-opacity="0"/></filter>
-<filter id="h-lift" x="-5%" y="-5%" width="110%" height="120%"><feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-color="#000" flood-opacity="${C === DARK ? 0.35 : 0.06}"/></filter>`
-
-/** A card: paper or graphite, a hairline edge, a small-caps title with a clay mark. */
-function panel(x: number, y: number, w: number, h: number, title?: string, accent = C.claude): string {
-  let out = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="14" fill="${C.panel}" stroke="${C.line}" stroke-width="1" filter="url(#h-lift)"/>`
-  if (title) {
-    out += `<rect x="${x + 18}" y="${y + 15}" width="3" height="11" rx="1.5" fill="${accent}"/>`
-    out += text(x + 28, y + 24.5, title, 10.5, C.muted, `${SANS} font-weight="700" letter-spacing="1.5"`)
-  }
-
-  return out
-}
-
 export function prettyModel(model: string | undefined): string {
   if (!model) return '—'
   const m = /claude-(opus|sonnet|haiku|fable)-(\d+)(?:-(\d+))?/i.exec(model)
@@ -96,11 +83,6 @@ export function prettyModel(model: string | undefined): string {
   const name = (m[1] as string).charAt(0).toUpperCase() + (m[1] as string).slice(1)
 
   return `${name} ${m[2]}${m[3] ? `.${m[3]}` : ''}`
-}
-
-const FEED_GLYPH: Record<FeedKind, string> = {
-  prompt: '▶', think: '◆', read: '▤', write: '✎', run: '›', web: '◎', plan: '☰', hire: '+', done: '✓',
-  fail: '✕', compact: '⇣', limit: '!', turn: '■', wait: '?',
 }
 
 export type HudInput = {
@@ -115,25 +97,27 @@ export type HudInput = {
   width: number
   /** the pane's height in pixels: the drawing fills it exactly, never scrolls */
   fill?: number
-  /** auto compact as set: marked on the context ring */
+  /** auto compact as set: marked on the water cooler */
   autoCompact?: { isOn: boolean; at: number }
   /** today's cost across chats */
   daily?: Daily
+  /** orders, reports and messages between the desks */
+  talks?: readonly Talk[]
+  /** when the previous frame was drawn: what happened since replays from its start */
+  lastFrameAt?: number
+  /** the office's layout for this pane (computed here when not given) */
+  layout?: OfficeLayout
+  /** the walks the move tracker planned, in office units */
+  moves?: ReadonlyMap<string, Move>
+  /** the grid was laid out anew: when, and the old desk cells (px) */
+  relayout?: { at: number; prevCells: Box[] }
+  /** the picture as it stays, for frameKey: no walks, flights, fresh bubbles or reactions */
+  settled?: boolean
 }
 
 export function isBusy(turn: Turn, boss: Worker | undefined): boolean {
   return turn.active || (boss !== undefined && !['idle', 'done', 'failed'].includes(boss.activity))
 }
-
-export function hudSvg(input: HudInput): { svg: string; alt: string; width: number; height: number } {
-  const full = buildHud(input, false)
-  const hud = full.svg.length <= SVG_ROOM ? full : buildHud(input, true)
-
-  return { ...hud, svg: phaseLock(hud.svg, input.now) }
-}
-
-const TONE = (t: Forecast['tone']) => (t === 'bad' ? C.red : t === 'warn' ? C.amber : t === 'ok' ? C.green : C.dim)
-const pctTone = (p: number) => (p >= 90 ? C.red : p >= 70 ? C.amber : C.green)
 
 /** The forecast of one limit from the readings the usage carries. */
 export function limitForecast(usage: Usage, kind: string, now: number): { pct: number; f: Forecast } | undefined {
@@ -143,197 +127,96 @@ export function limitForecast(usage: Usage, kind: string, now: number): { pct: n
   return { pct: l.pct, f: forecast(kind, l.pct, l.resetsAt, (usage.samples?.[kind] ?? []) as Sample[], now) }
 }
 
-/** A gauge card: a title row, a big figure, then up to two lines. */
-function card(x: number, y: number, w: number, h: number, title: string, accent: string, right?: [string, string]): string {
-  let out = `<rect x="${n1(x)}" y="${n1(y)}" width="${n1(w)}" height="${h}" rx="12" fill="${C.panel}" stroke="${C.line}" filter="url(#h-lift)"/>`
-  out += `<rect x="${n1(x + 12)}" y="${n1(y + 12)}" width="3" height="10" rx="1.5" fill="${accent}"/>`
-  out += text(x + 21, y + 21, title, 9.5, C.muted, `${SANS} font-weight="800" letter-spacing="1.4"`)
-  if (right) out += text(x + w - 12, y + 21, right[0], 10, right[1], `${MONO} font-weight="700" text-anchor="end"`)
+/** The model families an office can seat, in the order a tie shows them. */
+const KIND_ORDER: readonly MascotKind[] = ['opus', 'sonnet', 'haiku', 'fable', 'claude', 'sol', 'terra', 'luna', 'astra', 'argon', 'flash', 'evren', 'other', 'boss']
 
-  return out
+/** A family's short name for a sentence: "Opus", "GPT Terra", "Gemini Flash". */
+function kindName(kind: MascotKind): string {
+  const info = MASCOT_INFO[kind]
+
+  return info.family === 'Claude' || info.family === 'EVREN' ? info.label : info.family === 'Diğer' ? 'diğer model' : `${info.family} ${info.label}`
 }
 
-function ctxCard(x: number, y: number, w: number, h: number, usage: Usage, auto?: { isOn: boolean; at: number }): string {
-  const pct = Math.max(0, Math.min(100, usage.ctxPct ?? 0))
-  const color = pct >= 85 ? C.red : pct >= 60 ? C.amber : C.cyan
-  let out = card(x, y, w, h, 'BAĞLAM', C.cyan, [usage.ctxWindow ? `${fmtTokens(usage.ctxTokens)} / ${fmtTokens(usage.ctxWindow)}` : '', C.dim])
-  const r = Math.min(24, (h - 40) / 2)
-  const cx = x + 16 + r
-  const cy = y + 32 + r
-  const circ = 2 * Math.PI * r
-  out += `<circle cx="${n1(cx)}" cy="${n1(cy)}" r="${n1(r)}" fill="none" stroke="${C.track}" stroke-width="6"/>`
-  out += `<circle cx="${n1(cx)}" cy="${n1(cy)}" r="${n1(r)}" fill="none" stroke="${color}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${n1((circ * pct) / 100)} ${n1(circ)}" transform="rotate(-90 ${n1(cx)} ${n1(cy)})"/>`
-  if (auto?.isOn) {
-    const a = ((auto.at / 100) * 360 - 90) * (Math.PI / 180)
-    out += `<line x1="${n1(cx + (r - 6) * Math.cos(a))}" y1="${n1(cy + (r - 6) * Math.sin(a))}" x2="${n1(cx + (r + 6) * Math.cos(a))}" y2="${n1(cy + (r + 6) * Math.sin(a))}" stroke="${C.text}" stroke-width="2"/>`
+/** The pane's size in pixels, as the drawing takes it. */
+function paneSize(input: HudInput): { W: number; H: number } {
+  return { W: Math.round(Math.max(340, Math.min(3200, input.width))), H: Math.round(Math.max(380, Math.min(4000, input.fill ?? 760))) }
+}
+
+export function hudSvg(input: HudInput): { svg: string; alt: string; width: number; height: number } {
+  const { W, H } = paneSize(input)
+  const L = input.layout && input.layout.W === W && input.layout.H === H ? input.layout : layoutOffice({ workers: input.workers, W, H, now: input.now })
+  // full, then lite, then lighter still (the newest talk only, then the settled picture) until it fits
+  let hud = buildHud(input, L, W, H, false)
+  for (const squeeze of [0, 1, 2]) {
+    if (hud.svg.length <= SVG_ROOM) break
+    hud = buildHud(input, L, W, H, true, squeeze)
   }
-  out += text(cx, cy + 5, `%${Math.round(pct)}`, 14, C.text, `${MONO} font-weight="800" text-anchor="middle"`)
-  const tx = cx + r + 14
-  const room = x + w - 12 - tx
-  out += text(tx, y + 48, pct >= 85 ? 'dolmak üzere' : pct >= 60 ? 'dolmaya başladı' : 'rahat', 14, color, `${SANS} font-weight="700"`)
-  out += text(tx, y + 66, clip(auto?.isOn ? `oto-sıkıştırma %${auto.at}'de` : 'oto-sıkıştırma kapalı', fits(room, 11)), 11, C.muted, SANS)
-  // the trail of the context %, newest at the right
-  const hist = (usage.history ?? []).slice(-40)
-  if (hist.length > 1 && h >= 92) {
-    const sx = tx
-    const sw = room
-    const sy = y + h - 12
-    const pts = hist.map((p, i) => `${n1(sx + (i * sw) / (hist.length - 1))},${n1(sy - (p / 100) * 14)}`).join(' ')
-    out += `<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.4" opacity=".7"/>`
+  // a crowded office whose full picture leaves no room for the activity props: the lite one shows them
+  if (!hud.lite && hud.dropped > 0) {
+    const lite = buildHud(input, L, W, H, true)
+    if (preferActs(hud, lite)) hud = lite
+  }
+  // a kind drawn as its plain vector stand-in (its idle strip did not fit): the lighter picture leaves
+  // room for the real sprites; it is taken when it has fewer stand-ins
+  const stand = (svg: string) => (svg.match(/id="cv-/g) ?? []).length
+  if (stand(hud.svg) > 0) {
+    for (const squeeze of [0, 1]) {
+      const lite = buildHud(input, L, W, H, true, squeeze)
+      if (lite.svg.length <= SVG_ROOM && stand(lite.svg) < stand(hud.svg)) hud = lite
+      if (stand(hud.svg) === 0) break
+    }
   }
 
-  return out
+  return { svg: phaseLock(hud.svg, input.now), alt: hud.alt, width: hud.width, height: hud.height }
 }
 
-function limitCard(x: number, y: number, w: number, h: number, title: string, lf: { pct: number; f: Forecast } | undefined): string {
-  if (!lf) {
-    let out = card(x, y, w, h, title, C.dim)
-    out += text(x + 14, y + 52, '—', 22, C.dim, `${MONO} font-weight="800"`)
-    out += text(x + 14, y + 72, 'ilk yanıtta gelir', 11, C.muted, SANS)
+type Built = { svg: string; alt: string; width: number; height: number; lite: boolean; dropped: number }
 
-    return out
-  }
-  const { pct, f } = lf
-  const color = pctTone(pct)
-  let out = card(x, y, w, h, title, color, f.rate !== undefined ? [`%${f.rate >= 10 ? Math.round(f.rate) : f.rate.toFixed(1)}/sa`, C.dim] : undefined)
-  out += text(x + 14, y + 50, `%${Math.round(pct)}`, 22, C.text, `${MONO} font-weight="800"`)
-  // the bar: used, then the pace's projection to the reset (hatched), a mark where it fills
-  const bx = x + 74
-  const bw = x + w - 14 - bx
-  const by = y + 38
-  out += `<rect x="${n1(bx)}" y="${by}" width="${n1(bw)}" height="10" rx="5" fill="${C.track}"/>`
-  const proj = Math.min(100, f.fullAt !== undefined ? 100 : f.atReset ?? pct)
-  if (proj > pct) out += `<rect x="${n1(bx + (bw * pct) / 100)}" y="${by}" width="${n1((bw * (proj - pct)) / 100)}" height="10" fill="url(#h-hatch)" opacity=".9"><title>Bu hızla sıfırlanmaya kadar</title></rect>`
-  out += `<rect x="${n1(bx)}" y="${by}" width="${n1(Math.max(4, (bw * Math.min(100, pct)) / 100))}" height="10" rx="5" fill="${color}"/>`
-  if (f.fullAt !== undefined) out += `<rect x="${n1(bx + bw - 2)}" y="${by - 3}" width="3" height="16" rx="1" fill="${C.red}" style="animation:pulse 1.2s infinite"/>`
-  const [a, b] = f.line.split(' · ')
-  const room = fits(w - 28, 11.5)
-  out += text(x + 14, y + 70, clip(a ?? '', room), 11.5, TONE(f.tone), `${SANS} font-weight="700"`)
-  if (b && h >= 92) out += text(x + 14, y + 86, clip(b, room), 11, C.muted, SANS)
-
-  return out
-}
-
-function costCard(x: number, y: number, w: number, h: number, usage: Usage, stats: Stats, daily: Daily | undefined, now: number): string {
-  const hours = Math.max(1 / 60, (now - (stats.sessionStart || now)) / 3_600_000)
-  const session = usage.usd
-  const perHour = session !== undefined && hours >= 0.1 ? session / hours : undefined
-  let out = card(x, y, w, h, 'MALİYET · API KARŞILIĞI', C.gold, daily ? [`${daily.sessions} sohbet`, C.dim] : undefined)
-  const today = daily && daily.day === dayKey(now) ? daily.usd : session
-  out += text(x + 14, y + 50, today === undefined ? '—' : `$${today.toFixed(2)}`, 22, C.gold, `${MONO} font-weight="800"`)
-  out += text(x + w - 14, y + 50, 'bugün', 11, C.muted, `${SANS} text-anchor="end"`)
-  const room = fits(w - 28, 11.5)
-  out += text(x + 14, y + 70, clip(`bu sohbet $${(session ?? 0).toFixed(2)}${perHour !== undefined ? ` · $${perHour.toFixed(2)}/sa` : ''}`, room), 11.5, C.text, `${SANS} font-weight="600"`)
-  if (h >= 92) out += text(x + 14, y + 86, clip(`${fmtTokens(stats.outTokens)} token üretildi · ${fmtDuration(now - (stats.sessionStart || now)).replace(/ \d+sn$/, '')}`, room), 11, C.muted, SANS)
-
-  return out
-}
-
-function buildHud(input: HudInput, lite: boolean): { svg: string; alt: string; width: number; height: number } {
-  const { workers, feed, usage, turn, stats, now, motion } = input
-  const W = Math.round(Math.max(340, Math.min(3200, input.width)))
-  const H = Math.round(Math.max(380, Math.min(4000, input.fill ?? 760)))
-  const boss = workers.find(w => w.id === 'boss')
-  const team = workers.filter(w => w.id !== 'boss')
-  const busy = isBusy(turn, boss)
+function buildHud(input: HudInput, L: OfficeLayout, W: number, H: number, lite: boolean, squeeze = 0): Built {
+  const { workers, usage, turn, now, motion } = input
   const five = limitForecast(usage, 'five_hour', now)
   const week = limitForecast(usage, 'seven_day', now)
-  const parts: string[] = []
+  const bg = sceneBg(THEME)
+  // the office with its activity props: drawn again with less room for them when the defs do not fit (scene.withDefs)
+  const scene = withDefs(cap => {
+    const parts = sceneParts(
+      {
+        workers, usage, turn, now, motion,
+        stats: input.stats, daily: input.daily, feed: input.feed,
+        autoCompactAt: input.autoCompact?.isOn ? input.autoCompact.at : undefined,
+        fiveFullAt: five?.f.fullAt, weekFullAt: week?.f.fullAt,
+        talks: input.talks, lastFrameAt: input.lastFrameAt,
+        layout: L, moves: input.moves, relayout: input.relayout, settled: input.settled, theme: THEME,
+      },
+      lite,
+      squeeze,
+      cap,
+    )
+    const base =
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice">` +
+      `<style>${STYLE}</style><defs><clipPath id="o-pane"><rect width="${W}" height="${H}" rx="4"/></clipPath>${parts.defs}<!--ac--><!--sp--></defs>` +
+      `<rect x="-2" y="-2" width="${W + 4}" height="${H + 4}" fill="${bg}"/>` +
+      `<g clip-path="url(#o-pane)"><g transform="scale(${L.s})"${motion ? '' : ' class="still"'}>${parts.body}</g></g></svg>`
 
-  // —— header: the name, the model at work, the state ——
-  parts.push(`<g>${starburst(PAD + 11, PAD + 13, 9, C.claude)}</g>`)
-  parts.push(text(PAD + 28, PAD + 20, 'Claude Ofis', 19, C.text, `${SERIF} font-weight="500"`))
-  const EFFORT: Record<string, string> = { low: 'düşük', medium: 'orta', high: 'yüksek', xhigh: 'çok yüksek', max: 'en yüksek' }
-  const chips: Array<[string, string]> = [
-    [busy ? 'ÇALIŞIYOR' : 'BOŞTA', busy ? C.green : C.dim],
-    [`${prettyModel(turn.model)}${turn.effort ? ` · ${EFFORT[turn.effort] ?? turn.effort}` : ''}`, C.orange],
-    [`${team.filter(w => w.endedAt === undefined).length} ajan`, C.violet],
-  ]
-  const chipW = (label: string, first: boolean) => label.length * 7.9 + (first ? 30 : 22)
-  while (chips.length > 1 && chips.reduce((s, [l], i) => s + chipW(l, i === 0) + 6, 0) > W - 2 * PAD - 150) chips.splice(chips.length - 1, 1)
-  let cx = W - PAD
-  for (let i = chips.length - 1; i >= 0; i--) {
-    const [label, color] = chips[i] as [string, string]
-    const cw = chipW(label, i === 0)
-    cx -= cw
-    parts.push(`<rect x="${n1(cx)}" y="${PAD + 2}" width="${n1(cw)}" height="22" rx="11" fill="${color}" fill-opacity=".12" stroke="${color}" stroke-opacity=".35"/>`)
-    if (i === 0) {
-      parts.push(`<circle cx="${n1(cx + 12)}" cy="${PAD + 13}" r="3.5" fill="${color}"${busy ? ' style="animation:pulse 1.4s infinite"' : ''}/>`)
-      parts.push(text(cx + 21, PAD + 17, label, 11, color, `${SANS} font-weight="800" letter-spacing="1"`))
-    } else {
-      parts.push(text(cx + 10, PAD + 17, label, 11, color, `${SANS} font-weight="700"`))
-    }
-    cx -= 6
+    return { base, acts: parts.acts, dropped: parts.dropped, alt: parts.alt }
+  }, actCapFor(squeeze))
+
+  // who is at work, by model family: the biggest groups first (a tie keeps the family order)
+  const team = workers.filter(w => w.id !== 'boss')
+  const tally = new Map<MascotKind, number>()
+  for (const w of team.filter(x => x.endedAt === undefined)) {
+    const kind = mascotFor(w, false)
+    tally.set(kind, (tally.get(kind) ?? 0) + 1)
   }
-
-  // —— the gauges: context, both limits with their pace, the cost ——
-  const gy = PAD + 34
-  const cols = W >= 900 ? 4 : 2
-  const rows = cols === 4 ? 1 : 2
-  const gh = H >= 620 ? 96 : 82
-  const gw = (W - 2 * PAD - (cols - 1) * 10) / cols
-  const at = (i: number): [number, number] => [PAD + (i % cols) * (gw + 10), gy + Math.floor(i / cols) * (gh + 10)]
-  parts.push(ctxCard(...at(0), gw, gh, usage, input.autoCompact))
-  parts.push(limitCard(...at(1), gw, gh, '5 SAAT', five))
-  parts.push(limitCard(...at(2), gw, gh, 'HAFTALIK', week))
-  parts.push(costCard(...at(3), gw, gh, usage, stats, input.daily, now))
-  const sceneTop = gy + rows * gh + (rows - 1) * 10 + GAP
-
-  // —— the office: as large as fits both ways, centred, never cut ——
-  const rowH = 22
-  const boxY = sceneTop
-  const boxW = W - 2 * PAD
-  const roomFor = H - PAD - boxY
-  // first as if the office had all the room above one ticker line
-  let boxH = Math.max(120, roomFor - 26 - GAP)
-  const deskCols = bestCols(workers, boxW - 12, boxH - 12)
-  const scene = sceneParts(
-    { workers, usage, turn, now, motion, stats, cols: deskCols, autoCompactAt: input.autoCompact?.isOn ? input.autoCompact.at : undefined, fiveFullAt: five?.f.fullAt, weekFullAt: week?.f.fullAt },
-    lite,
-  )
-  const sceneW = deskCols * 160
-  void sceneHeight
-  const scale = Math.min((boxW - 12) / sceneW, (boxH - 12) / scene.height)
-  const dw = sceneW * scale
-  const dh = scene.height * scale
-  // a tall, narrow pane leaves room under the office: the latest events fill it instead of a void
-  const spare = boxH - (dh + 12)
-  const feedRows = spare > 120 ? Math.min(14, Math.floor((spare - 40) / rowH)) : 0
-  if (feedRows > 0) boxH = Math.ceil(dh + 12)
-  parts.push(`<rect x="${PAD}" y="${boxY}" width="${boxW}" height="${boxH}" rx="14" fill="${C.panel}" stroke="${C.line}" filter="url(#h-lift)"/>`)
-
-  // —— below it: the latest events, one line when the office takes the height, a list when not ——
-  const listY = boxY + boxH + GAP
-  const listH = H - PAD - listY
-  const items = feed.slice(-Math.max(1, feedRows || 1)).reverse()
-  parts.push(`<rect x="${PAD}" y="${listY}" width="${W - 2 * PAD}" height="${n1(listH)}" rx="${feedRows ? 12 : 9}" fill="${C.panel}" stroke="${C.line}"/>`)
-  if (feedRows) parts.push(text(PAD + 14, listY + 20, 'SON OLAYLAR', 9.5, C.muted, `${SANS} font-weight="800" letter-spacing="1.4"`))
-  const firstY = feedRows ? listY + 42 : listY + n1(listH / 2) + 4
-  if (items.length === 0) parts.push(text(PAD + 12, firstY, 'Claude çalışınca olaylar burada görünür', 11.5, C.muted, SANS))
-  items.forEach((f, i) => {
-    const y = firstY + i * rowH
-    parts.push(`<g opacity="${n1(i === 0 ? 1 : Math.max(0.45, 1 - i * 0.05))}">`)
-    parts.push(text(PAD + 12, y, istanbul(f.t).text.slice(0, 5), 11, C.dim, MONO))
-    parts.push(text(PAD + 56, y, FEED_GLYPH[f.kind], 12, f.color, `${SANS} font-weight="800"`))
-    parts.push(text(PAD + 72, y, f.who, 11.5, f.color, `${SANS} font-weight="700"`))
-    const tx = PAD + 72 + Math.min(12, f.who.length) * 6.8 + 8
-    parts.push(text(tx, y, clip(f.text, fits(W - PAD - 12 - tx, 11.5)), 11.5, C.text, SANS))
-    parts.push(`</g>`)
-  })
-  parts.push(
-    `<g transform="translate(${n1(PAD + (boxW - dw) / 2)} ${n1(boxY + (boxH - dh) / 2)}) scale(${scale.toFixed(4)})"><clipPath id="h-sc"><rect width="${sceneW}" height="${scene.height}" rx="8"/></clipPath><g clip-path="url(#h-sc)">${scene.body}</g></g>`,
-  )
-
-  const svg =
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">` +
-    `<style>${STYLE}</style><defs>${hudDefs()}<pattern id="h-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="6" fill="${C.amber}" opacity=".55"/></pattern>${scene.defs}</defs>` +
-    `<rect width="${W}" height="${H}" rx="16" fill="${C.bg}"/>` +
-    `<g class="${motion ? '' : 'still'}">${parts.join('')}</g></svg>`
-
+  const mix = [...tally.entries()].sort((a, b) => b[1] - a[1] || KIND_ORDER.indexOf(a[0]) - KIND_ORDER.indexOf(b[0]))
   const lim = (label: string, lf?: { pct: number; f: Forecast }) => (lf ? `${label} %${Math.round(lf.pct)} (${lf.f.line})` : '')
-  const alt = [scene.alt, `Bağlam %${Math.round(usage.ctxPct ?? 0)}.`, lim('5 saat', five), lim('Haftalık', week)].filter(Boolean).join(' ')
+  const crewAlt = mix.length > 0 ? `Ekip: ${mix.map(([kind, n]) => `${n} ${kindName(kind)}`).join(', ')}.` : ''
+  const chatter = input.talks ? input.talks.filter(t => now - t.t <= 60_000 && t.t <= now).length : undefined
+  const chatAlt = chatter === undefined ? '' : chatter > 0 ? `Son 60 sn'de ${chatter} mesajlaşma.` : `Son 60 sn'de mesajlaşma yok.`
+  const alt = [scene.alt, `Bağlam %${Math.round(usage.ctxPct ?? 0)}.`, lim('5 saat', five), lim('Haftalık', week), crewAlt, chatAlt].filter(Boolean).join(' ')
 
-  return { svg, alt, width: W, height: H }
+  // (the characters, the activities and the icons went in last, only as many as fit under the surface's limit)
+  return { svg: scene.svg, alt, width: W, height: H, lite, dropped: scene.dropped }
 }
 
 // —— the context tab: the window by category, in the same style ——
@@ -355,6 +238,21 @@ export const CATEGORY_COLORS = ['#FF8B5E', '#22D3EE', '#A78BFA', '#34D399', '#FB
 
 export function categoryName(name: string): string {
   return CATEGORY_TR[name] ?? name
+}
+
+const hudDefs = () => `
+<filter id="h-glow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="0" stdDeviation="0" flood-opacity="0"/></filter>
+<filter id="h-lift" x="-5%" y="-5%" width="110%" height="120%"><feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-color="#000" flood-opacity="${C === DARK ? 0.35 : 0.06}"/></filter>`
+
+/** A card: paper or graphite, a hairline edge, a small-caps title with a clay mark. */
+function panel(x: number, y: number, w: number, h: number, title?: string, accent = C.claude): string {
+  let out = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="14" fill="${C.panel}" stroke="${C.line}" stroke-width="1" filter="url(#h-lift)"/>`
+  if (title) {
+    out += `<rect x="${x + 18}" y="${y + 15}" width="3" height="11" rx="1.5" fill="${accent}"/>`
+    out += text(x + 28, y + 24.5, title, 10.5, C.muted, `${SANS} font-weight="700" letter-spacing="1.5"`)
+  }
+
+  return out
 }
 
 export function breakdownHud(b: Breakdown, width: number): { svg: string; alt: string; width: number; height: number } {

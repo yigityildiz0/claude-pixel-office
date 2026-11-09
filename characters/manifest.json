@@ -1,0 +1,827 @@
+{
+  "_aciklama": "Piksel Ofis karakter manifesti. Her serit yatay PNG (n kare x w genislik, h yukseklik), b64 = data:image/png;base64, sonrasi icerik. Ekran boyu = w*olcek x h*olcek; image-rendering:pixelated. anker sahnede zemine oturan nokta (kare koordinati, olcekten once).",
+  "_kaynak_notu": "Karakterler gorsel uretim araci ile uretildi, MIT lisansli; hicbir sirket maskotundan turetilmedi. EVREN ozgun tasarimdir, resmi logo degildir.",
+  "model_eslesme": {
+    "boss": "pofu-boss",
+    "opus": "pofu-opus",
+    "sonnet": "pofu-sonnet",
+    "haiku": "pofu-haiku",
+    "claude (diger)": "pofu",
+    "gpt-sol": "gunes",
+    "gpt-terra": "dunya",
+    "gpt-luna": "ay",
+    "gemini-flash": "yildiz",
+    "gemini-argon": "kristal",
+    "evren": "evren",
+    "bilinmeyen": "diger"
+  },
+  "karakterler": {
+    "pofu": {
+      "w": 36,
+      "h": 34,
+      "olcek_onerisi": 2,
+      "anker": {
+        "x": 14,
+        "y": 34
+      },
+      "durumlar": {
+        "idle": {
+          "n": 6,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAElBMVEUAAAAyHTb7pGnVZ0/ybJL/99dzaXyYAAAAAXRSTlMAQObYZgAAAZ9JREFUeNrtlkFywyAMRcUNEJoegK9cANQLNPX9z9SFQ0yQTZx2pquwfKP/LIyGgei93uu93utPiyNR4P8hoRYi0dgRZKL0jJSReI8jFJCZEx6KMvMgcgT7BFNCJArU8rB9AOA5EU+cx5NV1KOQACDH18hRiw8fCwCAfrP8KxJOkBbrGkhaAa1zsqay8/DMTMkEMMndH/pg4IO3f7RD6irqJsR5dkioTgRmgLnOSLUKqCFOPI6cU3uSV5LKWINJirgV8XYcX1I1y3YgnkiuGUjYPuY9nlDCdzXTz7sopMtyzYLl2vbvCSUsMMXSN/Rdq3Yeb76J0mUTMS4LACzXNkeehNpSGo88nlAAVtF9aBNuk5ZbS57Ilro3NHq8eUcUShtriUckKcaG9HmLJLmJ2lkHuYm0xCMiBUPKezzZRFbi4+UAK3REQhpT3rNjPlbrCYLXSLvA1Hi4P83iMRGXklbDx+bbLae92tbUlPjUCUIkBjXr9kpiZs9JrY44z2imwGJWOP6dmFlhntWcejvskbJH5MkbJKwPruieYFMSXic/cfCcL6Ct24QAAAAASUVORK5CYII="
+        },
+        "walk": {
+          "n": 4,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAElBMVEUAAAAyHTb7pGnVZ0/ybJL/99dzaXyYAAAAAXRSTlMAQObYZgAAAaBJREFUeNrtlcGR7DAIRCEDN4qA1k9AIgJPTQKbfzL/YI8s5Nmp2uvW6viqG4QFWOTv/J3fe7CJYCW6EHmjWYj2JsptJoSUG8GNaN1SIDpWm8N+TESLk9huJGnCWbG66lJaIZmzvSf1MxGQJP1OJlX5TjOHNtJtDq5GeqykxnzJOxEliS+2r4V0z6Tt3T1rfCYCkgAbUh1A95WYf9KorYFOMolOYv5BI9pJ7qUHEqk34pha4kWmBlCS/56PZvtM+I542dObPR/tImIHIvf01M8HuW8L6fvq6kOj5mRum0HChy2Y2kaN/SRtFFvIpNKOlVi1nEz7K9noNg3joSoj0Elq+GU7jH270h9X6qORivlhw+sB7CTxGmQ1740kqw1SuLjEcFQybFIOUmO7Pi3O0CO9o5NkTENT+2LT6CRrtC0PKCeiR2URefrIiJYWRI2Ipftr0tyICIIREdNmQ0REm1edRkRMFxJB1IWIIiLavJAVAApTttKAaR9qbSUCaUMWAkCfgitdxHI2EjZvMXMFLO9M4Py5XGQTydkU2BJRyKz5D5ksYWwJS38qAAAAAElFTkSuQmCC"
+        },
+        "wave": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAD1BMVEUAAAAyHTb7pGnVZ0/ybJJYhpZ1AAAAAXRSTlMAQObYZgAAAWdJREFUeNrt1UtywyAQBNCZG6jBF6DRBWByAhX3P1MWAgmQ40+yS5nlq56pMR9Z5LM+678uBUSA5bEs90R7EWUQOC6DQGd5mhHNAcnFZRBDnsvS3Mj82EhAkvi7qCPJYaKr5Oeytx6a/07E7RQmiaPkMaMts3Qz3kDecE6pBMgvsBd/EZC3TkQjQKJvVCU3AWa5Zk46e/sWSm3ma6M5IyKO8CQ8G2GXhCbK6EY5qtBtm1sLzVi20MrSV2EKnWSuhT6dIurWQt9ViWheyxbcWra6SUquZYuOhwi4li04lq39fsdWdeyIkhtJltjmdmQhyfU8bjeJslV1mZjrPcqVUOGUdtUY835vNKcaiscjdeGgS9k9WdqBVPGtkda7TkuYy96Sg+w4Wv+CXKtaKJ6Et2SZvgdmy/Qge/khQ+smEm/ZzLrW4i3HWeySsSkjCm9mwCTpIvZYRBnQPbUmeEmCPPpjUeAFGaq+AUhna7JNxE3NAAAAAElFTkSuQmCC"
+        },
+        "work": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAGFBMVEUAAAAyHTb7pGnVZ0/ybJL/99dLUnBp19Vf+RV3AAAAAXRSTlMAQObYZgAAAYJJREFUeNrt1EtywyAMBmBxAwRNvZboBcAnaMYX6cZXyPUrAQY/0kkb7zphkbG//MhgAwCv9mr/tqEFMHheDEcAz3YtdJDHGSVEtws9IVI3MOsTt5IeCe8lE8fzYjg3e1ZK6U3x58SkKBgxtOLGZfFktxlaZw4CJlyQ+YKph8YiYxd+LFIIhRAT/km4il1NthLtpb+A3wg4/nQp0BvTOTHuY7qS1x+7knhHeLqGg7QvIuth0u84tTXxnIDM0vFmcWG9lRfQukW/zSy3sW9bDI6SkOwli6hnQy0UXBNTM9zELZmQpXxZp10COrLD7ZYLBZRulGisIhnWrj3jmXRQxLSILgg5D2QagWDAweaJsIr3KymZ2MVnSS0joySc5/mLfYRhyM93kd+V0iLgQslgy8gINYM9A3I9K3kLdZA+YC4U4iItg1WMj1paMotovxKKFsqL1FQOdYGDmPGQ0Yvc+u5bpO+jg9zJgCuyOSKyrE6tmmG73rS7DNRlgEexP2fqn02+AZUHfW9ErLwNAAAAAElFTkSuQmCC"
+        },
+        "think": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAElBMVEUAAAAyHTb7pGnVZ0/ybJL/99dzaXyYAAAAAXRSTlMAQObYZgAAAZlJREFUeNrN1c2R2zAMhmGwAwFyA3ipBgimAXvcQA7pv5UcaFmwlLGzax8Wx2c+YMQfDUXW0lEib8qnBumftfQt+eggPYR02E70mXxu0M87tR9WOomU8Xn6NdEHKeEiVqeNhrjs5SHDXqREVY06iYiOcyzhquGyEztmsogogKa2b4oYQF7IN6WEUt3y+n8p1XuWrtTzvM/8zl0ynxR3a9sxzifFz5bu2ax7MVVcc9dK/lTaaynhBso4ySyepO4zVIOWRAq3mr4mthMpnIngkkOXg5yJcE3ihQiuaZAtk3ksJ+77ZpxosVyTLJO1mGTbEnMxj+XKtkmGGnghhUoAlyScAdcsymOm4NEAuy+3gOrDBpQAYK6WMmtoSvvoAHULVdsLAIYmGaGaB/m47VvIx+i2SYxEysQI+TbImAHouoZ0pgG0u/Rx1lG3jIHmLpHbUmvfnhSwg4x6EIPaDxcy0U36QWo8ydyOpB7aXsitq03pzw7ovbdXUv+VyS9R0d572jQRPUj5D5FCUzXyN6I70YOUg0gZT830lvwFv4aZFsm9D90AAAAASUVORK5CYII="
+        },
+        "read": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAGFBMVEUAAAAyHTb7pGnVZ0/ybJL/99dLUnBp19Vf+RV3AAAAAXRSTlMAQObYZgAAAW9JREFUeNrt1E2SgyAQBWC4AQ2TyZpmLgDeYMoL5AjZJGs3ev156ow0amlMNrMIVaYqXz1+bBCl3u3d/lvTZnyOiypE2aiU888IFaKTJ7Js5hIOCsZm5lTOFkALSTuiCL2YXhedeiqXvS5eip2L0jw0syX0QGYoUVmSpbgHMnpBk5gj8rdGscoDklgORMSenAxBQimRUv9sZPD6Jwx0sXkrieOFQ2055ow/WcyWMxBkvkUGVYvYExxtn8WvCp6NDKpWc2W9liFjK8sfk+jhTxQZPWTcV52rjarVHHDWp++mj1uIZiGaB+Eyg64sBiJKAaXLoWcEFO5dc+4aOdsgVyHLTDiXgretYtd0ratyjebSZ+7tIEb0KgSbbcMd3XC9TJJ8LywEmXZFGiEY3I8DmW1pd0Tp+IkX6ciZbWl3BIc00rUlFzdEQ243iFmIvI+oIleRvH3WJK4KFRcbUfH1jUJS3JghedXNe2FF5vfnBfkBOWl670KxSK0AAAAASUVORK5CYII="
+        },
+        "wait": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAGFBMVEUAAAAyHTb7pGnVZ0/ybJL/z0B9xPWWYjiMzZXRAAAAAXRSTlMAQObYZgAAAYlJREFUeNqtlNGxgyAQRaEDdrUBVhsAKnhOWrCFtJD23xJNvEKijpEPZzxz9goLaAyORx4XkOuC7uM43tfEjKYkZpdcF6RJp0iVc13QBzIeIHXVZUH1JA+R8X5xEJExlnAjyb3JWJLXEamJjd4Y7twSNBEPQeDMZTXJr0Qxo9dhV0mJx+PPSrhyVkQnKToIy84Rwxl5bN85YuU5XEk6t+8gMc2EQkXogBMwiKL0hLPU7qvCSCRoJUGZdl/kDx0biKWdtm0mkUm6ljwQIS+6TUBaDULHWK9BgWC5VkhfqUGSUUcMJBROLtPGNqsg3+SlrYK87lKIG44u/ybM/W1pUqMkRmmXTrL0QxfkNmw45pkRMYhzBXuLpB8kYVD+vI/ozOcBzoR2dsivvJADjkpxUrqqDMi+o4gn5BfpDNFfyvy19DokbxIqsuEss0xvQvOsExVO98Fx5e1LyX0v++okDIpTVXAlSW7fCXD9m5iTE22S9MXB228pZcf9Sp73j3j906ITRLPd/PiB/APXlKy5flq+oAAAAABJRU5ErkJggg=="
+        },
+        "done": {
+          "n": 6,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAGFBMVEUAAAAyHTb7pGnVZ0/ybJL/99c2sWP/z0A+fXXGAAAAAXRSTlMAQObYZgAAAg1JREFUeNq9lY2R4yAMhaEDfrYBxDYAruB2toW04BbS/knYYBwJ7LuZhJ3NzzdPT0+EEKXUU7W1ris9vY98tNnz8ewIsfeRzzZTZ/JY30k+26z/EJGsHyFzkTblf0r+qdmDyCoTl5TyaU7u+AiIUivTEZ2DtQ7MjPAqqdkuUsesmFjZ0BMHAPmClKpkOsKdd9HJiFLHvsyiNVg1JS6WWVn7U7MqajcYki11R8j6kmTI8ezz6iyIaupGNJRlZoRXCc6HqK2Wuip88CjJYUJqlekId+bWdkttq0zjywDB+zAmdD7rrENnZatIH0aUOmVbCzUsiSTOjwmehi1iGDurYgwQIThbjYJN9NY1a3zlkgsaJsS6hDuC22vNyBkn9Zso1UyYp+yjg2ia6A+C768jNiMePB0GiAHSyJlOVYoZ/47ddkFtqZv1fvS6D4QRnOIXlowPtZngjHMYl0nUzpFGgjZfE2tOdLFw379tPwTnsiFF1M0RBtZxQjwNRSuNnavo5/g+jOeINwiYsfMhstdGyw0itBeapcuyuFwTqVlizaK9TL3cINKsfLIlvdw7Xert3omHRCCTrRZE9qVZl1rZhd4v3Z3KCI/Ine/Noe1CzmZGapWZOHORKj6nOei+PO5KmeyzppmzsEXSHGZ/mJHXKu4sWVNqf/plurF4FXeWrFnqW834rELo/7K+tc7OfwFve1Zyq8kh9wAAAABJRU5ErkJggg=="
+        },
+        "fail": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAGFBMVEUAAAAyHTb7pGnVZ0/ybJL/99flSE19xPUVUKBAAAAAAXRSTlMAQObYZgAAAf5JREFUeNrNlc2R5CAMhZsMkKgJANgEgAhmMtjDpuAUnP4+hAHJXXPYWh+GLh/8Svr0g6x+vcw5juP1hPIY6PiD3wPKgyAoxwPKg6Af16MfM0dE4/nf42ok4uyVQngh/88kzq3VqNHJ4ykmWs/YsPuLs3VQwiEDKhSSySjc2a6HNnW8HHdQHNK5lEsYCkBElKKy0Q05r/hyNEgJ06hCMW6h2xRtwxlaY9FOkSTFGf4NdL6BLoU/0KQPiksSp5ubYp/nvY5LqSgeHRC/AcqRU/60Rps9lDBARaNjB3FaRiHiDQ+9xd82aAjYucatUPpMkaPbA8BZQHq0KP/m9Isq7dvvDfnS949UmNi/OK5xQIq47jUA3agnWWjZIEU0JJtpY2SEFOeQyFw7vHreRo7jlaRfA1pGQ8pGr+OnEl0uFgSfVDMtG4RHejo80Hlg6oTjPmSyk44GtkkSRXKvlBVoXuT04zTJysi73FL8mpKkiC/d7RxdvhxL9RNURAgbhP6IFU9pBuO666ch5Ua7fFFolwZmn8hYd9ZXHcE0coBWjjTilb1+MNgs1c+xmTY3I+Es0DX9uRW9jgaIvq2jG4HUmnJzTcDNLF8xUuEJRkYRrXOUEkQwO5OCSN7s51ZquS1WYr1Z8bGR+dQuKSmpfzEUkln1Y40rkPw32T+oN+nm9Rc736vZ2Je9mAAAAABJRU5ErkJggg=="
+        },
+        "run": {
+          "n": 4,
+          "fps": 12,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAElBMVEUAAAAyHTb7pGnVZ0/ybJL/99dzaXyYAAAAAXRSTlMAQObYZgAAAcNJREFUeNrtldGR3SAMRaEDBBVIpAFQBc6kgf2g/1YisA0S3rzd7OzkK5p5H+/M1ZWEhe3c//iH0Vr7AHxO821Gn/H+av2vGX1vQJDfTvxG3DuajfhanKegCYFLDwIP4nMwRoSwpyHEvybOJySC8CBGw0gZ9qy8jZZIInxM8msis/fAJ1Gq9CeNto7yP2rzQXgnmXWTTyKnJufxRuVtIxUtKUdFtBrUZPQIQAXMHAAVdxLxlab3aI0uokQXifhCI+so6EiVwZD8IAhqJW6iFqAP++PXzxIPTeg9gukwz0w0i7h4IunKPOpBwkbqsWfVqfERiezaTMI405jM2sgR1YuUOWwiMipfYScxR1vM17vY3DbPkU5VmkYXyYwr7UysYZU/W6pzkVLEMw3uBxAvwvdFlvFrGZo4SaIty0U4J5lpLp0kc1hHC5f1LI8wOmJ1aXLd0jyPReIS7AUlRfw5GbO9fZ0U84LIzLxtfzaaB2kOWGx4TdaJRFmvuiZNDhR0Vjaki2CkUVBEIlFZGgepwDpX13wuSYor4lqinldvcyG+L1Asy7n1SyJ3VmVFlHIxqx6bH75qMiH9SwNOGwEEQ8bXapHfxk15VLL5ygEAAAAASUVORK5CYII="
+        }
+      },
+      "model": "Claude (genel)",
+      "yon": "walk saga bakar; simgeli durumlari aynalama",
+      "simgeler_spritta": {
+        "work": "Kucuk laptop/klavye ve yaninda soyut kod ekrani; eller sirayla vurur.",
+        "think": "Sag ustte ortak dusunce balonu, 1-3 nokta; el cenede.",
+        "read": "gorsel uretim araci kaynagindaki acik kitap; gozler asagida.",
+        "wait": "Sag ustte 2px modullu kum saati, bakis yonu degisir.",
+        "done": "Yesil onay kuresi ve parilti; yapilandirilmis ziplama egrisi, yay gozler.",
+        "fail": "Kirmizi X rozeti ve mavi ter; kasitli 1px sarsilma/cokme.",
+        "run": "Yuruyusten turetilen hizli dongu; 2px hiz cizgileri ve toz."
+      }
+    },
+    "pofu-opus": {
+      "w": 36,
+      "h": 34,
+      "olcek_onerisi": 2,
+      "anker": {
+        "x": 14,
+        "y": 34
+      },
+      "durumlar": {
+        "idle": {
+          "n": 6,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAFVBMVEUAAAAyHTb7pGnVZ0/ybJL/99f/z0A/g2HTAAAAAXRSTlMAQObYZgAAAdhJREFUeNrtlkFuwyAQReEGDJa9Z4jYY9TsW+UKPYBdlfsfoQO2YwI2cVK1q4zkLF48zx8ZRmbsVa961at+VSAY4/A/hPeKMYkiIagEk/oeYRkJngZFzRzaAGR2kwWp6iR2aVH1FITSaES0N8vHgwTqnpLQ0jPEZSA3qXdIutbSs0E4xhJZ6IcJP0CY9COi8UmAbugQh07ViJxEKTHRo2pmfn4j0XerEvIJo2nbQVSI8R7R+3El3Xf0DBUzoRa8b+FrbfNAhK4aMa4fjXbJw0pPQTZEYIDWQVeF8GHq6h6KyBoDTRTB+joG32t6S2qfNAb1aHo828RDgSyMdt/MpPJeanoD6rqpFUF5EtdDXJKwG4xT3oxJIO+J+CRibiaRCCK1jh6gP8NeE3I5IiXh/ek8KmmGD30NFLJIvOBKcnMQTbPgevqk7iNRaolUEjqtF8wC4XsgF0wiZuYgmk/MIuJ2JroRe0TquSkNlHlKwhq1iKRNB1EgVuyRxmLWtUEK8ypyVtwOByJsj5RdR0hFrQ8QfIwsE1U7yOanc2KfNEVXSUoz7eKJJGo3mauk7DpAKJKLHpuSWHdI9Ni6Jyf0RUIqC+IJ4jbugVrXoW+HLWKf6KLni/nnj8kPLJas+xwmXk4AAAAASUVORK5CYII="
+        },
+        "walk": {
+          "n": 4,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiCAMAAACHmqD0AAAAElBMVEUAAAAyHTb7pGnVZ0//99f/z0C8H2tUAAAAAXRSTlMAQObYZgAAAdBJREFUeNrtl83SrDAIRHNoef9XvouYH0dAv+Wtkk2mak51Q4wEW/viiy+++OJ/CeBcHxkqpk0dnpDaS2a01uhLzJjxxIw/kYnc69RRqWMCsELIzDpSJK1n6I1OA5nUsyoZq5m+1WYmFTodKXV6aWZl9dgjs+nkO/3Cqy2vlDrzcTc7D1OZT5oRL7za8HI3M8eLfIS7mXMU+UwhirpyZOi4OA435zg8zZmKaTPpAzfnoEKedNzhwN0h2KJRO5Ayo7ApdNyhF8g8QN3MLDIbD94FuJVJDyEPmiPcEM9PmTvel/ywursrZtab4ZAckKWTIkuHsxnTSqZhQCuSpnfhCGJ7vVCic4Hid3rvQP03lGYNk+5uERLpzNIYa8HMNXLTyDbuMgFCYKa9VUUNCz0zDdkvpQDZW2dC2cr7JHRPiG1zQqYNYqMiHf143fcRcS1NIkyaKxM9sauSuCc9Lt9NJ+gNXL0CM2lnFN7l9AmmTFrGdrcmM8HPc8/MLkjI6I86CXOhlJmxA6quxHc6eV1rQNEwI2a0AFIhbViG2GLy6Z1pJiNjeqiaY7ZI53JmXeX4fkY2fM0RmHw8W8O5spw3q3KoZH2apMPg+sCpP5WgYmqnf4O3DAWd2cFwAAAAAElFTkSuQmCC"
+        },
+        "wave": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAFVBMVEUAAAAyHTb7pGnVZ0/ybJL/99f/z0A/g2HTAAAAAXRSTlMAQObYZgAAAX9JREFUeNrt1EFywyAMBVBxAwvG3vOZYQ+a5gC9Qw4QOuX+R+jCgAGnTdNuuqgXWbz5UsAji+j/+X/+2sNERMtJ+FlRcSHi0HVSwkQsy5yRLzOkYJk1lt8KqWgB7cYQ3Fw2Z6IFxkZkAGC8/0m+k1ERAMZ/A4DxRI8ze+uheZEwHehBRumcgZztWZZnMqT8dUv+ZU1HmV9N8i/XXq5r8u+jmLGKVF4555XzMsulCvPbnOE3noSMZ06e+ejdJNQ3zXkUInMpctxW+7ABt62FuIipIQV3KRKmKtM3slsyxt/QygK2FIK/vdaQBnIy4ciQ0sjJSCek4kLaRUt1bhVgi9Qp4TiJ0qcMGdh9RttMaKDKcaRRFO5k3D6isO1uBQ4hXcTF0kiHKu0D1DZWOpV9LqqJqY1UmXVI20gtFPgJaSThczHfyNSQO0j9SOoWEek+0ZPs7/GUgUi/IgSQx+KcSLfYa6ZfUWxEAvNDka9lX+NmWFH3he+I7RvxUn6eERrlA7tBeeT0c2ZTAAAAAElFTkSuQmCC"
+        },
+        "work": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAGFBMVEUAAAAyHTb7pGnVZ0//99dLUnBp19X/z0CE7XLMAAAAAXRSTlMAQObYZgAAAbVJREFUeNrtlLFuwyAQQI8/4I7UnTkGzzhD5nxCh/xC97iV+P0eGAzGVtSmW9WTiMTL48BwAPAf//FnAzWAwt8TxR6AnG6JBTCsO6cjvRMRInXSEyTmlcAd8T8linYoEat754Bsdo1TbJbdE/wGAQoz8xjsM2RuiBo/TyztY02uLkJ4S+470jugwgmDtLlKo/TG03VDruJcm0TLqOsmEeKHtIAtCbGtB2Bi79KS1amnbUZ8nRlx9g3BmX1DKJE71i1Jo8bWAbIhTC4EsvXwD4l97KhJA3ljQZUqUfIn2Q2Zjgk1JJZ6Khu9lnsmYnaEcUfqqHgdlxpdi0tqPxFcryRmh3eObxI58kVCxHKJmB25RERER7ZxdL5D1VkSTU6wQ7J6eH+Pw6STlmgLkcmiI5/mMiG2ZuvIp6G8ByijLQw46PT9HAmZSrLjK6FEptWJTxrebrc3Nh6GIc0/eX6JaCrkwJEtig5WJ+7kLaKzhrxIYzElcr6Q4hjMRJGPqVsHlEmS8RqWjSzk7RHBc0vy4eaot6+QeiF35MABWkh9/WWTEmlerexUorgncbb62xL1iKhlKSv5Au3Li6U96D5NAAAAAElFTkSuQmCC"
+        },
+        "think": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAFVBMVEUAAAAyHTb7pGnVZ0/ybJL/99f/z0A/g2HTAAAAAXRSTlMAQObYZgAAAYJJREFUeNrN1FFugzAMBmBzgzjVeLfReE/QDrAj8NADgDTuf4Q5yQIm6WhV+tA8oOrTb9chEQB5YVoAJ+VVjfCaF56SlzbCKoTJCsEjeV2j9zu1N1toAJo0Hp6RxhOAJbPRvwJHItQhpjJM5yghRF9JKsvCMaNEfrAs1PScQLtwv0x6yOek+Rnn5drqN/I5zv24E8n0+8xXmYH2Y1yma6tuVZSxFjsVsquCFnGesCUl7pbQnUzjl5Z7XNJpbzJpsbczWuQcw+qZjZI5otlnjkUI2Xt5qBBVEjJUi1WNLgTW+fBYhU0pMWNqaXgVsIyWmWSMTb59KVWGwuZkIlL78CRm1+1KwmEh5F2ULotn6y67lxQbB+hUme38XuqMtCUtgTrLMbk1kglEnCqjmFEi2yBdJVeE04gD5hBe0v+7VXJmEyeNUUv47MZMN6C6IzZKndkkvUQl+Wopek7CAUQpQzt5IBPuXxSnxD8gVRU0Q1zmrMiUTr7HbI4F72bkuM3f44T8AuUApkbp1NCeAAAAAElFTkSuQmCC"
+        },
+        "read": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAGFBMVEUAAAAyHTb7pGnVZ0//99dLUnBp19X/z0CE7XLMAAAAAXRSTlMAQObYZgAAAVtJREFUeNrt1LlywyAUBVD4A67wUoMK1YgitWf8Ay7i3oXoTQr9fh7yogdybCXqMmZsFWcuD7FJiHd7t3/bgMt/qYjKAFWtRpBtEjORB5m8kKVmlotAIiwXOdTOX3sY7blUpQhph6aWitAXMsX0fy2i6ntr+2jYW5ci5oj8iDY2thkXSTYTuWas+rkXdQP6HjqqTL4eCJ5liFa7aPbbeN9KJDnvt+P4mGTuvRRbtTNsg+24bo8lvsjQBUk7YMR43K8ieTdF0kwzTFK8cslv6zZL2lLSwQLaGrgfrr8JUb0JJ/qxkDmG3SocmNTrlMlkkwsdbO+OpxC0H+fvXehCl8txIkUm3T4q1LH7J6uaup2YgDKllJmhGxVqeSGTxm/L0s8zQjqafwjwiktHol/LQbPrr9360EE7Lvjs4CeSZ9aFCAkP7aH4d70UOUNoKx2g84/WHEEhVFtdHwvkG4wFf26bn3XeAAAAAElFTkSuQmCC"
+        },
+        "wait": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAG1BMVEUAAAAyHTb7pGnVZ0/ybJL/99f/z0B9xPWWYjjNJ+nPAAAAAXRSTlMAQObYZgAAAaRJREFUeNqt1D1ygzAQBWDpBiwE9RIJPTCTPk4uQGH3yJO9gq+QY2fFn1bIxgyGwsU3b9+AWCMEv/7cdYAcV3RDxFsoAsVSxFM5roiadknUc1zRHcENEk8dVhTf5CbB28FFkAghgb9IJriUaUVikbUWItWsaJTEF7HMOBYLUQFQu7Fp2Sl0T/qxRSb4i4ChCzjtE5E6qvjxZU40lzgTi3RiiuS5mNWMUGhNiZaVZ4hLMT11XmDIACvK20/zC5Y9ifpobXlWTNISLhbzlmVoJMzI31ZhDqWe71KqvMXrOeu8UNEZu/yykhGyA2U6KP0ByBLAXkm9mJHCTAmKHRIRGlSWj6EyZYdBUddTkLFBhs7xi47//c2/ysy4HdGSiz4RfTPR7v1TBtg+JGmVEs3nRhtMkgx/gDlTgPk5rWRkbbTbiHTeEpL+joCLNsHe+Mx8SOOqUWYe2yVE6UDah/YIfVLqgSpIHkv6VOa7LJpZIJLpSZqVqYmatdBDaaKighfVe4R2q3bNTRVKsUHCKSGb/kpeFXq2ir7H4Udri8BC6FUm488L8g9HaMan8bT2RAAAAABJRU5ErkJggg=="
+        },
+        "done": {
+          "n": 6,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAGFBMVEUAAAAyHTb7pGnVZ0/ybJL/99f/z0A2sWNxWuwBAAAAAXRSTlMAQObYZgAAAgNJREFUeNq9lV2upCAQRosdWJj4zkfiO5DcJcwOXIDehC2w/XlAEeVn7ElaHjrpk6pTX2HHJiJP6YQQiL5JXh3mF5+REL5J3h1GV7KEb5J3h+UPMSwhvEJeHraEJVyLTsJMxNwnTzxPioRVzFIPPfLRMDp33VNnRAKA6pOyqzTX1DF1LgKAS01JpGKWGPrjpY5F6Q1GEhZWZe80MW2A75Oyq2KORTpHR2pKPwbvt9n7oUPKrpr5LEpHAphV+ip40nLzZjZtUnZVzSQ3YF6Hs2RPzUeZALPxv+NkeGgRIpF2bZqJj6JMrcdtNj+MpJ43bDNm2SZEscuatpmEZi232fysNokUG/87jqda4o+31q/oEJ5i15q2L8zEmIzxfhzNcbnC7qmhh/Q0BqmkIqmoRQTG2GWO8aWZBLCrcap9TJ3UAgoA+Lyzgghg8hb5rqVZWEwe8CtUQopi6ky9nzYR9ug67qNiJnkUZXtwsUc8ukPGo8u0zR31Z8NqXXfzR2r3gPTGfzJMu3+TZ8Me7OEekO6u7aIsdfzz0s5Qmzy56lqRvacmtoB2LnunFmTv0t1hMWN1jyzR6JzLQYU0tr+Yd5T3sQPcZQ8Bs/8Ntgm7+/al+bgQ00steNg/esQ5l999xUzC3YsE1C31kyNgmMfL9oU5qq9FRepHw8pdCzPRf6kfnav5L+idf3By+pVfAAAAAElFTkSuQmCC"
+        },
+        "fail": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiCAMAAACHmqD0AAAAGFBMVEUAAAAyHTb7pGnVZ0//99f/z0DlSE19xPV1HRsgAAAAAXRSTlMAQObYZgAAAhhJREFUeNrtlsGOgzAMRHnjDP3/P95DoHXAgWoPKw4bqWpVRs7zxDFelou1ruu6rsvyFM3TgNa1tf55huaJQF1yHejvNE8E+q+hdnvP/vvQZwHsP5YHLEKCZVnYvivN/uAvmEEKgJBmu7E9QgouIt1if5UZaFtcAAXAJRAJm19L+sM3Uf7/9bpnTprt7M/YOc5EMsaRLUmyR6IcaMI8BJqpxs3uk7eNLdmEP9iv10eUwgyBsmbm46iprR40mNaw7NawKyDC7i7azlYfNotETb1ZSm0ShzCA7YBsUQayG1hya1hToNLHEai2ejwNm75b/zoDgWmduTXwLHttPtq2izhTybE8sC2Q7bI3Ikdidn1hwTH4SNGCHak8yg7S+wECRN0foGek2BKr2xXKPkaFjXq9XkjeQBEhsaACaJew/yoDoV6Mp7MfG8wooeyJ6SoWnSYxXwJtlaHdzzIz2VihrTxUAkWu/CiBMjMqXx/fnH2yeiJZkBiBTqrhptbteqdOPnJWvSWaSjqQRqAo4kTu+DEDyj5GDXRXHmPrlBQRx0Lr78MRKCZAMQAF54lhsDnqyj8CnbvHECeISf/4uB1RXY44Zg9xAxQV0EIus8LDj9UZiF+cxm7Ah6ZO/iiZdGr2HaMPc5eZzQMtRFrMBs/9+eV0+g41kRGKt2Y6e/Y+s+XH9QQ7l3yl6jeWbYCfz7lp8Oa3ku8DMZP8AJe5FSAmiLiPAAAAAElFTkSuQmCC"
+        }
+      },
+      "model": "Claude Opus",
+      "yon": "walk saga bakar; simgeli durumlari aynalama",
+      "simgeler_spritta": {
+        "work": "Kucuk laptop/klavye ve yaninda soyut kod ekrani; eller sirayla vurur.",
+        "think": "Sag ustte ortak dusunce balonu, 1-3 nokta; el cenede.",
+        "read": "gorsel uretim araci kaynagindaki acik kitap; gozler asagida.",
+        "wait": "Sag ustte 2px modullu kum saati, bakis yonu degisir.",
+        "done": "Yesil onay kuresi ve parilti; yapilandirilmis ziplama egrisi, yay gozler.",
+        "fail": "Kirmizi X rozeti ve mavi ter; kasitli 1px sarsilma/cokme."
+      }
+    },
+    "pofu-sonnet": {
+      "w": 36,
+      "h": 34,
+      "olcek_onerisi": 2,
+      "anker": {
+        "x": 14,
+        "y": 34
+      },
+      "durumlar": {
+        "idle": {
+          "n": 6,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAFVBMVEUAAAAyHTb7pGnVZ0/ybJL/99crSslnk6u1AAAAAXRSTlMAQObYZgAAAbRJREFUeNrtlrFygzAMQO2hnSX7yG77C4DmP8LAXoby/59QGeJgW9iQ9topGrjLi/QkhMlFiFe84hWv+G28Q07kGTIdE27GCzDyeUgkTixnOjAjXOYZmoGRESpEAs4zSkbeeFVklh2R+WvckmRHVfM0jrcyEcqsZDOpNiPcLKT1qImbBXIrE6HuoqFMuPnef0zujLVnZL2Pr6R9yzaUm2mziF40JORyRKQn6Yr0QoaaWaC1hjBuRDt9SKjKnSBZlVAf2tqrNhFpKK3BOrFLxORKOW3iYWY6aZSEaKIDshJbJa32c1vIPQ7K5n3RMmOd6JaqjHpqRI9UNqMF1TtDX9QI+i2qbY97npwIaejQKroEJOmDdB2RsBFOBD0IZTS1N4nH47ZoJtEyo68NartMZNHZCjH+iPgL5B4HJbMXLRGLwkmrkXWNcVXHPLl5RyTwnuVQlIh0oarD8yPSL8FDlN9sHz3qjDyq+lBVIZv5jLpG2meqAnIs6Q8Ivedr+z4+oOnQe4RXnSD0yvS+eyQisgRWScerjgk9SFK1CD8g/bNV/gVFVBb+g1B/8Jf0P9BZAswDRfM3V0qqqpcG8wgAAAAASUVORK5CYII="
+        },
+        "walk": {
+          "n": 4,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiCAMAAACHmqD0AAAAGFBMVEUAAAAyHTb7pGnVZ0/ybJL/99dp19UrSsm13pYpAAAAAXRSTlMAQObYZgAAAbpJREFUeNrtl0GWwyAMQ/lSGe5/41nQpKRjm7x5XZZVFr+S7AZMWvuu7/qu7/qucsGHID7kNcae4kNM7UVrjDGgNXonZZ5QyszSAVoj7wEwKgQMY4wxBr333kNIBzN673EiOHVIGBam8NLFq9cMWaB/MXEg74v3jdDvDP8rvjV89HHDUIZu6KLzb6Y1LHm+aum7iCWf0EZnw7DzQtKUshVTWJIkwHbCTB0ZwL7BZNvs8PpB4hFSJ9OZFe4Y8bNlNoUBqdkTqZmLjmLGK+OyMAFOhfTq9CeYO6FFQwgFf/6hczIPCh3QrGzHxC/sGXqeEn48KBgkWTUzN7d2jIFWBNJrA6SIlpaXXUx0/M7EOi+/JNFfxrPKtzz2mjoujEtlf3UaeuU+oD2jMBAlERYfBrpKmTsMQRftFXJUmDn7mOi0hvHSAEdmBq9WyUbEsOpE43dBFJ/mrJFjsyvjTEd+UfF4eetPdlJf4sRmrEQ9pe7p5MxCTbPEzadIcfNcrG54pZfcOcGfZiK9Kj8BifI+bTu/WOjworp0z9lyDLyMmSer5VJpjgVxw4ryQ+F8ypnjoW0+OYqr1+vnEfMLvKYOHtehF90AAAAASUVORK5CYII="
+        },
+        "wave": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiCAMAAACHmqD0AAAAGFBMVEUAAAAyHTb7pGnVZ0/ybJL/99dp19UrSsm13pYpAAAAAXRSTlMAQObYZgAAAcZJREFUeNrtl0t25CAQBCsyB3P/G88C0JeS8LMXXjRbRUemSgLZEZ/1WZ/1WX9rwR9jKgtM/RUm6kMYRECtQFDKHOxMhYhSSu4CKhE8jGB4kjBsqG1RSgadmZJ1efNcmBmEvMBoMLVkhb7JrBQqC4XIw7zAXEvPwqwxxswTgcasWfCkzMFTUybAbs+WDIkAubkohcRDR2rJmLOnpIwkyUC6OTrzBOFGPHlY8ASSh8tSFtYZmTkDkkeclJTW7smyAlFac75wUmhnCsjzF/9fHwBkpf3uCSToEHnYibml9V+Cx+PQStYCNJtj++mTCEl7ocwTrBRCEljeZn1PM+NSu/8b099nxnudhL1n9QG10Dbl5Pbpo7SYMlb3sHlgNqCRNfc0E9uuJpCubxGHS9pokrAH5HAphTo1Tge1rTu7fe0M8q11n+OO3D1I5piFPH34G7F3mjY6Mp7f/8XDZHO8enxJs7lt/FshY14KTT26ee6n9TXMNumH44GZFCIWst7CvFBoytwGnRywr1lnU8KcTF4Iy5gFTwTev60pwwKzfzZ/lNU+RB3I//zYGD8x/g1PP0LIzvIL4yfG6x5S5vA/Cw+t3xl+6vkP6IgPuEl2emMAAAAASUVORK5CYII="
+        },
+        "work": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAGFBMVEUAAAAyHTb7pGnVZ0//99dLUnBp19UrSsnc/biqAAAAAXRSTlMAQObYZgAAAaxJREFUeNrtlEtuwyAQhuEGzJDW6xl6AfAFWskXyMIHyCb7SJF8/Q7YMS81rZJNF0FyZL588xvGD6Ve4zX+4dCXR4gaOme4/E6gJ4sp52BgWUBP5g7RG/ksiE7kKwehX5blMmWkO6KQhCzTNBVkEHKY8tU0D21QRxRuZOqjc1CI0rULulZB0BFqo5WFIUnmHvGQSNGjSKpVS0ucFAIUJDiAmuBKivYjN0RZluHLsp5AR3RHFDpkJqS7hCT8A8nUzkfp6HCQ6x2A/kBcvkXYElkjCJLDPEcE+QbBSmxL5IBcRSspNssGgyOVt7sRcUvClWO7qniKFKogmbhgWpJEk4kmLKt04HRvgW992whBYNM6O5EJVmRrURzOFE+IDBxzGW0ON46k5aD0REg2AaTnS6QxrojJ7QQ5OqNcbHdC7cSvCNtx9IykT3BKG6ExEXsjNydkh8mPtSNdhHmej4xen89rGXFEEDJpHR1GfqudGB4lCEaf3hOyzkYJ3U42x1vYHfKNEz8RQmbrjd52qzuSHfWzE/+CvWNPEOlkBLZ615NDrXMsX+OWxOz8+zD5BkqJk1rRnl3ZAAAAAElFTkSuQmCC"
+        },
+        "think": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAFVBMVEUAAAAyHTb7pGnVZ0/ybJL/99crSslnk6u1AAAAAXRSTlMAQObYZgAAAW1JREFUeNrN1UFywyAMBVBxA4Sn3SPaA4BvkMkB2oUP4EV9/yNUhjoIkfG4cRZh+eajIEQSgG1hWQAn5VmFcNoWnpKnFsIuhMWU4J48r9DrTe311rwddQPTCRwQg4uihwTNssxvk83zxJx4RMDQ+7Is0/RdQ4Fl7qTNdLs4xPJTqBxy8FrMASm1mb66kO1EZILetT4qtlIaqswHpN0F5hPH9nWyRBbbZXaFrwTJYxLk4n1xuxlwfqCAhFLcKnFfBiXgKC9fT520HMoY+iBKdAlWSmIhqzN7wnS9BPpoQldiuTZy6YTaXTBQLAdH1QfVCxgIXdvJLeNF+87rEM+xlZC6DGHShSiHkhcjyuK8uNmSuXXCH0au2bVSPucoCpVt0euMEJdyoSr81ku/sf6lOHJK/jKjzPg2A2bImTCKiVBSci/jW9kGMNY3ajaxXcZ2GfldyyLpMQEzrivas8Lt+vUy7VnhCdj1x/yfYlr5BTSCsUWeQIy3AAAAAElFTkSuQmCC"
+        },
+        "read": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAG1BMVEUAAAAyHTb7pGnVZ0/ybJL/99dLUnBp19UrSsmBHX+uAAAAAXRSTlMAQObYZgAAAYRJREFUeNrt1EFugzAQBVC4gcdWCFsPuYBN1eyjXCALHyCKKtaoCmaZXTh2x0lbxoBomnRVxVI2T98fGHCS5Lme6z+vXIzkdIekkItUDOQ0EjEvKUDXdQvnBgLOiRukL5JFTuR4CPNr9a8kkbqbLPpBiuEuos9QLza/vZoNDSAPNym4QJDdIONGEmUShWhoK58/YjmSkIG5XYnEy9KPyp8VpagBEWQhZsQWJGY2E2hnCydRxFLHsrB4jMXZYsfkq9vi8GoQi6XrjzJsFz3sdqPlaoumFyG11PSp9q+IxGKU2eJll2ZFxQaRUyiiMaZcdMi8cFlZDD9etK6VWTY8ZI4kist6r0xWc1m+UeY9Ksq8r/yeh6bkOJLGc0lSjUtfNWi/P1uYkmogBVatr5mQXUO6fyPqWhTJRKahIs3OiAIKeSh7UtmZ5BDJJQPsjy3zrW+jw0ZT9GeaZSzV/mBmM69Z6yOhuyyNKksRC4xkkClLIOSnP3ykoFDcIfyEhGmL8MziIfkAAF2Y1wuoQZsAAAAASUVORK5CYII="
+        },
+        "wait": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAIVBMVEUAAAAyHTb7pGnVZ0/ybJL/99dp19UrSsn/z0B9xPWWYjiiS4g/AAAAAXRSTlMAQObYZgAAAZJJREFUeNqt1M1xwyAQBWDogIXx+Ay4AaRJ7vakAQ4qxIcMLdCCW0iVWWFJLOCxlEjc9M3jiR/ZjNHxM44D5LiiR4zxUQqLrBa2KscVYdO/pOk5ruiFxA3SzjqsqF3kJomP44vOor7I0Fx/aD6RaVYWDqEqyhJrIUWlcOAh3GHwy8f+lNMg1iTQWUzZM9IwDAtJHZJ4IudKeJp1GrB7LkrT7qloGrP4NRlfLxZSTSjJ93vhtn497hZStyjl3kh4JZ58BtxYwJFDTG0QaISpa2cu0hCSRhlzLUXfjFWFwJhxtMhL8wEGSOgTjPbSFdO80Sea0bgmLzUtAozhzLzXzuEjSCopAVR0lcEjwjVqafJOeHqEQhIpKha3D/REuPkyXXe50VArl5u1yFVGc1KkkCwG8yEt4rLgU4fsqowkJ4JLfg69TxbqrFgOpJKc0azO5L3J/kkqv802MmX6LFO3yyuCmWCfzKu0vXgj3XpmPoDe7RW8yVF6+JfQIt6Pw4m9Mv4ioPjWN4qrBG9AjH9UfxReyi8YNvEjFKmVkAAAAABJRU5ErkJggg=="
+        },
+        "done": {
+          "n": 6,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAG1BMVEUAAAAyHTb7pGnVZ0/ybJL/99crSsk2sWP/z0BMbj0IAAAAAXRSTlMAQObYZgAAAhpJREFUeNq9lU2S8iAQhmHx7dNQkz2NFwjcwPIA44L9uJhcIVfw2F9DDCHykzhVysbyqe6n3yZWZIzdWTzTNPmP95GPDru7e0I8ex/57DC2JW56J/nssPQhEpk+QnaLeLdPjg9znkxV0t/2yRFPAYXUkQCDcYR/rkVC15FhXs02u/Y/CeGCzOPNue86CWf8efbk5q2aUvdj331d12HYk/rXuWud5F0FcygafdHyUuHGp/5yroskqIl8N8jQP3XlZmqrqtc2AbtEhi638WRdiXq55rUtIqGgvwGwOpFqfOrKzSV1SE2PIwLgSGeArkEWz5U1Q89ql6YeKHUS0cAAqIFwldB8CdR1bZof6jQ1hNQy3hFHZTQqNEJViWd0QHYN80Nt7Xr9QiliIIReygRe0JjTGaM6JyDnrnXX3Ew/mblI4qrWSLmNicMkqRFPFxxYjZBn0EahgKWrYOaobSgyuKpPqA0mqcMN+dNVCYGT/36OnoKZ9piLUvXlHFInv5DZrOqE08WetaEuVTcHtfK3v4pEpn6soRsECts/m0siU1PbFjkQsaF+cZjZD31oDzan1kODHBkfUV6UDbMDq5P6MNsaFlOzrcnarkUeXc1hBbXM9uDS0hlYi9S21+0iHhLa9A8FFUDyHiyTsGvrqksXwubUKfFv0/TvrEB41lUwF9TCp8ZN0f6Zd8V26ILap+bAXjx5VyH039Svj/8Pf/uZmj+cHuAAAAAASUVORK5CYII="
+        },
+        "fail": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiCAMAAACHmqD0AAAAG1BMVEUAAAAyHTb7pGnVZ0/ybJL/99crSsnlSE19xPVnQ+iOAAAAAXRSTlMAQObYZgAAAeVJREFUeNrtl9luwyAQRT1ccPL/X1wPmw3M4qZS64ciRc7D0Z3DsMTZNmO88ti2pzBPE3q9UiqfZzBPFCqIHfR7zBOF/vdQcs/Z3x97epjQvpNzWd5BeGL7/mOEjsHVjscPkI4RPz9FSqE8KPEQCQeZMMoYfYJsFEIrtudiK3QDKRRGbSkoOMhQjeZq77eLNMbUbow1s55zUKp0E8IstElCdHZIEboaGULnws5In5mGXJiF6pjMzMonU1Y/UBtyscDLvyBzECRqYDICsxYXi4krIh1tF6Ec04cuJFJzMSloZg7ZKi4H5eORsxK7aUFwhQYfV+h4DNWuUweVJsbBeT3V1QlBC+pDQzITWweiSJUGnU1UjIgbWPsoa/NJrEhQZ8ZbKEYuxV9UIfDWR37oQeitJi2IHORc+L4BQLZzNFrtCwVXKCyDJIR7B9Qv2szisPZ6kI4U58FmpW44t70Y2br1URTqzjJyWwgmMWgDivZ5LcDaHxgbgPV9Z5I2hOg7E9OSxusMgNdF5bKicMWkw0jtdu0Qudta8sk/iVdEeWdk0bYWyMXNnBq1GQefdUShO0j9Kb8sPFmXTI3SXmLRB32MTJRciwlqS6EmUX9psH4VPGSg4AfBSOrd1f9R3EAmSv9LQRryBfebGbSREwjJAAAAAElFTkSuQmCC"
+        }
+      },
+      "model": "Claude Sonnet",
+      "yon": "walk saga bakar; simgeli durumlari aynalama",
+      "simgeler_spritta": {
+        "work": "Kucuk laptop/klavye ve yaninda soyut kod ekrani; eller sirayla vurur.",
+        "think": "Sag ustte ortak dusunce balonu, 1-3 nokta; el cenede.",
+        "read": "gorsel uretim araci kaynagindaki acik kitap; gozler asagida.",
+        "wait": "Sag ustte 2px modullu kum saati, bakis yonu degisir.",
+        "done": "Yesil onay kuresi ve parilti; yapilandirilmis ziplama egrisi, yay gozler.",
+        "fail": "Kirmizi X rozeti ve mavi ter; kasitli 1px sarsilma/cokme."
+      }
+    },
+    "pofu-haiku": {
+      "w": 36,
+      "h": 34,
+      "olcek_onerisi": 2,
+      "anker": {
+        "x": 14,
+        "y": 34
+      },
+      "durumlar": {
+        "idle": {
+          "n": 6,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAFVBMVEUAAAAyHTb7pGnVZ0/ybJL/99c2sWOyJukWAAAAAXRSTlMAQObYZgAAAVxJREFUeNrt1VFOwzAMBuBE4gB10gs46QWSXoBCxjsSF+Bl9z8C7lq0xIYkQzDxUEt7+WT/89J2Veqoo4466qj/UHrg8tAhcko/tnvUuJxZz/jSFDnVIxpO6TxweW8IwOntDGVPEsKTlcG0GOQSO4RN+TGZRg81weIKsh7AhboYR4JCQj1ZaUc1/Ejg1inaiArvIzrOJPkC2gEtHRvi2NraBed8ISJZaXyNbjF5E0L00BD5ZbhEz3J4srIU5IqgXUJNzEUslkILYS15vWXoiPImMz37OD3VZftlRc+aU/SIZGpKaCaN2QmltEZfz0jKPlUu9LVkyRREIS4PMptka0uRUz3yeaWz20jjRqYixu+C1wskpkSy0mEjO7Dr4YP6XjRsSTBURCb3RP+aKHuhGfgzNIea2H4B/gfm5+LJX3saIqc6hBaYqcJ9ZH30gb+H/kronbt98jdsW+Bm+QDtMG6AzpV8KwAAAABJRU5ErkJggg=="
+        },
+        "walk": {
+          "n": 4,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAGFBMVEUAAAAyHTb7pGnVZ0/ybJL/99dp19U2sWNga9SKAAAAAXRSTlMAQObYZgAAAUNJREFUeNrt1E1uwyAQBeCZG/DAUtc8egEgF3BkKetK7QF6g3bV63fhSPYMaZxtpbD89GYw5kfkOZ7jOf7lwCDzA5lRdHn5sjItP04wZG7I9HH5dvJ+wWHGi/K0zCUYmZaUxQlGMVUiMSPaUKteWKdBXEYkksz3Rf+QYHszR4YjKc1IInMj3PRTyp9W8JZnJ3OBzxjRRiJlOMEo+zLlKsHSHIkjyelWJpjFcilpcXLGXYlXCY7I+VDOHBrxdb/8RtqdjGUVmDKz/8ruM5rXRtveKn2dMpMky52MaF5t+yLNLHY25fqRZWtdWrciAkSSrNvS0lV2f6TCZeJQdV1/f0D252jMiJJk6e5kse8n0zZkms+IJpbe9ydL0Huv5oqipt7Nfai9WxEtAJK5kLHCPxGRMC+UEkMGQQSmN7CqoWAFsq/6BZ0cSVdCsERXAAAAAElFTkSuQmCC"
+        },
+        "wave": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAFVBMVEUAAAAyHTb7pGnVZ0/ybJL/99c2sWOyJukWAAAAAXRSTlMAQObYZgAAAShJREFUeNrt1F1ygyAQB3C4AQv2ALt4AeAEOLbvXiL3P0JBm8guU9OkecmMO+PLz/+ifKhSZ5111juWNi+SOV+EDF9C1NBnpMDwOV/MsWgoAseiLM7ZopQoZe4zXArlTNhJYOKhG1p2KU2lzFMiplYJ/y86JqLkTfswIArtC+joShcTSiKjNC5E2bYhzOSxEV0ykT54ZiG/tKIcQiTgIYge7L7aFrYMtmu9ZpBvCLEQ2LHKhE1EZlSXqTShHTW2J6RKEwIq91kGosyUVRsnqpfZ90NKfdjdzHoeiPxOV4mG7zXRPjcbpJSV3dqsbPOuG8jdDqD+EQhKtj0pzWa7lVIQp/9h2cgncyjxF2Efm0ulwl3xKZguY/gPAUD+a6S4P2QUwHY9JprJNyVCSyGFP9L2AAAAAElFTkSuQmCC"
+        },
+        "work": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAG1BMVEUAAAAyHTb7pGnVZ0/ybJL/99dLUnBp19U2sWNUqD0NAAAAAXRSTlMAQObYZgAAAVVJREFUeNrt1LFuwyAQBmB4A+6o6plzXgD8BI6w1LVSXiALe6bu7ZLH7uHYLQdRXaVRp5zE4E+/TugAK/WoRz3qH0ub+4h6Gs/3EA1TPJtKDi9mM1OJQhcjOilT/Kjl8L4hCvs4BldJ3BRXi9I0BJLbDgCV0BWxUpQlLvd30SGTaI43ie5fA41ohBBNjYCUsRJlHSBTsUt9ES8yYUv4QIBkI3S3iMLd3g28pIRGhl38MaNpFykvU8ie8qqlzehi2pqWMpVAI23GikYQroU8odnKuKE4Nu24L/HoDIBZQp5DyI0AoMnAmuHWQ5HhC8EHwLc902kRfiFcfSk+Z4LpVqE547+F5++fU7LOK3hbyAaXUuIX2XUnkSnEYs5gIQp6Dh2tV93aCIAlDaXkTBKZ3DphIfyHmsuodUalwO+FB3DkD/lEZvHly2oyWY7iZut5I2BuEPMlnwOMX+s8hoH6AAAAAElFTkSuQmCC"
+        },
+        "think": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAFVBMVEUAAAAyHTb7pGnVZ0/ybJL/99c2sWOyJukWAAAAAXRSTlMAQObYZgAAASxJREFUeNrN1dFxwyAMBmDYAAkvIJEFIB2gztEB/NAVsv8IBXxpQfhoG/wQPX73SxhwYqUeBXspNSlnDYLPR8GUnDoIuhDsJgRGct6g17u11y04SaYH6e/7hClRy/td0LL+QUCIXj7i3dQP+ZwopERUE7510mcuUlIoxkD16SVZO4n4S0ZpB8BmXpTdmDcaC1ASL2X17WuwBYK2bUMp0IvsSs/I1Dyl5mckUSkzK+keb8yXG0nhf0om1w06kjgWHch2q/GREA4zmgO129X5FIXkQmokr18fUibZZjkcDXKhFiQ5iEqX/Qn5knGVlB7iVjJidW2AOeWql9SyE7JvlZsMY5tRZat89Z0YKaHKYNe1H4C7mllJy4Ukfl7SP0v+Sc6Lyl9K8dk1ncBYvgBxvIcexoEG7AAAAABJRU5ErkJggg=="
+        },
+        "read": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiCAMAAACHmqD0AAAAG1BMVEUAAAAyHTb7pGnVZ0/ybJL/99dLUnBp19U2sWNUqD0NAAAAAXRSTlMAQObYZgAAAR1JREFUeNrt1sFug0AMRVHf9xzw/39xF0OqLmqGiBRFFd6wObpjoREi4p577rnnnnv+0/BpJpOqmeEiA5mPzCo+xEgMJHrjnJv3dEYoM9HksEw8N6c7EcgAFxkOmO9hbtwbv8e8uNClplVXmo9bCIkHkoBODWOJ3DMCa8t1xmDJj7azoelCAn3LyULzzt5ZljLHO8zsQ5mS3Jtnxz7XCbZFvD1/U68YneyMt1hlm6qlD1GLDRR7pmxce2Ypds24QrWuta7r0nzRf5jaNcvhTmsiQPJASLRmO8x7xgfMrBNg8VzIbm8+67oM0x12oIO3hao1EZilBuKkYT3QmZkIjAHc7hwcMIHNMu142gk0fglm/zFXmYBxK57PPzbRmS+SuQu9ANC2nwAAAABJRU5ErkJggg=="
+        },
+        "wait": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAHlBMVEUAAAAyHTb7pGnVZ0/ybJL/99c2sWP/z0B9xPWWYjhsJ0AGAAAAAXRSTlMAQObYZgAAASpJREFUeNq10+9tgzAQBfDzBtw5HeAedABgApAzQCp1gVbKCl6BFdi2H4gU/4kSgl0kvvx074F1QBRe67quawWpV7R475dYyFMq9FLqFdHiD0nWU6/ogfgdkqeqFeUvuUv88l9Fj1abrT//RDKpV1T+i5yalI6JcdO1CR9idkieIj6d3bUPRXZIniLR8/Sjsbhc3K8+TxHrNKEpFzIAYjomJACg5WK+BZ8SlhtcgEss+gX9SGfisxkWsI1iyqIscRFDOZ4ZlIewSFiggmCTFgxwLMpQ24cnY7QcnU26GehmfSpwL2dI3KxwyZAOSczBdi6ZiVMGt6spk4pFusl9SW9IG67WbhRshHfILcWU0ti/J7JJk/407diUCpEd0I59uZAos2i5EPN2l8gfiY+wz3MGBM8AAAAASUVORK5CYII="
+        },
+        "done": {
+          "n": 6,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAGFBMVEUAAAAyHTb7pGnVZ0/ybJL/99c2sWP/z0A+fXXGAAAAAXRSTlMAQObYZgAAAbNJREFUeNq9lIGNwyAMRWEDnHQBmy4AmaBVb4PrCqzQ9Q+O9AKYOIl0DVJU6ck8fztVlFIv9XdCCOnnc+TUZq/nqyCJfY6c20zV5Bk+Sc5tVr7ESMIp5ORmz0TCKeTcZorNWhFttskez66iyy1skgPNVDGqboi+fD0CyOQ9qwqSuVOUUy9kwKhGmfBb3fZz0dI8pTYlGfDxGFAm/BY3LwtZRG5OvdQQABmZxFm/A8rmZSFl6puvyEjxOJn0pm/NvYXYJjUM0ezRSKQ7a2vuFTWpNY3Oo0Nn1knsn25tLD8vBKs5fEoNxSW6E12JzDqZI6Jo1pCLoBBBTI1YiIbr3fr4CESDhRiQCg8zx/czpiL0RbOYuE4d1ZHci5CMaPpV22J6Zk4LyadSo6/Uui3hRFO+Va2aFflZvSDIqc2hZp1ZubmzIsgiaN49WSeR+ZaTzO+MTETuWDPu4WS1GRdNZpscbpaJLUU+gUkmO2ZdLSpFavQ0TfW3sSVrs9qNopR6qpoNCNB+ZBuyNmvl4UWdOXT8a4KRSbxl61m5uaPmc+w5/BY3d4p46j0HID9iaM2K/uvU5h8d9jgkKRjBtAAAAABJRU5ErkJggg=="
+        },
+        "fail": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiCAMAAACHmqD0AAAAG1BMVEUAAAAyHTb7pGnVZ0/ybJL/99c2sWPlSE19xPV7FsmUAAAAAXRSTlMAQObYZgAAAaVJREFUeNrtlsGOwyAMRJkZE/r/X7wHkwoIJtlUWmWlIrW5PJk3OLhNabFKKaWUlJ7CPE2olJz98wzmiUKOrAv9HfNEoe87lE/v2XcOfdc/XzDDtp0g+DMbmGWzbet3fL1aBGZHpGMi7ZGZJesYkHAhIoDA3Zk42eyoPTDTZEchM4hCi3RCjoCdUMfUY8zZtq0p1DN4dyPcy/MDy80gwmADchBybdtabBCaJjvW2VcIYUJMkx20xxOaJRsYkSDJDC5aNjM6Cp0FmycbwyMDpDLE4GYHQiElpPuFQAGkfyNCMrR27jYj7icDaSSh+pwhYn3pASzT5733YbKKMEQSSDMS+zOIBVBOhYVAuXYeJsiQTPTveTLIRcT6xC1np5reR8nOkK7xQWuxu1b3uB0Xjtqsvh4WC7UvWiR04txoG0LtC0hKIMTmugZ10Ch/dNQXkrWYgKDzl4R2SppRXbD4nnUHpPnlQDvyViMGS2uM4bGeVQp8uhEsrQbjW0h3wzv2XivEjbX66QDkscJThPTWWSab/P/4JXKJ8hF7Vgg1EMJgV5DPC/0Akd8Tx0VPRY4AAAAASUVORK5CYII="
+        }
+      },
+      "model": "Claude Haiku",
+      "yon": "walk saga bakar; simgeli durumlari aynalama",
+      "simgeler_spritta": {
+        "work": "Kucuk laptop/klavye ve yaninda soyut kod ekrani; eller sirayla vurur.",
+        "think": "Sag ustte ortak dusunce balonu, 1-3 nokta; el cenede.",
+        "read": "gorsel uretim araci kaynagindaki acik kitap; gozler asagida.",
+        "wait": "Sag ustte 2px modullu kum saati, bakis yonu degisir.",
+        "done": "Yesil onay kuresi ve parilti; yapilandirilmis ziplama egrisi, yay gozler.",
+        "fail": "Kirmizi X rozeti ve mavi ter; kasitli 1px sarsilma/cokme."
+      }
+    },
+    "pofu-boss": {
+      "w": 36,
+      "h": 34,
+      "olcek_onerisi": 2,
+      "anker": {
+        "x": 14,
+        "y": 34
+      },
+      "durumlar": {
+        "idle": {
+          "n": 6,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAG1BMVEUAAAAyHTb7pGnVZ0/ybJL/99dp19X/z0DlSE1xsQSGAAAAAXRSTlMAQObYZgAAAa9JREFUeNrtlj93gyAUxWGqIw+Tyipk6Aos+Vh1SsbaJXzsPiIqhogmbTP5ztHhd+69/Ht6IGSrrbba6pdF2TOEPOMC9vZJIVYAq5YIAXhrphqGGmDZZELVSTSNilRUriFVdalMRMr6dG6aOpvsg86XRkaIryA42PlymmhUqrklhBoBAHUsMrCCiBbAxkR5jc4m+2lj6dcQKq/FXkG64aWMTrZURkpldJYkrpCjc8mEH9B44LFtD1LuIU/SwdKchFCzw6AdjB1KJSDBJ0dMt9bIdc15j/ohTb4brVeQUiPR/KEpeoSLraciLpVaIn4XpyTNuSHE1YTrEl9uIC1+M6YmZY54F0xcaU5CCgzi/qCF+woTcg788cPRsTkSuQbNLUmTCf1w3Ya4794mXddpRzlPUtdAzKwGg/omHqMDUStI/QghBcgQBGGxRdsTMU9GF1tB+m0cgmwS/ecEGy0Mb0VoGuF6gic8R1LXSNq5ZAwy3fBDUOH4IuldKiE2Q3ACpf/vWKvd+JO1HSHzRCSuNiF3kvF+UVpr48vD/xFs0Rrwm2WvIP7mFF7RregJQpfIDyKDxbwZjUymAAAAAElFTkSuQmCC"
+        },
+        "walk": {
+          "n": 4,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAG1BMVEUAAAAyHTb7pGnVZ0/ybJL/99dp19X/z0DlSE1xsQSGAAAAAXRSTlMAQObYZgAAAZ5JREFUeNrtlD2SwyAMhaFziWCzcSs4AdDkWqncxkkRjr382ICcGa930u1EXb557wWQLMY+9an/XOIAOVTXA2T6VQPn6/MMhMB1+jvhDqfnhLuESZzCZPdJRABg3ycMdCzcJ/wAYTIhLd4mKToeATbEaUuJcf0BXkmKxpPUX2JLTo2oFA36m2gMqJ5kG0gDNCiKYGODfZLOGIM6lE/9QjSxFQ35s+Eeg7gxSETItW9keJRX64jbEhaCi28vlRCNpG5I35N7fFYJVENJEcWuoXghsAnaahKBdo88fenGlYx6KVGnWOYRqRPBNZahaRpu3BK0Iq7lJih+e4sG6+hvNWwAXVRoFhTM4rNQ+2GKEdcTBScXUtsWHqrczc4rkYWYy602DW22VRIk2OK61Vd7lLuZS1jusRI/zq1FnmiGcEdJSOljIj4EQoy3oQVll/cr4WFeXXPtWhYlW5t1lYHtRmR2KceORJMIkJ3pI1GCEuv6FTErGH33OTCOyQWCrqO46lS/EDLRQEUIDsk2jhpH12FycPJ3iZCciIBIWPrRkR88Unte6wJTjwAAAABJRU5ErkJggg=="
+        },
+        "wave": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiCAMAAACHmqD0AAAAGFBMVEUAAAAyHTb7pGnVZ0/ybJL/99f/z0DlSE3nPTBTAAAAAXRSTlMAQObYZgAAAZhJREFUeNrt10FuwzAMRFF+stXc/8ZdyHYTWRLZopsC5ipAnoeyqSSK2VNPPfXUU/+poGDa3wRlBMBaA9ayaqA12yCgpTnuNEmt4c7G0LbGcG+tSaxRz1GaQ2utpQtq+wUReVCllxkREQFErJ+0R5/I2hh4HLWaB0SQ9DLDr9osKDVGFIIqOe6pKpkC+nGvhaqYCirmxEe/ufiE1YLisw+EjXGyIPr17s4Hsc7hQIDP9lrBQAVF3uvWzPmNwX3sNgmq9DrQMdMZ4rz5F3NHL++dL273T6Q5ZpLTh9tnSkizFDM8TuODOT7xJ/I5uq7e5Jgkce1+zJDGFZ3vbEz/zO8R7kGe45K+v0BA0vCoz5nvjJmJBOHuZDkdvX833CaLBjIxJsUdvbUDCjnEiIJIe91NBUlUcgYUwTjXW6+JqQRNSN/Bb9MYUEQw7DRJykwFMRJf5MSQo8mCSEwFUckxk4i4QMymYdJ1sFga06iY94ok59j+17mK9XE5MxX0Tjbnj+M0uD2jZKaCvsnst+Vl2S9/LX5vKmhHvgCzWg8N/ow4KQAAAABJRU5ErkJggg=="
+        },
+        "work": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAHlBMVEUAAAAyHTb7pGnVZ0/ybJL/99dLUnBp19X/z0DlSE0YGtIYAAAAAXRSTlMAQObYZgAAAXtJREFUeNrt1D1vwjAQBmB7g80Xi4aMvrAw2qn6f1Cl7EysZaNbUxbyb3uOTfAHoqRsFSchkUfvXeI4CWPPetZ/LpECv0OyLhCzDw6RwGw/XTgul/s9ikiqXLpUlodDKJY+T2noHjmckkEGqFR4kVKT6DBTpJJnGCuQSmeipmY4DiUeFTc6Op0XNS3Diloiroqw7ZVERbLKMplwswDERXC3nZSgxEXKq5lFkKHFAhH9xGPiSQckEeQ1UTeF0TILUyt2Wa6VpslEpWIisX+5vbFxqDZThfYR7FbCZSdJcLpw/0DQggWA+EXWX15MmmHz79rNNmvY7baD0AFiTSJKL2Om85kiFTY/KpRNo7FYd1twbQrta+xkk4kfnQib9wpf2naDRe9n953Ct0Gqs4yZUY5NIqzqGyBqoem7bena0MoG6vPoqjfQ+sw4OhEyqS1J3XO61lhYLFUmQZf9+LoKP8d/EXqmLLyrVKAWicjgpUWdZpibGp9tyN4WEckPCW6W/4S1ZOEAAAAASUVORK5CYII="
+        },
+        "think": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAGFBMVEUAAAAyHTb7pGnVZ0/ybJL/99f/z0DlSE3nPTBTAAAAAXRSTlMAQObYZgAAAYZJREFUeNrN0zFPwzAQhuHzQlbfITXzfUZijj30d3RghwVWAhL39xmMGyduUkE64PHR60uba4nK4XyIdsqtBvFTObxLbjqIm4izLYS35HaD/t/W/t1xvnzUXcL+7tlxTX8Th8Pb14vmfXKR10auNSvRJQl+qyG6n1a4S+gQgfBSk0Qg6EzQSNO4hxPCSXy1xIcTtJFFo0uhe2Uo19SKyzJsNSTKAEfdKyQAAOhecWAAKsEvBQsBw6/fIqckSbyrIiUZLoiSbDRkAwng3aOdhUkArUQ0S7D5LXWPY5HORk6Aitn7z8PMGADEzJ9fCAMI3JemaxtnIwIAHM9kn2ABMEUfAABBX8SVZrrlECE5KxFUIbXQmDeEMDUhNxHTICjmg+JyUJcHQbDxsG7k/JMY+vL9RwEEwMDv80HKbVOEestRSOVF9pY/5CTdVlPWZj9RSmbrEleacBYykyzHKcoSK/m42pAzThEhpX70lSTMZEwJMSQ2v3Yrb4C5+mP9VYjYEzn+pbi5fAP2kMB3ptwueQAAAABJRU5ErkJggg=="
+        },
+        "read": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAG1BMVEUAAAAyHTb7pGnVZ0/ybJJLUnBp19X/z0DlSE3N92G/AAAAAXRSTlMAQObYZgAAAW9JREFUeNrt1bFywjAMBmB7gtFyWmCVs7A6WVi5PgELe4Z4hqkdgQ71Y1cJJLHsHKVwXXr4Mn38kh1BiBDP9Vz/eMldLBOVyO7HKlCTHQCX+Z6JTKSpikSa94+vPTKZkxgVZ3IVZ/CWRvjLjBAZAGT82DaWNJOK0IYWPi7StEs9KiI7k402Y9vdIneW/WEjaRDo0sPttpLHUhiAa5mG1nTxMjQmavRCjd6YrKNGXgONG2DpeznR3iOCXNqqvBfpvdColfBeBWJJFkxQ44j0VdT7qGhwKG1P9GErq0E+E0kysiihyuwMyu6R7CUfpLiICTPabocqMS3w1VXObXRHU90JJsIyLhQxPRVmW7va5MtDIJWrIqkTcWEVzU+fG6E/BNI0Qn9kmSrKuDBDU7PQHBIy7wOhGwHLpCYBJi4UIppi7TbZaghpO6MTZUGj01jGhRk6JZT0H2VLOHbfyKgsNtczl8eG/dbvlOZ90LwmHpNvjUej0c5RvRkAAAAASUVORK5CYII="
+        },
+        "wait": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiCAMAAACHmqD0AAAAIVBMVEUAAAAyHTb7pGnVZ0/ybJL/99dp19X/z0DlSE19xPWWYjjgkBhWAAAAAXRSTlMAQObYZgAAAZ1JREFUeNrNl8F6wyAMgy07nZW9/wPvAM0IYMjXsi5c3MNfSS7gpCLh+j7WPZj7Bdp3d3f3fR8xIu6pjpiyvsrcL1CKNEEWMtM4Nwx0CRH3NcwVr7sFuvIzrmPm23qDQMD8KjZM59pXTHd8zBgASRtPsg30ZHBizoF6OrVZT6dhVOFOukMRjPOLjMPpmDDu9JHO0kArdERgOFZ08IBFzAUvgR4LN2NC6sMMLAEhBFO1JGamhojRbIhIJwlknSiQPQBVzQVR6GT2tSFmFHhsqSBiti3pAHH3SIEwDgSo5jIIhGd5RwdpyxLZo3LeQyhiTlIzHQu6x5Ekf8CMic1OQi/qkAYRqAEKESjJiNHECPqMnoSsx3CqA5IsG2P61ogBWkZIsmyfrRlrnY6XgCDL2WBszyNZM93uax2+4oXf2aHRLIItYmqv3rFeFkjXMFJsak4N1PvxSQbVzqtZc806jP0V0x7FBPG/GCFJnBBjT4gXGLReA50+IwIQsGIB7WjIjJZMO6uSztOrx/S8MHgqxs/WzzLFn4Tx6+mMwbs6P0lCHcM5RINXAAAAAElFTkSuQmCC"
+        },
+        "done": {
+          "n": 6,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAGFBMVEUAAAAyHTb7pGnVZ0//99f/z0DlSE02sWNC9sLDAAAAAXRSTlMAQObYZgAAAetJREFUeNq9lUFugzAQRc0iWTOOkr3HJ8BIPUEO0CzouqgqV+D6tTHGhhk7pFJAERFPM3/+n0RGCNGJ5RrH0X29jxw6rLt3CXHsfeTYYWJN7uM7ybHD0h/RkvEQcvCwuyNjjpw+n5M9Os+LKoDTA6BIXhom0qyT60gq7L5+H1iXCO1ilYk0wNW5Tohx0qpMSBczPiwknmAVXr3rhQhoAC5pDSW0iypzRebqXcciifYqE6+jyqa9tK6THS+uwzPgdAHkie+SyTOnLECtpWfXsajCRllxq4R1jqRZC8pbaeq6Qq2UUUaaOGxL2KxbZU4atjkMTkX2liekixnPSKNuFGpzia6lsp/pJnLEd63Tk/GuSBttpIxFwbWORbXdiLLtIkfmLhW7qDKzECbHDZWrkdjnie+qk6xUmZGmOQbpt49DngDposqM9OI6DpuV9ZAntIsqMwsJrqNQj89J6FJDXpmRDq6XFZ0DaYfvHOHSE2UqTdvOg/EgGbYlhVUjHabzOW6zx7YZ+hzZlZVbEc3x48FHiSDpIuOpNHVtD55Lq9u2SU/9DeGyklVzK1pc9/FfbM9vmZzwhADJypg+U2nnujVpDstq9+JdvT42ZOpKszLKoahNpGmOPRfpYpQ5ae/6xWE0PWf6f9L7xwflP3I6jn4gTDj2AAAAAElFTkSuQmCC"
+        },
+        "fail": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiCAMAAACHmqD0AAAAHlBMVEUAAAAyHTb7pGnVZ0/ybJL/99dp19X/z0DlSE19xPX8mxeVAAAAAXRSTlMAQObYZgAAAfhJREFUeNrtl9tuwyAQRJnZpEz+/4f7ANhcFkzaqvJDkKJY0dHswSzYCWExJEkK4S7M3YSk5zN97sHcUSgh66D/Y+4o9Omh5+U++5xD3QDC1dhA/iYIQECMAZiSAEKIMV+En1M7QSARoxQjiCUSF0ii4l6QlkH7QtoXMvwmyHCM+vfXqwoqQFepYqZUzcyCupxjzIXKWAu5VCvkB/lMY/R6nVCN1EE1M6MaBuYGtQxJQ0Y2hLglREyLXUw+gARA5i8vqHVeBHnlphNbSG8I4ZGQx1Lo8QRJPr4wFTKOSM9kHxrQ9/Uxr9rZ37AtZT8OApGtSATMc2zlvFdtR0gyhACaxHIxIEW1OHtPS8kIkDTL5fygFhmMIMlQeg2gyclRuolKmxDyhRJlOCm8HwRJqhvfhhxIUuWMETlmFlD2IWZB1a2WEwQj27NhXNluryYttz/OKHgUaNYgNgaBl0JSy4De2gskz2PYSBJa16LT1tVilPMc3cIKg9DY+En7wNIp2gd5QhpXvvWxvqshoRfCIJSog8s+enfyYWjpJKQOAeqHNDC+Akuq7yRIwglyJi83p/PpczQicIRO72I9BqE87w0wZ2aQADMrtQwSMEOMGXG3PVCOc7Nk5ATl/jIDaXCCzgN98ZjaQd4NsnnS+eZ68WdhjWxRTa2e+QZXbxz9XBY8/QAAAABJRU5ErkJggg=="
+        }
+      },
+      "model": "Patron, ana ajan",
+      "yon": "walk saga bakar; simgeli durumlari aynalama",
+      "simgeler_spritta": {
+        "work": "Kucuk laptop/klavye ve yaninda soyut kod ekrani; eller sirayla vurur.",
+        "think": "Sag ustte ortak dusunce balonu, 1-3 nokta; el cenede.",
+        "read": "gorsel uretim araci kaynagindaki acik kitap; gozler asagida.",
+        "wait": "Sag ustte 2px modullu kum saati, bakis yonu degisir.",
+        "done": "Yesil onay kuresi ve parilti; yapilandirilmis ziplama egrisi, yay gozler.",
+        "fail": "Kirmizi X rozeti ve mavi ter; kasitli 1px sarsilma/cokme."
+      }
+    },
+    "gunes": {
+      "w": 36,
+      "h": 34,
+      "olcek_onerisi": 2,
+      "anker": {
+        "x": 14,
+        "y": 34
+      },
+      "durumlar": {
+        "idle": {
+          "n": 6,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAElBMVEUAAAAyHTb/007yoxvybJJp19VHBfLxAAAAAXRSTlMAQObYZgAAAWdJREFUeNrt1MtxwzAMBFCwAy4wKYBLNQChA0/6rykHfS1GNuWMczKOb7CgSEkU+dSnPvWpP1bK/yei5SjWIW1K/XlPMs+/SMJjichdc3YFCAAIcBTz59KmHoloBUliLPdSO4QXRayMJMntdHWS+kjstGfbfTtZkpIkWXIj6JB8RSRNwpqPwg6pl3oEdCWLEY34I5mrTeXzyaIVIL/AckVsWazt8fMUJgLWF9IrRvq1VBo3ms62U8pYSKu6SH2eklR1gGlx3Mp02ik6pOrAqmUc9tL23IsI9PtGNw634osML8n3U1l/BnK5xd4n23dV/f0imO4UBi4JO6RJpdB5+XWzOj1Sje2PacTm1Doo2XiY88vkNMaUiuVWSfR5cpFTWVI7MZKM3ZxmsiRDREQ4fBttERFh5yJzqpXdnEZEAFiEA+vyHSKpQ9qUiNGB3R37qmhHjyiLud43vSJKb+TYIwk55bTf65vkB2zKnJo+bpw4AAAAAElFTkSuQmCC"
+        },
+        "walk": {
+          "n": 4,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAFVBMVEUAAAAyHTb/007yoxvybJL/99dp19XCliD/AAAAAXRSTlMAQObYZgAAAYZJREFUeNrt1c1tAyEQBWDogAdS7jNsA0AasOUG0n8zgSG7/HnXipRDDuaWT49hwCxR6j3e4x8O/JHoZGbx5nVmEaV5JiziXkpuEIDSTWFEYObMpegIRPawNIsLSyacZ/K2ApcBmsVdCibJR2aFPJpEEfqVlHMtVXJLi5hBOO8FF6JKQ+HLdrVFbpZug9DHnBmlTstnffwAOj4VeiGYp50JXYoC1TPzfqczYTgexSMdoqzQ407YTC/bU3ks8tl1lLvcmOOGC/F53p3TmMlyZPJufb1H7O3e9yrsfsQtGXecNjHJ5aJoJglNLMtESodEP2aUDvX++4BWaJYQpXSWafmWKR+x9J3a57dLu9kOcpMTOnGTaMhn4xtpJ5JaodOM7xbT5GRWaE8EWemwNa3laHOmfeuoa4WuECOVgTBJ9wDuGddvv0r3SKKOrnaFyLOgew+tr9K/tTavB9s/wDmVEMmMGcc0PNg504uEoMZCRYbVilgO3f8LGA09FpKO+7bHPw7Ri+pjsW8zVWTBHD/dLgAAAABJRU5ErkJggg=="
+        },
+        "wave": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAFVBMVEUAAAAyHTb/007yoxvybJL/99dLUnAZF4kYAAAAAXRSTlMAQObYZgAAAUZJREFUeNrt1MtxwzAMBFCgAy3gFMCVGyBRQTxuJP03kYN+FBnLHtunjHl8s6BEUJDIZ33WP146vEfE0ntELQ93pXTiewEEAAS4K8NRRmxEIUeU9JqIpUKS3E5siSQ51lJuiOeqHSRJpuEBwe2M6PRCHIfXRMBsZHJujST2gk5El6qhavYJ5BeYOpnPr+F/ZLDLiGAiYG1AJ848S1ky2lVp2Wg6rzpaIdeN5p6ATUZ0tPOPWUqnS+Jclq7fe3GeGymtiMDOF2bn+ZLych+NiHYZpmuTEXXOF7lMDtiKWJdBlxEsX0R1/a0sD2MnYzVrs2xTM299LF2VcpqaZOtH6tPex1Ja0ZJJMsLXsbEgybGT44wAERER25/Fs3cSERG5y1QiovCIjGqM8YyIODPg29A8JtaJGJNn25fdF2NuRBSDDlq/5BPyCzDXZyVkYCNzAAAAAElFTkSuQmCC"
+        },
+        "work": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAGFBMVEUAAAAyHTb/007yoxvybJL/99dLUnBp19X7IAgqAAAAAXRSTlMAQObYZgAAAVZJREFUeNrt1UFygzAMhWHpBn5SG9Z6zgUEJ2huko2v0Ot3QYJJaJO06aKLavnNj8cGBkT+53/+3mj5HRGL3xH1LM8LlnlOxKqTZHLZqHGWMb7TiAdJkv3EthF/QERtpijPiShPU74l47UICCPDmRvBA02ubvYLyFd0WiS+Fq/DlcAqQAIM3JXx60bZaT6v1o3wvoiOtodZxMshajnL20buNSKw/YHp3B/6tn8iInZ+tHkl00Z4S8RPUq+igOetBuOlCNJJcppKf9gwMpn9PUqQrOsmAJLsopPnSCYcChQR0TEmkMm6yCdNMsjoIlqNPk1OxPD+vkQAjIssTa6avLhKBFZ3x50RGDCU+VtDtNawEt822LW2FhFFaw1ZZMBpbcWutYYL2TatNUwrmemIIssmFe200IUcb4tYAIClnG/bQ+KzRBfxCgBjrn4PG/EHRBRFi6I8JR8IAXo04KI5+wAAAABJRU5ErkJggg=="
+        },
+        "think": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAFVBMVEUAAAAyHTb/007yoxvybJL/99dp19XCliD/AAAAAXRSTlMAQObYZgAAAa1JREFUeNrN1UtuxCAMBmC4QWw03QPTAxhO0GhOUKn3v0ptEmIemVk0syhqpOrTj0MMtMbUAdsw5qK8qxD81AGX5K2FYArBZoPAK3lfof+3a/9u2KUu9ZoY50eaBWmSKWOTX/b9rIZxEFunqaQ+Y0F6vxj+2elU7FkGGjEuQArBQ6K6yCqhFSyy9JnYZIyLnOFUU+i5aCE/ZniRoQxajpbtAiq0iVNx4yxpPqM/tumF4MuMDR+8gtv2/c8k3YrEJnMbMgYCMPEDkzTTRjmZ5QIx8UNQL6Lsjzy1SRZKBlT4169+lkEXPr9D5Id8PcJVagfQTyKZJJL9Uej+kMqPVQtV0UIijgWnzFGIP+0h+3hfm0/bBVTWIkHlvvaz2CLgdmy0kXLUWHuZM9I2vfnWh3K42q2VQsF1Ul7XSCqFUEXOaCmUNYSlkO+kvI7GQs32G5e8YCQ6RApH10vkQrmRUCpR0qONQS5SznrasVQmh514zLmRco1bkUuTeRDq207FnWZc02zufIbyl6wRmiTnUcb/RJYvMWFz+/4oxvICyeUuNMmcSaPwKhe7WFguyS/6/JsXrg8y2wAAAABJRU5ErkJggg=="
+        },
+        "read": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAGFBMVEUAAAAyHTb/007yoxvybJL/99dLUnBp19X7IAgqAAAAAXRSTlMAQObYZgAAAXVJREFUeNrt00tuwyAQBmC4AcMk8npwLzBwgrS5SFdde1OuXzAmvBInirLoIkhYyqff4wGCEO/xHv9vSPUaEQBPCQ+FNL1ClJAA4bEjEpJAvayUKcuTDOhceEBpuRfpAG0Qp25nBBo0YZDlTtiMogYpy5Nk1lF1tIlWJWMH2TLVanUiUjuCSXgnI2T6mCltZ5lLSPdyJSPNUOg5wUy5bwlZIKeKiJsZdASg42TOJ5sl7z/Q3AmWTD5a7cwRbJiGt5PUnAWzkDmeWuFeQkcGQp9h5o6Qs1w6GqRkHJc9OiEzHT6rPYrCh8v6N6FO4h4glN3+OJtZm/PXPbG9kKUJ67u2xG2bqtIPiuXJQ1UIvF8mX9FzEq5f+D35pb60ScqllVF8LTGzRKGhUKFHC0Upnw9Nrq81badCnfhW/Dqqpa2p6XeQpZWfps5aafHftYS+w18djepEt8J3RciZkfTcFtKEjcysucuwpq4QKKlk2zZcE2ileesPKYB8T4UhEeEAAAAASUVORK5CYII="
+        },
+        "wait": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAHlBMVEUAAAAyHTb/007yoxvybJL/99dp19X/z0B9xPWWYji0DGnLAAAAAXRSTlMAQObYZgAAAZhJREFUeNqt08ux6yAQBNAhA3qm/PY0SgCUgUoJ3GiUglNwtm9hCzDI9v3Iy1M9bQkNIu3vdrvdbifIeUXXbduuzyKb9CIf5bwiuW6/kqHnvKID2b4h49RpReNDfku26+lFDv2HLFI+P9CvyCiioS8qsvVSx0ZxGv3zsh9I/pRxEAAQ+J1eijvIoBQZQZJg2E+sSBrE76LDlFjIJBm1jGEXDBn/ekqckSSZ/N9ERO8UfS9BXovLw5QjMolc398xKBm0lUeoz1jNCMKXMnwpy4mAF5AXtBIuyvjP3mUsQBmgTNgXlgAJEFXuIStie2afEq1FjxPQtIesyqOoSC0KpSgiMyK3RcnIZG1RRCahTVEyMlgtgk0LoVyX+mrTygSuC/x+g7mS0KkIbFoJNFMimBbGzGkZpD3slYxHmSri2G/EgejnTAkF/0by54zg0d1e0fuftZIH6adEqSRjymX/NWaScW5FB+kzgmDzPM+p3mP7gVhz+wHMMwD/NxFxDEBzQ38r4mKyZLN/K3PSZHGQ+akI3nn39Iw/l//O5cQNwGJt1QAAAABJRU5ErkJggg=="
+        },
+        "done": {
+          "n": 6,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAGFBMVEUAAAAyHTb/007yoxvybJL/99c2sWP/z0CapGibAAAAAXRSTlMAQObYZgAAAj1JREFUeNq9ldF16yAQRKEDZkkDO7gBIA3EcQtuQS2k/fchIyEtxH45J9Gf79mZnV2B7Jz7ctuzLItzv0n+tNnX/asjy/Kb5G+buSO5L79J/rZZ/xKX+7LMiA/PySs+LxUBz8l/NLsv9+WYuieiz4lVWedB0Zq6Iz7m8Iw45BfaA+u0+6yiPfEIAOAR5mRVhZOPdT5ZO+d8rL0sEiQJ5jmxqqHzYyHbR2VLjUaghSSTfEcQUGOvss5rUe2L9tRb+0iSZA5zIk2lh/YH570ot6VuqRtBkNVaPWbExbNq4NyKKE3Vp15/l8xUyFQYdUJ2lYa5s/NyLmokbc20RJBAEp0Q53w5qkbOxtoBfDxoS0uxKCkplynxvqmmoZ1zpkgyATJjX5G8XUnyoupmREBEMmOLaJ0dwCykRiK0q1FFSdG6rShebszg7bq9akNEdZ1Vmso6O8lJMhm1tDmQ5EomXrT0GVM5rOhMorZZ23G0zk60MpGF+xzyvqb+1POqU5gSL+83Arx9apg6I71dWZW3D243pqXeljY4aYYY1cDZyeVKjbxcdXpkXFzPVcqYE6uyzoMim1oySbJGnZPB9MZ58D7wuB/dHBpJ1rp/iiyxKuu8Xb28z7F+eGreUwO11gqEORmojPOgSLSsqbtdAwfnAbEq6zwoeqTO6HetgLBvdiYe8aQaho7G2s5Rc8zr//CcnFUD55G1nQPBB4/vyUB1dh4V1Rz1kPqVx5csp1mN83Ah59QvNbOzGucfWv+g/T/2TV10SrVb8AAAAABJRU5ErkJggg=="
+        },
+        "fail": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiCAMAAACHmqD0AAAAHlBMVEUAAAAyHTb/007yoxvybJL/99dLUnBp19XlSE19xPVHOgm+AAAAAXRSTlMAQObYZgAAAkZJREFUeNrtl9uO2zAMRHVmlK7z/z/cB0q2bFF20AJFHmpgk01wQA2vYkq5ebZt27atlG9hvk3Qtr1e8fcdzDcKCuTe0L9jvlHQ/xp6PfbZ/zl0foAHiYUPmFLKB9AndpD4e6SUgv1oCH/gvf2gG+wPDFl6CgB3CADx2v/Jc3WP7ElvUF4D8dWOpKkLj9QekI4ovN+PSGdKwTIdgzG/nQFDRNqG+JjYwdofowmCNTIYksxB4USQRs+MEtGlMB4mHaLf78GzHBmYUhj1SHvhjnZ0RcjsSOfj5sM4I2N8Rs9yarRzRcjs6Ig1Tg0tkclQpmgUZH0i2tSQ7h+wplCDTKtXfsBrz54E6UlQHLOftn+8TDGpaw7Ec09HnTli0N4uEFOANM2+qLKroNNARuaK2JoN+Qg1L/BsqMn03mMyF0MhyHQoKuRsx+ZABF4KevKsjaoh95oEgVXrflKtNYk08f2BOMlYJuiSe3zNvbLch6AWgppcMyA9IK1Aah/q1DoXSKI5uz8ZB6dO18KEeImUUppn/OpxJEVq0+wcmWZDeqGf+mO1Fe0O3Xk2ZKPWmnp2OszpEgIeL9fFDnIewwtDY6jzbQYdN6dtk3gWHdPPkRaRPi77aKZE0N5k0vmyP2XMsQ/EUuBcEDsDK0FYRpZtPE2YofOtNkoWKYN+HLlj5YqsNkqpU3mpxUKAMV4K6mtKHwx/irRJQ3dwtVVasS5n98+4WhHtsdTsmC9rJMpIzdAyjFFF8crtz5u+Nt9u3ve/hXbqA0MZ8huUpRe2/9HlzQAAAABJRU5ErkJggg=="
+        }
+      },
+      "model": "GPT Sol",
+      "yon": "walk saga bakar; simgeli durumlari aynalama",
+      "simgeler_spritta": {
+        "work": "Kucuk laptop/klavye ve yaninda soyut kod ekrani; eller sirayla vurur.",
+        "think": "Sag ustte ortak dusunce balonu, 1-3 nokta; el cenede.",
+        "read": "gorsel uretim araci kaynagindaki acik kitap; gozler asagida.",
+        "wait": "Sag ustte 2px modullu kum saati, bakis yonu degisir.",
+        "done": "Yesil onay kuresi ve parilti; yapilandirilmis ziplama egrisi, yay gozler.",
+        "fail": "Kirmizi X rozeti ve mavi ter; kasitli 1px sarsilma/cokme."
+      }
+    },
+    "dunya": {
+      "w": 36,
+      "h": 34,
+      "olcek_onerisi": 2,
+      "anker": {
+        "x": 15,
+        "y": 34
+      },
+      "durumlar": {
+        "idle": {
+          "n": 6,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAG1BMVEUAAAAyHTY/j9gqZKhwvkbybJL/99dLUnBp19UW5BTUAAAAAXRSTlMAQObYZgAAAg1JREFUeNrt1rtu2zAUBmDyDXgRgq48tIGsItsHsMwhswIjczevRZEHSJDBj91DUmJI6mI5LTqZ3j78/ElLlGxC7uM+7uM+/nJwzv+fAEBp3KCwfyDTZrhc3gvj3eP5HVp2RXBWW8y6nCuZNFMXCFgmXZB2g7BVqZtJ41wHl/PuUMvjBoENmayZukDgHCtDsNsgH0mmPTPN1AtgTx56QsHQYU1cnHVY66nEX2qoQ6G5qJ7KOGuLZNdDhQPapNA2Catj0y2zSNM9vAlQD/wz1LU/BcAViYuBO7BRvmFGF5m6mTTAORLn6WA10KLoq+IfYRSW95SZupmIME1zCSqJwpAvUmxZ/AeENpp99gyZxWYq4NkqnPU6FqGcrDJC/+hluyBY1IM2AvY9T4vFzCtottBMJOxPuB8Dp354r/AowkucNxWa5EXEbdOshy00UxMIB1JM4bWIsu+NuiovRg3VKRNfajPNFNRwhju8B7FIi1GG34c10cM3E2oUFWWmmUp/qPzj6vAgxYuWZHyDTkW2SYZ7NiyGMi42bSaU2ijOpudcxufe6UWhrBbO5dgzfPu5ZiJNmGXbXHzoeLPsZiVrJtQapGO2PLU2hPiqmCC/qsxxksmbcQPWorSFmB0KWxf7fSJuVso/Jb+tLf6YUC6/IHxG6ma8+zx7ycRji2JuFTkvRTPu0W+CFcK+JGRV/gBSeOWhPBMAlAAAAABJRU5ErkJggg=="
+        },
+        "walk": {
+          "n": 4,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiCAMAAACHmqD0AAAAG1BMVEUAAAAyHTY/j9gqZKhwvkbybJL/99dLUnBp19UW5BTUAAAAAXRSTlMAQObYZgAAAbVJREFUeNrtl9tuhDAMRDMzJpv//+I+JAFycdiyrdRK+GVX4ug4JtiEEJ544oknnvg/gRx/hAEgkqR8DsCLJMkl845Hlx4zI1OMKZGCyxhTzBDWnvi5xxL3gOt5g/kpT8FSjImGJZRSjDNT54l3Pa0okWZ+shX0XU9KvPSQpNkIYQLhjsdaaMYUqLaGaGZwRKU1kBnMmFSY+56A/UkEIsBkSNNk5SmMORs2l8keu/aQXmH7XADK77hjPCBNBs0dD8n5gnhAmk2sjsFvMgE7s20bSZDYNjgMt40kQdBl3vdIoyeA0llEgIOoDvs9GzQwJCWdPSPzUlfYyIS64W20N3KKvIYFjapuP97xlMqO63urtIzOpmQ2JsuO/V7W7g4Lj808jSWdZkkHHbWVWTI8sXlBDTMu6LSi6hmZPVedo5hUrw5SJwoAoKxyPeiX7Hl6ZpjmUoEOZuxXFdPCg1r9whOA3B2+JwTgpXMyTSCo8WjuwaWnmKRCaHqOAw7GdO2xDzxnSu7ZEy10wXzmCWDFAMg7V+pgXI8uPdC1J9Q3YX29eJAqg/uehsHqu6T/5zJYflEczA3PF1OKEZtBxspcAAAAAElFTkSuQmCC"
+        },
+        "wave": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiCAMAAACHmqD0AAAAG1BMVEUAAAAyHTY/j9gqZKhwvkbybJL/99dLUnBp19UW5BTUAAAAAXRSTlMAQObYZgAAAcVJREFUeNrt18mSrSAQBFAzs9T6/y9+iwIHJonX9qIjZHWHc5MCFbjL8rWvfe1rX/tDDQCAF9ArBoBIkiMGgE/oJQMzum/uJNVRgJG+ZfS7xszopEfhTQWY8YJ+1ZiZmZF035y0B7RtTmuhMD5hbNY4adZCp6GTfDQ+YdjpDAdhIjW6G/63CTRhKCWjfmen2QdGEyYX1DVCfhQBYIAUNz1QJCH/bmBmcvIjL2y5oK1TkBNbqhpeVQ2SgA1N7uxi1qbxqPWcofI5S18iI9QoPh+bvCKWpnzy83fHSq3CADoCjhWWFSIRI+uZnDMyuaB1JQkITG9UjF4IQ0jxg7UIAsCxSbO4Rme9nOX4mBR0vLkG6RKUJqtCwYbmlsNeTlyplZe2ltsHYjgFUnNoI5Ou2TgHudZzrSKF6nroboxEa4oezETOvaC0rlcFLTgXs4yGBfVNnVNO4/GA0YOYVJ+ejiTL6C2z16cixHpvZz2t3f6G1ERvmQWSxJM0T02QpIecCTOTsyzYFYzdelJvjBiNjMLsnfPpRE7cSpJad09t9j6CLjmY6KvbWdpZoPah8txAY//pjSztHgDmcjgafX4x+texPKGfmX/lfBGy/AWtsQAAAABJRU5ErkJggg=="
+        },
+        "work": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAG1BMVEUAAAAyHTY/j9gqZKhwvkbybJL/99dLUnBp19UW5BTUAAAAAXRSTlMAQObYZgAAAd9JREFUeNrt1Dtu4zAQBmDyBhyRu3bLkY11SyYXEEMgvYEcIM3CrZFCtVzp2DukZImPWGlSbBEWgvHhnzFFDcjYz/pZ/98CgO8RRMwNLImoMl/Kacw7gT1dEI0oMyavuuTCPY7jDVEk4qKYzcytEKa8dzheDl0hf7H7MnM5dUnrSOi9yEN4WKTOfFLFgyBVeUhCk3RVRlTSJQeCZZmzgTIJ0G4JvYeJH1stpLyGhgQSqTOlMOVgaLD9nZQ58z7J/U2U+/VeZkphe/prIoDlIyk0047wVZSZYcmUVaxBHTcpUScyNWpFnmmyTF5F9Iba0vOsRS7Hc1uJfijcHd+os6VGB5FKU4ndkjD85/Ah8Yjz0S7yB0qpM4sQaRnnyK2hOCJ4gFaJhxmcMs6ujcDYOHzPL4JuGEHShXP0nUUF8c7hXpomZOApZljMTCMLLzDfS6pBeHqmMq1hHEfqr+Qk2Mq7LBmzisyFSUljQwu14QPsRRQdREIiZaZJ5RQacWOh7/urNYLf9qE3N6hJevi48mEWu4sZgEUQcmFcwi6WXe+N2CySWg+ZhEwha4bu8Eg7iNd57D03Avo1HWSdWeWeoV3Ovde77hPpo4gNYTyeLDSmEl2J2BDamlieqbBK+GP5B36mwo8XsiEnAAAAAElFTkSuQmCC"
+        },
+        "think": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAG1BMVEUAAAAyHTY/j9gqZKhwvkbybJL/99dLUnBp19UW5BTUAAAAAXRSTlMAQObYZgAAAcJJREFUeNrN1LGK20AQgOHZN9Ds6iDt/nJIvStCausGUueCHuCaI23IGxzhyGOnkCyttMYhtovbzh//jISEJXI6Oh2RG+Vei/TldPQmuesirSKdbCd6Se636P29tXd3lrvTGyWDbuiMQFdJ1bz9eEVFROf3qLmSuuFlJ84GAJqFrhNpzeDt9XBcbrI1gz+V/KNxZgZgx2Ym11YyNYdKikbcJJ1ZMz+z60Ra+6rAQ2u6E2/HrWhbyHGeOq6L0nOGD1pE8dlXkum0lPSc6R5CsWhImkH1sERDVF9JptNwQcQTFUieuEh3hYhnJGbPWERnpb8sEhifUD6OpDWa5Gknn9cmMH7PmymX+OkBRkJzkm+adzICXdBSNJWNuKg+AtD5OYo54QFYBSASw0k63/mYiylxyTMvysuYnxZ169j0k7hKJMLAp9yszz+AGWn5GgQfM2ZD1DlSP/0diGsDAbMhrR8jNGNmj2n9zhF3EjKYWSiE6LeN08BvM+ublUgHs8dS+mlzKcm2jUjozaxP5ac3mFlfjJ1pahHX99ZvVrtflYTe+i/Nfqq8lohTVdVNlFQ1NJebSsTRiKO5WcSpiOyu1vyn/AU7/sj0ANod0QAAAABJRU5ErkJggg=="
+        },
+        "read": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAG1BMVEUAAAAyHTY/j9gqZKhwvkbybJL/99dLUnBp19UW5BTUAAAAAXRSTlMAQObYZgAAAaNJREFUeNrt1MFOAjEUBdDpH/S1EN32FiLbtjGwhcwPgDFx68a41Y1rx4TMZ/tmgOF1xqiIK2OTbg73ls5AXlH8r//1hxcR/Y5EgE4XDGX7WGVG8RuCh4dcVLlCs/SZUozKEthWk+WZosqGgHJ5OFyN9lLqPDMRmUGrIQxqPxC+4+5hUdJAlj2ZfCJMu1YUIQwO+lqK0cqtDXh3742FLBzlYj4S0SrawG4f5Y73fSZj3q+Z9FpMU3KItBGhKw4kes7EIvC/24lWgBGtwk5vN57i9BbhIGjESBlkiAV88FFUwNrySwtjWH0QDiVwTUib+UQK5WKobbqunTf6IG7mESsDIfVNWlSmy3gWn2Z1JxxKZOq32tH8WKPLGizHWpOZVVIMS80yj7qbKjB8SYduuhDFwGK9EP4cnJPSZALETCLwqIGHlH3tS0lyjihqb0RiRLQ3Sl5nmQVcEGL7LT7c8H1cNrTaX0SGrEX0FIYZOSFV4ulrdSZPRCkTG8jOdb+VZfjeT9zLQnSRQk/svC8vvUyhoLVCFuIfg04WPrt55Pzb9InyDmjzhCTEwvEjAAAAAElFTkSuQmCC"
+        },
+        "wait": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAIVBMVEUAAAAyHTY/j9gqZKhwvkbybJL/99dp19X/z0B9xPWWYjhmkVGDAAAAAXRSTlMAQObYZgAAAYpJREFUeNqt1EFygyAUBmC4AQ+d7nnU6VrsBWI4QWY8QFZdN4uegSvkCj1lH5ogoDUxykw23/z8EmBgLB6/fuwg+xVdnXPXVJhjubCHsl8RNb0kk579imbEPSHTWbsVTRf5lLjr7kUAkB1kEJfLeEVmxCBCUjSKG0VDMi1kIvn5uvhUuOyvCbct+iEC/St6KcNKaxF/Lu+HsHuvCe8J0R7EI/mwWZHPjEWDoLVik1D1QdK/B7QQpAXKgEmEzkiVYQH3zOe4pNK+EalvGYXUWeYCBU07L2RY2QIV1SDDvpWtAgpl4otgIcMk+qKeg9xCkeihaCHjSRqFvixIBRolnCLB2kitxmkFZVSSIepOCrDqsI5Eg8kEaxlLlWd4jV1/kB0WYkFOBNVChnFlcBhaig3y3DQtb6JMLtrcbyTI4Ya29f36+QPygquE9s14scd6nWAujDe9NGKjUHlD1NRTEakc5zLx482bJp01SPIxXsxmEqFLQc94IdYK5MI4vZf+t1Wo259n+jWxUv4AAQbz/neBVQUAAAAASUVORK5CYII="
+        },
+        "done": {
+          "n": 6,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAHlBMVEUAAAAyHTY/j9gqZKhwvkbybJL/99dp19U2sWP/z0AJ0v/7AAAAAXRSTlMAQObYZgAAAjVJREFUeNq9ldGNozAQhu0ObEwDDKzuGVwBiSuIlBay79HpaIEW0u2NDdhexnbISolfIj7NfPOPs2wYYw/mzzzP9uN95KPDHrdHRCx7H/nsMPaT3OZ3ks8Oi79EJPNHyLMiKeVT8sKwmyVzhsgBQD4hRzwptKQORMK/7zvIIqFdyWFYJOy24YZc6kC4AXdEgTAu/+B0EXuomTt1XCQHlzqQ2qB7upuxQFgN03SHnsXj92Yssuo+/AfjVoQpxUYQ2EU6M4osWbqme+e7Emavlh5h6hNM8HeMhrk7M0ZkybormJGEltH4Rd2N2/e5prYiT04tgqErEtQsu24iYma8pmqfegWqbmUFjYSxFxlCuxLmVJE5aQQajFwBVA0+avshMoRJAz+7EmYschcSqVW1pK4atamb5e8cKsiTqlVL1yAyZsZ1DXs1xu3RFlJX7fWCFV/XoWEZwkHZXaMuak6o19T4hvTgi64XNH1dwV/1nvABu1rbVbXZ0Byfl+PVFYrsRWJ2r96OyJK1C8c3WbO7EKeGJk4NmPrSvzDMdxXMTPmiwh7DCtoCIV3UfCg13pF7X6FnWXLIc6hIudfF6DCMkCO7ZvfAN7IVkamzasGyhG9dhV2DutnvcQ57cDW4NUSB0C5qTqnX1DL82HKtjY4BJUvXWZfMqStSepcafwbxKMFKhHRRc6IotQfeOwdRJq6rbE4U8Z7ugU/yCaFdxJwqIqmPnMSuxLwW9cXUh4bRXYn5l+rXx/8HUBrHCxLlmOkAAAAASUVORK5CYII="
+        },
+        "fail": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiCAMAAACHmqD0AAAAIVBMVEUAAAAyHTY/j9gqZKhwvkbybJL/99dLUnBp19XlSE19xPWVpzH2AAAAAXRSTlMAQObYZgAAAj5JREFUeNrtltGO6yAMRDszhiX9/w/eBzCBxNDu6uqqD4sUNQ+n9ngMxI/HZh3HcRzH4/EpzKcJOo6c6/MZzCcKqsg+0P9jPlHQ3x7KL8/Z3z00Lvha/+sN5N8tgCylkFzmqwhJvZD0hurXtRtZqqCFpDcQT8WGYFc997WbmZFkyYW0AHwDqZyROedcnVxkE0vOpay9hnk2kjSzjj2fL5GTqVhDSiGDOCNSXQrizMloQzqHbnpslcx9LIVBnBHJuZBhHEx6hvqfz0lQhAyM99XGwnBhsLJ6ZMyMaJtRADrWIZgZBeiGzIJm2XaLs0YuDIlcBdXfQNAFKXEgM55HqKe7Oi1VRNJCNLtD7TcUFCF3q0fZoSCiDIEiQa0PIkW2vszH8YrgjsSyx9N4ImWH1GwpVUL+jp8iLvviY1TZHvFsybOllFIsaIt4NkokQEppIYiAP0E3HhDVyq8rJWq+ZU9XTiS4iLtspSabm8rSymqQEKclzBREYkagldUeIMo2VAasKgP7MfyJoEXvb+su6LaugjQ4VK9RQTOEQVBFEHyrQaqHMrOvm42zIL8ir70HnLO6pOvogD5UOBKNM4C3on7scJsw6k7GEAkAgy8+pI5I0dgASGTZIc0A9Fxx8XVHWGfiEQTtFq/J4gHtJeKbzU0MJyLwREzRVjwVyUyr4ifkazcvwql4SAV0IloPspBP8BtBTmg9DUMUJAlaToyqkrSN5AcdKwvfQlpH0A4Bfos0r/3l98gAPZbdwBjognwDS7Ad2YPX/9cAAAAASUVORK5CYII="
+        }
+      },
+      "model": "GPT Terra",
+      "yon": "walk saga bakar; simgeli durumlari aynalama",
+      "simgeler_spritta": {
+        "work": "Kucuk laptop/klavye ve yaninda soyut kod ekrani; eller sirayla vurur.",
+        "think": "Sag ustte ortak dusunce balonu, 1-3 nokta; el cenede.",
+        "read": "gorsel uretim araci kaynagindaki acik kitap; gozler asagida.",
+        "wait": "Sag ustte 2px modullu kum saati, bakis yonu degisir.",
+        "done": "Yesil onay kuresi ve parilti; yapilandirilmis ziplama egrisi, yay gozler.",
+        "fail": "Kirmizi X rozeti ve mavi ter; kasitli 1px sarsilma/cokme."
+      }
+    },
+    "ay": {
+      "w": 36,
+      "h": 34,
+      "olcek_onerisi": 2,
+      "anker": {
+        "x": 15,
+        "y": 34
+      },
+      "durumlar": {
+        "idle": {
+          "n": 6,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAHlBMVEUAAAAyHTbt6Pi3rtvybJI+P55cX8D/99f/z0D////h4GorAAAAAXRSTlMAQObYZgAAAa9JREFUeNrt1r1ugzAUBWD7Dbi4Iclok6Wj7app1+YJMoQdVfVedeicjblb3ra2gWCwMCZqmWKJ5dM9JzF/CUL3dV/3tdgCgKUEQCkFywhWdiWOFH8kXjPKDBTq2M1Y+QhKnVIRM24zwqfTSalSlY6soFBlcQyKn7ISnDGXECBTq+7UAtGymhA/FSEYvvXiGVTtqcXEyGdYRlI8OIOsaIPqDK18SallE5Q69eAJBAStud4r2b9UVXV2BNZ8Usg+RpxmBJlgLAczlDjCADZBkYzRfkoL93p6zQikFExKXXT+d0Hk8QfY9uJQnFyAvU7JMIUt6aHrSwzb2PYmGfQMmhE2F4MJBjzpScpARsggJYKiSX+wPZJ/F0ukPyQayQPipyIE4ZSD0LesoNfbM6WNwKj4qU7GZxBJn94opLsDpe02iBGxO/BmI774qU44HWs2RdI8sLko2+o0mxYxFJR6PV6zeZ8zu2QJ7ivFCA/JaKoTr1mbHdIPevc70EgSED8VI/rZq7+0U01EhLAbZurt5s8wV95vSSHMM1X2/nDFipqdap50uojoX+/EHvMFzUr9Ah/qDgb8ljP3AAAAAElFTkSuQmCC"
+        },
+        "walk": {
+          "n": 4,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAHlBMVEUAAAAyHTbt6Pi3rtvybJI+P55cX8D/99f/z0D////h4GorAAAAAXRSTlMAQObYZgAAAcJJREFUeNrt1bFu2zAQBmDyDXRio3jlEehOXtAie1+gi3chiHbDATxn0yvkbXOkIJE82nKbObf5w38nkrJNpb7ru5TS0N2Vfyl4OI6dkEkK112ZuKq+K3KM0nY18jrBrsQ5U5OZpuJhOsE4HLodSXPGY5M5Fpvj0wAYJsihm/KQZWgyavhrLpcTwPwOt2X8QeRrASEKuIv75nl+X+WxEZnRbZfmLk90PswzFAJSzkSnWoh+v2VR+nKOXwhg6rIYX8ulyUhRmh+OvN0i1MoJXligyghReqCAzx/+sH1Nrwi8XM9AFmWIMIa8VTdlWMWLDOQMU0CkAGWIJTiwQj68FARbDGJBPjYPUmyx6lXazDaoZ0EfCf5XoJSFntDmA1gksFBXCvGbtFWGuMmtx2+cQfcnOLMewCaUBSEJNELbIfXe4lLrdntrAy3SZQkYyoyXGQ55NFFo25m1XxAVX1d8llvPI0kvxd+TuN2QRv/K/1npbbsRCoEmI4WnLwsCIT+NbzLjnixLovI+0ENA54PtdjJpRZXEHzIXloMoiS1vuVihyPROitKxw1SDougAe5n05B6rey2ur75Y0weoL0OR0VBex59+0rbHZ+BkJwAAAABJRU5ErkJggg=="
+        },
+        "wave": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAHlBMVEUAAAAyHTbt6Pi3rtvybJI+P55cX8D/99f/z0D////h4GorAAAAAXRSTlMAQObYZgAAAY9JREFUeNrt1bFugzAQBuDzG3BYSejIuUtHm6pV1/QJOjQ7qsQedWDOxtwtb9szYGJsGkJZY8lDPv0+2ycrANzHfQAITP4hGMvmUCaBVPPyGYjAike5WmBTtSNZK+LQlvaK3y4f/pE2yKMqtxjKARdlAHd1fcQKs+SKyPmMYKnrb8QGVwnIuiiK11o3jTMrGAlnjpF4GdjZy+LOhk6DcKVA4owVfRHAL0NEiFnTJK4hVvRCgS2fkfgE2VCaRUYymwH5dEZ6OGOGJ1/eLiJwKvMzynDKnLsQJn3XRGFDngglJzLdZoOAIENIKaFK/hJBcjqz94SJu99OtwzTUNIwE6+aKmR/SLLThTBaZjcbZ3g7VSjuv8nd9UkFMpExFGZAyue9QvP4nmsn1It2AqmT3G1WxJmtonboobeyA5JDJ6UyrZS98INQYaZ7onxSfTlkLxhJeSUD4ssSP9JFgkUo3U34QIkndrtIZjL2chx6wZEY8q7aS5gJV4HQ9h9BR4I3ZPSoECHPfLV0X9DRN3O5/AL3rbbhDQ52WQAAAABJRU5ErkJggg=="
+        },
+        "work": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAHlBMVEUAAAAyHTbt6Pi3rtvybJI+P55cX8D/99f/z0D////h4GorAAAAAXRSTlMAQObYZgAAAY9JREFUeNrt1T1vgzAQBmD7H/jFhaQjdpeOxpHarsnSlaHdGcoedWDOxtwt/7ZnSMIZqpKPNSe8PHrPnAkiQtzrXmeWnI+ASs1KOp+pqSp+707KC6Xfp67Z5unnROp5kV1XxUbqpYzlI0g5ybCR0pKOX1cZBkEnn/gvU44zAtp7hxrvapCXJkjLpGm2MyIXDdU30O4wEXW+CN1475vGtW27i+T1MhGL8DpgsSVSt0h4RMYYh+WJoIuD7MT5IjLvtfGe0XUi9PMe5m2PJcDlMZafvyTqkn7fbwQlbxEhw4BG01LXiB1eI0NPv1vqJhGyAHQgy0O6WxMZMsU4I5CYwtJV5DiJNWfIqEskerW2KFYbl6vDzU5yHGCSCfIQZ0SS2Q29Wqt1ZY8bZXZNwk6b9PLEM46OwoSGzCoUoa1CJDaxwDjDRBsdCe0eOpDkikkexEyEZ7ofiAtRntVfEemcPn8leBtJlJFAECfGX3E24kEqRH8Yk0w6FiFdOKobi3bzGcQTGdDKJ+IuFDqI6tYt8gvOrrg7ghehSAAAAABJRU5ErkJggg=="
+        },
+        "think": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAHlBMVEUAAAAyHTbt6Pi3rtvybJI+P55cX8D/99f/z0D////h4GorAAAAAXRSTlMAQObYZgAAAglJREFUeNrN1bFynDAQBmDxBqw2xtdKYtJLe4Xr4Bdwce4ZT+g9LlK7o85VeVvvCgskiEmcuyKaueK++bUIJBal0oBpKHWhXKsQ/EgDLpKrFoJNCCZbCezJ9Qr9f7vGUqty/JNU8Dj09Z/lYSXDUFaCm4GHLBAukupRpMmoaiapF9lmRL7nom5OJ8aHQ837CUlOw9CXwhkY96SKD37ox9dEOwIfi6qQT90LHEaxPSGW11loLeo2nui7cZQFRMEozyxjncthk8lF3XpeIz5H2hXyu6IAyVqQG0lnApq/EJ7lCqmQTLCWFmJxG5GM3xN+agZZ4ACHFCIHH8lcaJ61FLKS0megdNwrayxY+smyZESKDLpSmMI5FrKLmF+xUCbyj86YicygbBaT98APsihEwMvOxUfJC6EvMxKCdchE+ZIX2mQAVoVAtx2F0HZmfq1te0+IbefmvdaOygzaY0eoj0um0njsrNeuM6ZOobazJriQgDPtvZUr+kTayqzgvn2dCwUvh4aHT8V5p0EzOJ86RiBHMUNZxkrM+aWrNXbK+Hmzn2T7rSM0ZcblGf7fak8+649xQURLC+eH6kXmQr/JNCx8+03WaisM8WKZaIs8q88+D++ZupjltC2+RPze8Ky8i6N5WglsMiI9Fb0fpSNov/5cadhkNlJ+RHA6XJ8UXbwN7027jr/PisrkDW09+c6YiQjmAAAAAElFTkSuQmCC"
+        },
+        "read": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAHlBMVEUAAAAyHTbt6Pi3rtvybJI+P55cX8D/99f/z0D////h4GorAAAAAXRSTlMAQObYZgAAAgxJREFUeNrt1bFu2zAQBmDqDXy8SHFHkXmBI4W0s90X0GDvghHuRQfN3by2eeEe5Zg80nZg7yEgDx9+no6UTCn1Nb6GUgCrx6W5IvswrkoJV6SYx2UqUdAGHvCgtPtamkU6Ufy2iFmhFtXudhyb1ispO15aKZyBY52RwmvlEabjnzsEbotq/DzPv2F9THaPwHeWWYp65sg8/zgeUwMsPJGE4JJZFxnvfSHqmbhH/CVDlxLX4amWJZM6gs4bA7HJ874B3iGHWpqYMcZmYnEXUmcOtfA+HgiMp3V6ko2nD1lfSM4gIQvk59+YzTsY/Q7+/P41xrO4KCmD/z4kZb79xTjT5hciBoy2TyaXXgpZEBILxRtm0T0aFBkm7o+3DUUoSryywBXBQtK0zwvRjUJ5lgL9srGoX7Y9SPH806+qzCZlGvfT9eSGjU2lHQ5bM5hhS2fTSE+GWPoi482woVRbD854C0iUQkT8IAnDuVCjqeNNjKFcqPe8NI1TakATOIt2OuS2Owoe/OtIaWn8r/b8LuOUlo+nzD5lFHae0AfOimOkC1N4k6cYdYFeC1kyUyH7A5sjcdRhG8Yw+RxCG6eNQni5nAErxHShLuRiaDTl/StxPQuaupDs+twRCToVKgRiRh7ZEAuVHxqAbpyg+GRQu6uFMygFoWtHLUXh6Q/wqcCF6EWg/PStlutRUUL+AxSJwSi5XGnzAAAAAElFTkSuQmCC"
+        },
+        "wait": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAIVBMVEUAAAAyHTbt6Pi3rtvybJI+P55cX8D/99f/z0D///99xPXKKf59AAAAAXRSTlMAQObYZgAAAeZJREFUeNq11Utu2zAQBmDyBhwxVZ2lh7kASaNdx/YFssgBBAPaFy3gtXfcur5FTtmhHnwWURwoArT5MPOLokc0Y+nV+2sFWS/ozTn3lgtzrBS2KOsFUdKnpMpZL+g/4j4gddcKQQCiWCQA+6jEl+Xw2kNWdJe4KH6mRPJD8m+zuFLCiAzSVdJTeAhKxJUyt/G2FDbVbEQY9jsEonCgq+07FyjIpZJY81IKFZ3PZw3gLjDvmazkYbmGeSGjN70syOZdYd9/0yJ/pm2j/ErlT1VDq4HsYQxaiwhA4SIRBbKSusYHzcJbaxCVjkWj4JIQqOckmtsOJGrYXEKRpWUvChRdjOPjFfzdwlyE8ga4v6Vi/wLaTB6vEpsb9FAE3SRG8UGG7ihTEKZdFHSNQkTbj36hIhP/MlF0Jb4D4CuCoLFGodnt1TyiYJQlUWabChqjDqn4LhtreCOPlGF2B72dwqXcHRAaL6Hm6UjydJyFUdfBd+2DcKNxvLQSU9sPNYDqZjESzSCnKGMNnrZxREehUZk/o1FUFNqOqUbnomyn48FrhxoL8eA1hbAgIhOVCh0IZnj8J8Ranf6bgLSWvpNE+CCiqsnkZLP1+D3xJ0KjK4FKnksxedA4gO9KU4vKxnHcXDHc9wpL5B/FPRDtZOz0qgAAAABJRU5ErkJggg=="
+        },
+        "done": {
+          "n": 6,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAHlBMVEUAAAAyHTbt6Pi3rtvybJI+P55cX8D/99f/z0D////h4GorAAAAAXRSTlMAQObYZgAAAnZJREFUeNrtlrFu4zAMhq03MCW0dUZTeQFJQbuny60Zkj1XnPfihszdvPbywpUsWZZNS5c7ZCwBLz/Ij/wpw3JVfcd33CsA6r8qdwoGXTdnU+VePuChswFF5VavyyQGp+6QSOzkyI9QUhyFeiXtl2g69cPxeLRCXxeUCk7EKyFT9Dh1PdUYY6A791GiSsVc0a9TedUEHaY+NFGBiwvo+/4jq6x4peQR3Sc+XJzO/ccoPV0AxKVJ0FSxVcoe2qGHPHlYiJqh4WWYuknQ0Nmcd4uGrDJ5hSx5ZSF+apUuzWhE5drXWeXp99LryqodGi4/+jUfQWHi2Qg0akJTpRKxqs6S1xbyZhBNMjUz/Aq4uTaQV6xXs/RKyH4hEkpTM/RoMPE4qCLedguvhOyS1AJtfv4BC2ugic3sPoYnVlHFbK4CN5+Je0J2SZ8wJE1oPTRLfdzQDIdmaRUlg/YSPENspjxITs2kPQ9pt1IXFPsyDk+eLJD7GUWLKqxahGatCUnAt68S+G7fxneIKKTZClmgCJIKkjUm7cGi1GMd00ruvdLmlMGrRin11GxJdmXoQ48gbHfD1K9cjujWp8i8UjHuqvRuHwVCtguRHr3HuCLcOmdbHc9MgCcboQrK1u8DVJZsBwhLk/EDxsNEarpPXAraOyWv8OAVeZsns4iOn2YRpp4UJrQjqyqvhGbSTM0oOaAxRY9TJ7egsHfleXaZL5TJK+TJFVC0m9oaS9hCPXZnkV65RBm91iUyo2hGfPDha6GKiv1+z6tWyGsrIj4YuKcuKgJclSqS3ULOMF8RmfqW4HJZRckraDcx++efXaBe6dD/h77tlz0lfwEQ8RCxPrSr1QAAAABJRU5ErkJggg=="
+        },
+        "fail": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiCAMAAACHmqD0AAAAJFBMVEUAAAAyHTbt6Pi3rtvybJI+P55cX8D/99f/z0D////lSE19xPUIaDaWAAAAAXRSTlMAQObYZgAAAlVJREFUeNrtl+tupDAMRrHNMDB9//fd+JK7nUFbacWPjdQSiaPPJ9fSbVu0j7RtewrzNKHP5/3Wn2cwTxRSZB3075gnCv3fQzMD1uKj2BPRcYUOcxm4Vev1OriFQRMSBh0N5TCc87WWhbTlxlF9R24F3aoFDfKCE5bICw64EwQu1en4tRKTl1So04HKosfIPepWUHr7lkZCnokax1YQ3iKG/DooQLaMKHZqE+jnJyN7hFRmCDobqjJxUJuTRwSUOr5QQd4D4gcNVCMUBrU5CSFCRH6atsZUIUNoQFomDGqZG7V4pikxTDHmCwXIraBOiHVoWWvjlDRygVg7ESOkhQwhDITg8IO6mRYENcitJRDaPKKur10znRAeGmNIvmO8IFvaQvVCyN6LWglKsjyk9IvsOZ1DxEO2T0W9Q88iXEeCKAiSADaSjhck0GU5VyS08ysWui5aCV1oQbHQZULXFQtJy7Po5sgrqmgg9D0ILAjDoKcJydt9zxsy9ThuQLBHJG4K4ioM6R7ZZR85zlxBET27cw6QQTtoXRiM1CcjZF1fKFfjSJqFqBXSwc8IHGiXZz7YAwZyiveM6Oq5a28BZI+5mq5WRby/rJSEatO7zVuzUu8Ab8WEolxQejRXk7NXa3mfTDJc6nwc7SpE0am38ZebOg10Hj1iNka7s8kdWjZSn6jWwrgWtFUld9+LkF3UCyEppy38ON0KEhJlus0Zok/KgyoTfHfXvz2+cY/ERpUKZppXvwZh+L9Cc+NhlNPen9sqqFySURBBSVxNdfv8O+R20NAp7Q9Z/yP/Q7DW7AAAAABJRU5ErkJggg=="
+        }
+      },
+      "model": "GPT Luna",
+      "yon": "walk saga bakar; simgeli durumlari aynalama",
+      "simgeler_spritta": {
+        "work": "Kucuk laptop/klavye ve yaninda soyut kod ekrani; eller sirayla vurur.",
+        "think": "Sag ustte ortak dusunce balonu, 1-3 nokta; el cenede.",
+        "read": "gorsel uretim araci kaynagindaki acik kitap; gozler asagida.",
+        "wait": "Sag ustte 2px modullu kum saati, bakis yonu degisir.",
+        "done": "gorsel uretim araci iki kol kutlama pozu ve yapilandirilmis ziplama; yan yildiz/parilti yok, tek yildiz kulah ucunda.",
+        "fail": "Kirmizi X rozeti ve mavi ter; kasitli 1px sarsilma/cokme."
+      }
+    },
+    "yildiz": {
+      "w": 36,
+      "h": 34,
+      "olcek_onerisi": 2,
+      "anker": {
+        "x": 16,
+        "y": 34
+      },
+      "durumlar": {
+        "idle": {
+          "n": 6,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAG1BMVEUAAAAyHTZ8bPBZQat94PDybJL/99dLUnAsj7itERBkAAAAAXRSTlMAQObYZgAAAZBJREFUeNrtll1ugzAMgJMbYELRXmOK1tdALzDWCxRpO9BOPpvwl4QA1do9YSkP/Wp/ccCpKsQRRxxxxBGxAPg/IrPPxMs5F7BFwqo9RLw1aFyS7SBhVbojR2aI2mlAnhGLLXJdIu/JulnIGyK6Sc2TSGAWKRH3tB3RTyKOWdqkqQEJlkASJ4MaVqqWzFAxQhiypKo0ZZkUTZwAoFcFyhIzEd8s4AdZROvSdwkN5qT6BrzFyQ/2cZmIVq4nMPO45ndk2VmPZz9BVXDvUXJtkD/xshdJ0iHyj6prqp/RwNw9+gzSInfU/ABgjZA61byq/pUw4YZOs818sxCKRSnCfRwb/tI+EIQYUTiGmXlsQyZm5pY0dC9/uKFEWhaX0ziEBPHLkllV6PEIN9By32U73gcYmoY4Ud7BiJS+JzRTAy0XldP20k4srhIMc6wHk7h5n3rXZttkqexlZCWp3kGKh3IeUv+V8JUtjKrqWRIRgLo2G8SogFBOncTNNKFUIWFWRgS2iNxBFsyi+1GW838mryG/4E2KIcfvASwAAAAASUVORK5CYII="
+        },
+        "walk": {
+          "n": 4,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAG1BMVEUAAAAyHTZ8bPBZQat94PDybJL/99dLUnAsj7itERBkAAAAAXRSTlMAQObYZgAAAV1JREFUeNrtlctxwzAMRIEOuKTt5MplXABJNxCPWnAqSFJLys4hosSPbfmUk3F887QEJHAk8qxnPes/S2F6NJBHHHFn9M5PT16mbUcn+jZcdwMZHcvQtWTPZBuOqZdGRydyOJ6MDdqdSb/hvPaOKMm2gYdI6gnAgESgJmQzCUD2Tuodkv7DEl8lHS7RwzIuFhLpD474vu3oiaTfW2JvqtfhD474NI3j7jl/w3tYoqzXTKrHMDpvxUETRIQQuiBLjzqISMEPTlyDLMkLAxhNRY4hxJUkkhdydPxCRBznijU5knklKA5q50K6ard0TlpXQu1AbjvV9x8kmaXqbrmelKB6tcfTUjfrtSAOTjk/35MeceYmQzaYbwDK+LpsyU3HrI4mMrucs9lN70XKyDkbnSazHBY2HFHLACDHSoqA64KuO7EOchFGFBCd21ZABC5WbbsMEdx3BLj6Q2jwlvMLYdNYj/hnl2cAAAAASUVORK5CYII="
+        },
+        "wave": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAGFBMVEUAAAAyHTZ8bPBZQat94PDybJL/99csj7jXD0lLAAAAAXRSTlMAQObYZgAAAXBJREFUeNrtlF9uhCAQh+UGDLj2mVEPgOwJbJM+16QH6BWa3j8dVMABV9uk6ZOT7IPf/r5B/llVV1111X8WwE+IPM2I+7M8I/CFkJMx71SPaDlRBXka0ZxZ4o5o2AuIbo+gPLYqMSK2MidcAwJ8bqVVKR+yBWEz0TORmwUvMgIWlDKPSDuAg8cZ7drBh1xk4Ay9gFVxCYRGS3OrATuTWzZan9hQiH6v62g0VvM2k26dL7xg86Hm3NoIxmCFjKCNrkG1TRpNjwhEAOKu0CyIoCd2tRBvlLmljNiETJW0AXkj45902EpmybivPmRV3N1Fa00i9P+7Z/0UVkQnK2y3GHDyY/XxUCyaIs2FxVZEqPoDy3vTEgJ2ZtgBpJnmpLB887k2rdWqpTNSEsytnUZBOyQ7jUpUasMvGrlCc4UWb8iO9YeNBmytdunS+KtFd4sRRRkijhFglr9/IAVsET0A5IRnFks7m3/VxfZLPj+cEG59A+MPXGySHIMYAAAAAElFTkSuQmCC"
+        },
+        "work": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAG1BMVEUAAAAyHTZ8bPBZQat94PDybJL/99dLUnAsj7itERBkAAAAAXRSTlMAQObYZgAAAadJREFUeNrtkrFywjAMQO0/sGzDdbUMd10dtwcrkKEr3PUD+gm9Dv2FfnalxHHs5Aq0dEQTvDzJsiwh7nGPe1wRAP9DpD2oCXk6wEXHTh3xsMcwI+4KJ0yPR3RqSnBGHtX5LCH3iL6WqA5WfcOMcFZNhGbJ3Uwk9AjUrST6hq7WxJCYNPQdMZg8AgnoDBGNpVMTAStcHBGXgG26MLS43Gkmq4K8NVOnJkLvqZD2ltJcvjxQ4wB5BOQksqqIL0hOO45pTJqq0Lz0jPC7dhPR+S3p36vxHtd5JyQ73rtFSTwR/zxugNT4yoNbn/IgO6KJuJJ4fdbhBk78kOtxuehefUC1jheIkEPauBHdimCAKSmdPqvYo6KQhB6nNF0QSB0oGEgzdYQMnRSNsm3bSyHwYdR2Jhq5eIyjE2PvZMISHUO7q2zcqoI0HjJpevKzQ30RMjEGLsS1M4nk2RciMHOgcrqOZLuTEAhtNCi75UJMIksfXlkgYpkAgY0h52sg2Ylt35Ew4ZMCghg6SsQkQqcK7UoHCmeckYAOvYPI8/8b4V8AUCzEb0jax2/hLXzHkrKcGQAAAABJRU5ErkJggg=="
+        },
+        "think": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAGFBMVEUAAAAyHTZ8bPBZQat94PDybJL/99csj7jXD0lLAAAAAXRSTlMAQObYZgAAAbVJREFUeNrNlEFy2zAMRckb+AOpu+ZjcwCKvUDsE7SddJ+NT5D7Txe2ZYLKpJ3Gi3D55uGLAiCldD06n5Q+SO4VpNP16EPkrkHaSDqzieg9cr+gzze1z3t0J/LxoEu/NCzEf5H8cNxFlL9vyGv5q5PygRYvmQ8oEjuw2zhTVXqAEtGG5H9wUn6Fuhvb9wYByoZEJwm43HIkYTwOsAmKjhyoTauW5Q5NgSzQgmOABiepVoF8uY2V8rRU+fq8LIooT8a1LjtFVPlKUv5KkVWJ41X6RpHVL+JwI01W5IH8sLp/WUkStL3V/cvaggzlZPX3cSTtZOXka1POhIdft+YKymlBFoIEzdahXIiW6Bh1ufU7G9VhmG42gDpM8kxmp9cadkI8UpxnhmY//izGc1VwLDrPRCdlawtAu43W0UQMoHiZSFxS2byRXrBIDMCK4oYWDxvplClINgc5gDEFWbWB5IU232gTbQB++UhXYrQ2BlXblE1Blx7NQR6qcu8AdX7+SC4b0SenLWNV9t6bhyBB86WHl+3New89qs376CT1JvkovUl28r57z0lZSikP/4MzUSS7DRmdP50Ul3oqas7ZAAAAAElFTkSuQmCC"
+        },
+        "read": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAG1BMVEUAAAAyHTZ8bPBZQat94PDybJL/99dLUnAsj7itERBkAAAAAXRSTlMAQObYZgAAAZRJREFUeNrt081uwyAMAGB4gxjYlGtMX4B0e4BEHLh2UnavtO0Zdo2EtDz2TNsk/HRdp+5Ybv1qg40JY/d1X/d1xeJQSJULVL/HMNXlVo95lmoKGfMs6BEKqf4uTPVo/kP4E6Ku0qoRm1Q8CSskLQmQFhRSXSHpjchAphC4QkwyehFIr+M9SRNLe17irLrH45qfAIdZ5vFydZJN96MwsGioXSpiMwdZOvogtpRTd7wnaREA+2q9s+e90K+w3CWn1t9J5CL0n3kTzYdYroli6Kd+3K8T4C3tLTTtPb+AIDsSGYvZCQorYiB6ATIUGMpeJiDmRs5ItWQdWotiGDcctcZBw/pCBppHIYgvq3CSNIuOe0AtcIjerRiwOSvmUgyToWwDcZChizYyElmIMHkWg9oC2DGqERSJ73JJY4osLhpvlRPr9ZNY5zPxzk4XJUxS2dq16/cfxE2JCPRu6qJZH2OmKIaCNG2UnqYPGyVCG41tHpNUxIDaVSPE/YN3fkqldv4rlc9MGGwNgNzCrUJfO4QDqlvkG2yraT3wa8+iAAAAAElFTkSuQmCC"
+        },
+        "wait": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAIVBMVEUAAAAyHTZ8bPBZQat94PDybJL/99dLUnAsj7j/z0B9xPVRv+aFAAAAAXRSTlMAQObYZgAAAYBJREFUeNq11NFtwyAQBmDYgMNu3zmSAcBV3+tuYMkD5KUTVOpzpSzhFTJlj7TEwDlx5FDe8uX4he+MhUjXV1gVpF7QaZqmUy5iEqWIVakXREmbhOXUC1qQ6Q7hu6oF8UPeJdPpv4KWRsvGz18RJjWCAMqXfZvI9l3lJNu3Uj6ZvJQiZI+QP2WzJGqtRrSIpobII6JV62Jy2ZU1QiItl506CDBRTNJdEs5kQM2iN4gA/FvfqhRgNXC9RrbogJIRexXHSn83gS6yQ9fkNcfzTzpWn0Q/g98f9OWBQ8vggPDhY1NkqMHXUAMXeTpoS4pJEIA3kBURBbVzEIEDn9YAaAtJkNTx0eJ0SdDoQC6KD0FFjaHc0AE1N3IfmjbMoyQZSMa5kU2sSdo/FkLhYzjAOEdLvR8s5DKi06Xku4TQv3M0j4q8XqTWg1xxQWh1qoxOxK/LUhDfhusSybIgy7bdFCHpztIF6JxKL7ZrOib+do2AzgE0HTwq9EWA8CFXG0RG+QF/HL9UyfWfwQAAAABJRU5ErkJggg=="
+        },
+        "done": {
+          "n": 6,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAHlBMVEUAAAAyHTZ8bPBZQat94PDybJL/99csj7g2sWP/z0ADKnHSAAAAAXRSTlMAQObYZgAAAexJREFUeNq9lFFuwyAQROEGLI6Ub7PNAWznAnZ7gki9Qv5b5RC+Qm5bsAGDF2NSKeYjUZ6YmZ2NE8bYk/kzjqN5ex85NOx5fwbEsPeRY8NYTO7jO8mxYeGXqMl4CDk47G7IeAjZvQSwT4rDGOkaEX7txR4p8UkhM3VEqkGJPUJVqbDpEguq8o9PEZOTUvUe4Y9+paLOeiFrazkoiAh/KIUiT4xq5UOdGR9UE/XmdurlgNIH8oSqqPN8SUTETu0/gzTWNYhtouMH4kOcJ2sVoWo19blX0znV24SqUs7zQppMD37FWl8CeXJKSjSbVTnnxdrPBG5qR7hWoKzbyu+WEv3czarFhzrzs7v044xOdupfv26p7PFzE8Ifte3aiy1nBl/uklu3Xoed2odNqjb8RgjRXat6UrnFUmejapRE2Sw6P7XfNm8vt1pebssTSghvfVex6bxcwrAHxk+WXG0xQSrSlTpr1UUhqlvQQ85TB7+QgjDdVcXtqbNetkZSfWOBdfMSSTi7trke3BmJbZIIo84lPaw1kjDMhSWcixZSEFbSdTsMm/BvD5uq6wIjQuzSsCQMs2GgXXnVQYZshuE6rF316Kapwz9QMC8iR6iKOvuFRFMDRD1KDlVR58SlaWoA8VoY7ZoY+n/WxfHe+Q+HLoWWL3OZwwAAAABJRU5ErkJggg=="
+        },
+        "fail": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiCAMAAACHmqD0AAAAHlBMVEUAAAAyHTZ8bPBZQat94PDybJL/99csj7jlSE19xPUoB6RUAAAAAXRSTlMAQObYZgAAAepJREFUeNrtlttuxCAQQ7FNLvv/P9wHLgkwA6laVXlopN2sxJHHnjBsQphc53me5xnCW5i3GTrPfU+fdzBvNJSQudDfMW809L+H9uWc/Z9D77+APxR6gmAp9AD5PSEwUvgpEgJ+SQiMZEd9PkukZ0JAjCRnOk9qBSCSJJtOtpCJ+EKTYOtaIYDputn+fDpDcUAGpha7USOTaxETHVXIE7KQR0JDsGUtANU0VQfgDjUIrxmZCFWqYRyhttaRlpRuZDyABgKOmNfK7RiLpQWlBlS5hiluVL8S0jJpx+8AqW0HyBgxTgW2BuEwtYgxCSlRHCkcsQs/CqVASq1U6SjGXYiCRAspVF4GttIpA7knG4RyE5vn0Z81RfsWzDjXcEuGDNuGZuGzo20jWX+pP9evQTWOhzaaAEo0/YQmdb1ZQo0hwUq/QjohM1jq9SVkJwv3QbQ917NDIM0NVGxrK9TmCXXJHKHGUHANTZA01RIWQkIRA+D4aQ1p0qGFIZK8n7FWLRVEKqfQokGyNiw7xtRRZ0iws+fBdqM9NFQHTJ4hXJuMpDxD9ZG5hnRVsnUCymoWcp69dFGOkPIu01QoNwaSTJn8n5g3pLz3T0BqhOAgnCElGQAkDEvEeyF+QOWVWa3cADQ/XMJHRuy7tb4AKMsXPRXfId0AAAAASUVORK5CYII="
+        }
+      },
+      "model": "Gemini Flash",
+      "yon": "walk saga bakar; simgeli durumlari aynalama",
+      "simgeler_spritta": {
+        "work": "Kucuk laptop/klavye ve yaninda soyut kod ekrani; eller sirayla vurur.",
+        "think": "Sag ustte ortak dusunce balonu, 1-3 nokta; el cenede.",
+        "read": "gorsel uretim araci kaynagindaki acik kitap; gozler asagida.",
+        "wait": "Sag ustte 2px modullu kum saati, bakis yonu degisir.",
+        "done": "Yesil onay kuresi ve parilti; yapilandirilmis ziplama egrisi, yay gozler.",
+        "fail": "Kirmizi X rozeti ve mavi ter; kasitli 1px sarsilma/cokme."
+      }
+    },
+    "kristal": {
+      "w": 36,
+      "h": 34,
+      "olcek_onerisi": 2,
+      "anker": {
+        "x": 17,
+        "y": 34
+      },
+      "durumlar": {
+        "idle": {
+          "n": 6,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAGFBMVEUAAAAyHTZGydYsj7gxR4/ybJL/99dLUnCh2yuRAAAAAXRSTlMAQObYZgAAAgRJREFUeNrtls+O2yAQh+ENPBBpz4DXd9ur9hzHL5B9g3WfoKt9f/WHsQkwsZtEbQ9VRuLyifn4M2AsxDOe8Yz/MSQaZYQeIvIGIlRVIhDZPkK4pxzeEpGt/gkBUtbknQiE7ibe01W7ZqRZa/O0EeTtbsI9jIjDAFQfS+L+EMnMUlubT1L2M+nvJCfmYWYhuxklW4u6grX9PpnDMZJ6mFloN5daXY6xMh8gH8rskUXd7ng4geisrTlfRFKZ0MlUmwSD+bVSl07oTNYYbbbNHpH2orgjslvU+6QH6ZMpog9lfbgZi7UQYcGxjvLUvBurXqfve6TcRpDCw804n82E0Zv3MYpemgkb1EzHHYIsaF4TMgbPFD3cDNG3yWrb/Ihp2oXq17GynFD7OQE0tabU85J6uFloM+QiHNhwP+q1+pzgfARi7Ep0O5RTLM2+igE5FdXLOtznckOuERuI6dbqK1d4uBlXsV1KrVcRgbgRJ+DQbhLdovR9b51eCfcwgs/OER+URSSDmhZCJDaI4H0uHnxnqqtm3Nc5beyQVql1Tnb0pAqv300k88yP6lWzxA4Vou4BknnMhhmnpgYaXIIOmNB4evs9GYy4EO2ix2yZxeHkRfPKF0RfnhyTv5UrZIyk2vJw4uvvI3thiX7eQOhuggtq5pYT3d1AeFb2enGz8GOjVX+Z/AI+cKzXClMqFgAAAABJRU5ErkJggg=="
+        },
+        "walk": {
+          "n": 4,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAGFBMVEUAAAAyHTZGydYsj7gxR4/ybJL/99dLUnCh2yuRAAAAAXRSTlMAQObYZgAAAdxJREFUeNrtlUFuwyAQRc0NGEDNmkHqHvAFHHOBbHqALrKPWqnX74CxPeAm7boKuzy9+YzBngzDcz3Xf14wCPk76Zc4EidF54EUtnX8HzYTCNr2BHoi1YF0VYOIykInKewJHBzw3XOcvhBd0yUAIh6I7UjArsd0pjJ/IPYxMXO/mY4Uo3hLOgaEA7ENMYXwJoWi5Bewl4Y4IrJ14MIbqFU8CLPEj1IEegpoghYntI5rnAEWid3SUqbZ/j84YSH88V0OD8qzF5TI1WnZOlaz0xZYqjQPGulCrpS+SyNdyDtG2TpvjRNnfL0iDzKpNM7uX0AqZC/TaSGso0p40ORUWwbO5BNABbsTe8d/Fgf2JKNQE9mPhM6xBNmwNWD04sBw31mCXHBqC6JQKop2v21yYg7y7GLJicEG3waNM3VUp4Jwnp5jnC21XdHq+HUuCTw4JEXl0kxt1zkh1OmMRPKv2qbRdEbFqURo+mRXpzZlbp5Qol/rwIE0V7IFgQ1E8ntcCXfsdpFhTAnyWOTkJgdWZrJz28nRoXF0+hinHLINYUghTRr2uSxMLpskm93kjNWR22vjm++R5jNAHmT8gyxLPnTyQGiHncjzUjuQD53YO3k3CcA7ynu3/ytLR3edb07wXwuHSZttAAAAAElFTkSuQmCC"
+        },
+        "wave": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAGFBMVEUAAAAyHTZGydYsj7gxR4/ybJL/99dLUnCh2yuRAAAAAXRSTlMAQObYZgAAAflJREFUeNrtlD2O5CAQhakbUGBNxxQ9vTHYmtzdPsEEm09Le4C9f7LFnwGjcYebDJIDf3o88KtyCfGzftZ/XjAizM8ZAflaI5QU4ORLEp/qHDS20wAhIslTIpR7rQFUZFCeEsHEDpqeCNiIaJNHsoxkbZ0fgfxtjaY7I7uek7DNtqdN/qiBmcKa5Rl5RNJkCxGQl21qjkmbG+fIx2G7zTtF5LyrF6KYUWukzRdH+6XcCQH7hmT+aHOiEcrEGikzELcXSBsuNT/1kuOuEeGR8IclI12N9GikOQ3yjvbzbSIXWvfMDOcTMroWI9C3T+PV+7OWDab3T3a+7UjN7va02IjAL2+/KWj23kL38eSS3BojdPdU2tKlmjK57n07bSpVe5W79VHD+5LoWrKF2STRr/v+tWvuoxKJnotRrYi3KotKknjxycibro15qdxtSmEC9m5laxR0tSSaBbMneyBz1XBDcOe3hMcO9/Wy8dURJaRBpQrREmQxWjb+bx1HgpVkDSZvzCJEkSPg/2gbCGt8MIL0dcC/cCCsAVO6JKEwAs13xO+kGCUSPqwYCX0NyMTr5W4LJNYsEzHNTB5xWyHLUSMujyDqpg+DbW4nO0RN84emXYj9qI1rIPJUE9+96+Y6GanJ9CQ+LbGsaWd90nTTPxzeXyCcPZx/pvkHqVFyY2O5oroAAAAASUVORK5CYII="
+        },
+        "work": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAGFBMVEUAAAAyHTZGydYsj7gxR4/ybJL/99dLUnCh2yuRAAAAAXRSTlMAQObYZgAAAedJREFUeNrtlE1u4zAMhaUbiJQAr0Ul07XsALPOVED2mRNMb2BMgFy/T5L/06ToZDcoAQHO58cnmVSo1Hd8x38cNKxniRZT1oK0IME81twQ/CSijehfiNLUSiDzNFH0KiKH4w3pl2mZ7PqHGuVaoHD8nMhjje6yRha11eGGdHfIskhWiEWonVvp7hGOD7IU+z8sWH4WVWLjltxqFkS3Ht5Y87nZkwWx/r7mg6yPjQr5otGrP/uO928HMx+bC4mz5gevNSDbLJ0Mo2j736dJ5AyuLUQzuXidNec0a/bnTN6Os1HsSx93dhKF3hbydyLxF5f2T0YUysUKrp2/Q+qt6WTsJAf2a2KlGzTj13Il5Ns4zgIuF0I8+qQJ/x2QnQj2e1mQUDQ7KxGESlbMhIWrBnOAX9AABLzxymivqGMaiMYOIDhhXBMbeEmykYttk1KCNyE/G2lHrhKjI+U056Vq7EgoigdJ5ApBFZU+lLTen8xwIt0eKoFt3V//pEshaSKRs3WyoRClUHMXL8X7aDgPqkyKEQiGDm4lKmAnDRwKufRFY2Mlpd6puSIcakh1UI0E+lzaTE7XQTORtCV4aJprT3YxImxDDfVLQtT0zUoDBbaz6zGSQ/x6HBO1M+FCGtmSpUbVk2miJ8g70y9/CegrEpwAAAAASUVORK5CYII="
+        },
+        "think": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAGFBMVEUAAAAyHTZGydYsj7gxR4/ybJL/99dLUnCh2yuRAAAAAXRSTlMAQObYZgAAAgRJREFUeNrNlUFy3CAQReEGapDjNU1q9iA5e3l0gfgGmVRl75Wvn4+YgQY5clKeRdjp6f9Piwak1G1QHkp9ktwriH7dBn2K3DWIdiLKrCN0RO4X9P917V5DDwj/mCR4SKqteA1E7p+JMg5oaESOyPfEdkE7stk4VVX6aCw7vyNOHWvUo2FPEulHZn5tyBh7QiCNS+kzbF8XUaR+fpf4Y41Kk7EPAtlEpoZMIHys0YYMu+9TbaV+TiSv9pXEB6wISU3sXUr7LxD9MELkQKix8QP1GkQHSRSlnjkyJAlEFAXhrAm9RhBlPKWyuSLDKNs/sRNkitBE12oal7KnF8x1ugRBLnviP9Ko8XRh4tPPpZKnl5582zQXQVBQq1Fj2hDXLXElS9psDUka9LESrGnnwqWyBc1UGqANm43UHlk8kx8Hsfxuyxaa7GJfG4B6Egqu+OyIZ8OhzhU5JCT3WnpET9i42hFnQSYeiiawnxeuO0uzt3AZ0TWIzLziuNnCsBsTcU3QvC5WBMUQoaFJBFmCaMUSlM/VOdoVn/Y2aZp/qgE5O5JHxPh1XaP4WmU3UlUaNpBJ3r7Z5eRNa2+oGDMJlVAheqepFzed82y65OuNDD2Zh+1a/hNB4fRKmFuXwwWyLj1522mWpFGy22FAx/FqqP1PR1J87LtksA1J/0u1+4P+LckpvwG/s6q8v9n1ZQAAAABJRU5ErkJggg=="
+        },
+        "read": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAGFBMVEUAAAAyHTZGydYsj7gxR4/ybJL/99dLUnCh2yuRAAAAAXRSTlMAQObYZgAAAXZJREFUeNrt1EtuwyAQBmDmBgy46pqh6h7cxzppeoCoVfdxe/8zdMBWPYDzsJplkLz59M9gA0ap27iNqw24VhWyYilagT4nTZUyHHJXEKCApgq5RurMQhVYQy4UdIEsVMEbET3JBYDdouz0ySrVRSa/qeWhkO1iphCwlEbQjcgvO5YRrwQxk9f/FF7+nqUnEaJxrBNl3Z7X/2CCEGRBKVPZKRnLwr5o9GUID1HKHbcuM/uqSnU+zx83pQQkIYSWM1JcnVHdy4en+PwtQhEj+ftS0mT+lHCjgbs/yrJRfvB8RoiCbdozeUgn+RTyPlAoZTuQLUQh5pdEvV6CFOhD2mqa/2SwSSLJPZoyQdwGOWODaMSJyM3dGlF2lFcnfyPLZHxYKaYShTH3droSlGIaaTIpxeQw38tHBP4Emsx8lePG9thhumBnMdjxnUxSAkudkVU8XRqy7LjMZaMUjfg88No58WksYCpxUwabKhRnKz/FGb1Uxpl+ATw1X7J64RF+AAAAAElFTkSuQmCC"
+        },
+        "wait": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAHlBMVEUAAAAyHTZGydYsj7gxR4/ybJL/99dLUnD/z0B9xPXS+xC+AAAAAXRSTlMAQObYZgAAAghJREFUeNqtlE1u2zAQRskb6COFZM1h6z2lIHvFukAX7d4u7H1WvYKukNt2SCLiUHRrt5ABA/bzm48/M7JS8vUrvnYg+wV9LMvyURO1qC1Rd8l+QZz0X6TJ2S/oBlkeIG3VbkHtJh8i5bC6U6qrJK0awl9x2ylBplPaVY1cySJJqEakJcoEYBMEBddVQUHBd1UQeLFuE0SBpTLsegBsRdJidIdoDESogp4H8jVpHZiNo/BGRF8gGqETmf5KcIzkXfav58WIpoYESeim46vFUhX5ThBviZwVZLSNMzIYBWGJT+swSimcBnqCIBEAMsh946qTFTfSu4uhcDLlJKDAFiBIBE8Qp0UMqqqUcWlHxhVCATFIkAxEUFulLCUkJEuXkbz/LshXvpGNgzgisiP965mTD+dJNOTKe6JrkfofCYgm9YdtVQwi0OGnkN7ORANd3mWQN3QVg9RWKaTO8or/RkwiLxC9zsMWyrXZkIgVVxs2jjbIJKwToT1LnmeLujJGSTLr2GhyOVqQ7JQqRiO9zEdWpRSJbchYkXEcRVWa/hS0jnbcYyJDQ4SDDUl/B/M8D259Ipj4hkSHGkcQZjaX5f/l3KNE+K4/tT86gvCnI6O4xXXeP4ke3B1nEoS3iQm8NvemkL4hcyQiiAmXCSc+o52JX9fzMtF2S5AJVuJQO/wb0lsM++Mkp/wGDcfNDeZmQecAAAAASUVORK5CYII="
+        },
+        "done": {
+          "n": 6,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAG1BMVEUAAAAyHTZGydYsj7gxR4//99dLUnA2sWP/z0ATgDZfAAAAAXRSTlMAQObYZgAAApNJREFUeNq9lV2y2yAMhfEOEHb7DtwswCTtu2tv4LqTvueha8gWsuxKgDEYsG9mmjCTyeSM9B1J/IQx9mBh3e93+nqd8lazx/URKaS9TnmvGUuV6/2VynvN4k1E5V5TGvzwA+UrnC8FCc6a/kB5wuxKylI1p6pjBdEgDxTXa6zk5EIQmUGsNKoHIfcV2+uhfUtBLO5V9KjweINAKAlsV3FmiZKTHTpNkwAqMRuVUpcDBc3bJKtA9mgWTRqr1hArnUG0HnaV5jv2eks4OZlRUIK2VX/AqjREVqrfU3yvEKMzcgha11J1WI0BhWma7yh5VoFcCBK26gjUSiEUSLOn+F737Vm7DcKqMQp0KAn3XWmFWg91BYzdadrrKpnQgtCRmRatkhqPkv/dyh+zBHOaheQ1RfTS2KxW8ioZzyah5YrGAzRj1SclQ5L+NmOJp0/jEwuKksZmaaF4hWw3aHYDYeG6IAjEaR6WrPbsBiKNrCoC7TVmfQYlI+Osu5ND93wxU67q3yK0Ng0W3U28qnTTX5v1ZxxqZJw1Tp+C5jBr8eGrXufYOaUPvRaUyWct9gVyo7Q76PLXMutm6qzycz3X4I/1emUKyujsgVXJOGtwQWbbxzoiGu1lQlh0YnNl3Bz0nMzg4qZ/GWFzPfuBPWWGWSY2K5En77/bh9DTNK0VFpVtVoFMLzwFSUjTptiMtRbd00NRU/ISc3IJ7auOb/6IypnTn0ZNcb0qyffIjVCETh7Q87YPfFZwJWaZkveak32QjNFUNf01BJDAZ6Clexee2VxxWbl9TPYDGdKqbzeIzbAJ+1lXrrheIRt1TLboAdI+JG/pEEM8gaOFWdteM7JHywhNm+E25Jnle+WJ/YZcCPpfKyH/A2FLhZ3GcL1DAAAAAElFTkSuQmCC"
+        },
+        "fail": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiCAMAAACHmqD0AAAAHlBMVEUAAAAyHTZGydYsj7gxR4/ybJL/99dLUnDlSE19xPWBGoUcAAAAAXRSTlMAQObYZgAAAklJREFUeNrtlsuO4zAMBFXdjOP8/w/vQY/4QSmzWGCQwwYIfCk0S5REu5TFb9/3fd9L+Rbm24T2fdvq/zuYbxSqyDro95hvFPp/hm4Mp8fqKvIr1x5xeKQQVMRr6Ur1R17sRE6FKIUhlHXm4rymzL8gpSADoDmFBGB9CNLnILfFL4J4IklmDmEkCbMWAslIrBBghRTCkiQ5ZuWIGMjCB2rSfGXw9MfFd59TudfrI3JmSoHoVAzqzKTIlRm1JNlZEEfmsGlXoROVF4s3shACWqN70Ot1ErKk2ulDrTNzWVmjLkyG3HPE9kCS2cbNvwiJt/O4+fegz0InJK3VGkQ7Z2RBWDw2JME262LB8lu7zYek0z/o4j3nIqTMOVm92fB4JEJ1boxaSoVC2yYJJG2bkmtN1PPVT1t+8zvVDmMaNBZvHigfn4SPQs6Ftk3yAmlBD9cgP2ZBpwsUrEbebTrcnJ9VKOZCB+1JELTFw2MidB0yZEw+h25JdZTNZzXYyCCYIZY5DsZkY8FvI0/f03gkGefnQ1KNQrMjVN+Fsu22PFKmv+5mZ7HU+9Xao/zdeRByjuAmGxHhak4eUxGWQoKIiFm1ghy0IKdNxLXPjoiIyfdFta45xppu2RCazQagr8zMjhl0n3CdgOnB74hXnxbVJ4IZBL3WuBxpAw5CPXmKOEfqrY6u7R8HJR0fQW0wJEfyB8jJqG0YH4NKemjrhoJrG+/VOP4WQoegmdClVibUR8L7bty2YyCaIn8Z5EVQX/ehAWtk8Un9iZrX+gM2ghjxGypiTwAAAABJRU5ErkJggg=="
+        }
+      },
+      "model": "Gemini Argon",
+      "yon": "walk saga bakar; simgeli durumlari aynalama",
+      "simgeler_spritta": {
+        "work": "Kucuk laptop/klavye ve yaninda soyut kod ekrani; eller sirayla vurur.",
+        "think": "Sag ustte ortak dusunce balonu, 1-3 nokta; el cenede.",
+        "read": "gorsel uretim araci kaynagindaki acik kitap; gozler asagida.",
+        "wait": "Sag ustte 2px modullu kum saati, bakis yonu degisir.",
+        "done": "Yesil onay kuresi ve parilti; yapilandirilmis ziplama egrisi, yay gozler.",
+        "fail": "Kirmizi X rozeti ve mavi ter; kasitli 1px sarsilma/cokme."
+      }
+    },
+    "evren": {
+      "w": 36,
+      "h": 34,
+      "olcek_onerisi": 2,
+      "anker": {
+        "x": 19,
+        "y": 34
+      },
+      "durumlar": {
+        "idle": {
+          "n": 6,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAMFBMVEUAAAAAAAAUFBSMFCDkPDj6zBX///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADUGbITAAAAB3RSTlMARv//////mLrkRgAAASpJREFUeNrtlTESgjAQRb8L9tYWDuMJnMkFKNLZeFQPQMEFnKG0Yiic0dIDAFrAhkAUAxotZKvk5S/LbjYJMNlkf25iBNlBYG7v5SkicO5oXpOjEDjZe3Ewb4tlcdE1DgjVqEhQJK0fckDom23RBDsYa+6IJzfDyc6Tm7m9l69Ki6QjsiB7DPKaAQAkL0Q8cEKolR7CbsK9ZJUBoNTaq24QdmvMhsQAkKNX86AbTTcbYlq/5q1ztg4A0LpXk2YAylQ1iAQAClJta/2QSR43G93SjCAqs0AvtAwV8WWDA2MzhhEORqVR4M+Tr9+NUaymefREZ2pGEM6spO6na6KFL40yDCRqlBkd/HlCfAqro8BpuyPc63qXOyE/eqmnYG9Y9VLPFtXsdlXcBbkDkFm9Kt/GOfAAAAAASUVORK5CYII="
+        },
+        "walk": {
+          "n": 6,
+          "fps": 10,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAMFBMVEUAAAAAAAAUFBSMFCC+xNLkPDj///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIgCQyAAAAB3RSTlMARv//////mLrkRgAAAaBJREFUeNrtlbFugzAQhn+MGSPRJ6hUKVMXJK8d8ggsfkovfoRK7Vgk3qLdkt1FdADMYYyNk3aolBsQOfz9/505HOAe9/iXkVe3UbnNic8oJar+y8klUcxSQsT6EFXurkmjmPWHqJyKnAQaoHGrTqIms65F18b6WEUixTafrPtwhZMpRpfF+mgeW4/4fsqaNU/xPtaNpVHcLnKluuao6G85XWg2jeLbQu2RUoW9q3XIPkTx/ULZhwBweHtOsqfU+M6yBgAOracie/cNAHgldadSbK8Q2Rq5217WC5JPzbsxCuX0cMjKM3yfbCFVlDLzNNKUNyQAlGf3tNqypzFQhVTz6M+pQdoK2aqR9WH7KMW8QvD1MYUhoxahlF6djU5qW2grwvZ7DuJlKA302TV/1CNl1GxGUsteSdW4PATtoxTzChF7iwPozwBANz2N4iGhxYSoolZAUauY/ZKSRgOQhpz6RgNAUYeF3PcIaTRxj1J8Q0gPGtIkDcPQ/dDMDdP4K8EB4JT6NcV3ZrXjU2f8/fpiX04Ji4dJzcpxcC82/xeZH0A20cQ1lxHqAAAAAElFTkSuQmCC"
+        },
+        "wave": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAMFBMVEUAAAAAAAAUFBSMFCDkPDj6zBX///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADUGbITAAAAB3RSTlMARv//////mLrkRgAAARNJREFUeNrtlD1OwzAYhh/csJOVoap6BV8gQzYWjsoBOuQCljoyVVFVCUYO4ASG+C9fRWRHZUH1YMWPX71+/dkx3Nu9AVqMX9E85ms2QaP5mIneteYifBY03mjzwvPwmYoKiXJoODIcZ6sVEnWrEkcjA1C1yZxBogVNMDK1ESdiaiNObUlThe0y3z5vSLKomYxa33XW8UAOWHI0ahaLBhE0m7gajQD0Seocsu0jcUbnHhi3iSiHdETi8u2u7lQOSaNUvmhqd4qTCakay2+afaIJK6SaNcSXXk2ltF2MXEZu+q8dOklXEJ9ovIpWSMJXv5eqMqIALDCewhVbTYC2kQ9NKfmDF/LfGT1M/dM0+v4KvJT8AEZJjQJD7xFMAAAAAElFTkSuQmCC"
+        },
+        "work": {
+          "n": 4,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAMFBMVEUAAAAAAAAUFBQiLEY0OEY4vfhY1nSMFCCWnrDkPDj6zBX///8AAAAAAAAAAAAAAACtB8B2AAAADHRSTlMARv////////////8tAhAgAAABiUlEQVR42u2VP0vDQBiHn6Sp/QNCi5NLCV0dxY/hJK7i1kUhWzo4OHQpSCndQikIjn6CooNjF79C7OLciqAttIlDL5fkAo1pO/aWXJ73l3vvfu/dBfZt3wBbeX/EpryJ5sXeiuTEs3BH/WgU1WQkwUDLmrm4jSXLSPRdWRwO9JqIZSJG0HnoDaF4DzRFRRq9YfknStZq5EBzusAz5AW4RiVrNRoAjgj4A9P7HG1EDICSXLLnrrJlJ0rVimEV2gDH3dyp6m9Ioho9jmZS/guAxfJd/SwkUY0RQwfrdkqgKVh04pGCRUdWTTfdeNDWTRfb70c3nekC83ZQNalpr6rmANRdwO9DfpRCnmYqGdTG+WBGugfAJTBKIecJcsGZcta0IrPmZsRQHG0mPP4n0YGGBZ4OnrS7YbljLzbZVI3sjetqmmwkB7A4+ar4E7QqNwIvrir4E7yPqiQpGg2g9b2siFtFrL8l0kwPJUnRGABvCfeyE33HPzWnC5ScLcjOZrS6ITXhoz+VPCv5A8LM0NhPl4G0AAAAAElFTkSuQmCC"
+        },
+        "think": {
+          "n": 4,
+          "fps": 3,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAMFBMVEUAAAAAAAAUFBQ8PEKMFCC+xNLkPDj///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADkZRCiAAAACHRSTlMARv///////2AnXkEAAAFjSURBVHja3ZQ9bsIwGIYfJ1GmSgWJA6B2r1CUAwSBOnXgCBkqztUjcICicgBacYEiDlCJzJSQDsSu7aiILzDVU/L41Wt/f1bYKxzAezsSOSjNoFzZJOn75A9N4FhnwMghfeD+HI17I2YTvLVi4JEZPPkaHjyjhk/DBiawb2gOTmjlApg7ZAN8nqNR16qa+YsyPwQZ0aFFozQ7ehvNsOeTUxptNBqEKaRWXYcd1YPEqv1JjTaawxKWVhbf4As+rEyf1LgN6XasiBijcgWp0zRVAYlDztHw+AzhBcTcaLGH0hHJiAKI85rvXuoPOQkAcm4WgHqN9UlyEpiJhm9vxkUk4EqrfkbGANHY2pCSAJgCqC7rjVa0ICa0ztaphJhoI1UBh7X1TgiJney7RgYFRDekui3sbpMTfaNK+ScJiQmt6PoqGQkAdkC1BdBz1I4A0xyIp7QnVxuRf2x0bATV+X3LaUd+AJcxuPY/9ZYdAAAAAElFTkSuQmCC"
+        },
+        "read": {
+          "n": 4,
+          "fps": 3,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAMFBMVEUAAAAAAAAUFBQlY+uMFCC+xNLkPDj6zBX///8AAAAAAAAAAAAAAAAAAAAAAAAAAADYcECZAAAACXRSTlMARv/////////+u1ZYAAABOklEQVR42u2Uv2rDMBCHv8gi2UofIAWhJyj0BTLoQTwUz3mMjp0z+UE8eOwS6F4wfoTOwXU7+I9kK66tNN1yYCS++3F3PukEN7sZYGbJHsNmShP1xFCMNGPyZgwfU5oukHxGV6WrCSSiRVVOlQ+SBRJxrRbbQJnnu4zIZDdH9jLZbaY0sv9d8lEgj7zyi2YFQNI5Dt0mmAiAdZ8hbtdwcuVTExnA1u3ANu95J/VFXqATAKnrSC1v7Yzo3D0S2nPNkiwXmipzjl8aVDGcdoMqkC6SRhVgnDJdTVeRqL30YeQfZu1KgWov4mIi1KCi0jujpUTZik5AXbi3JIAIytTOmtD6oLVy5mgxUTWxfUYejtHL13t0Z4sOJX2PHtvPWhhp3iOemuVoJZcRkhhYJ38gTUWr+8bz/dlpgskPP4KIW3xSl1gAAAAASUVORK5CYII="
+        },
+        "wait": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAMFBMVEUAAAAAAAAUFBQ8PEKMFCDkPDj6zBX///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD8NMDOAAAACHRSTlMARv///////2AnXkEAAAFFSURBVHja1ZQ/boMwFIe/2CRzM1WqVKnqCaJwgQ4cIAt7jtadhQM0Ug8QJE4QZWvH7hTSAQN+ppIxYmgZ+PPp+z3Msw38tWOF3lH4rAmOZh/f3z4l2z98SGuCE6Fr7RTfxXVdypjfUTiZX2MTHEWha29sgqMASjiSsHFiiS36nMgUf01i3kQMm/gdBXoHRDHxi4gJ4neUQd8l9buICeJ3IuRSS6vc6WRa5VMcNcyMNUmFS/xOV+h42p43MnXaniWY4gCpdZ5BouExBTIhhBAFsO5fcDDXcNL2SBUAj9ZEjIlHagtVAORWakw8klruD2mapp4u0LVyBulHZIh1hJGo61vTfvXQgkCyWI8UkOUunUG6ETWjoQWS/u767FphRHULq7nYy20eAdIDsBbbOpAsOmv/qVCV+SsYZ9We71p4++o3cyj5AXryvQvTsQGjAAAAAElFTkSuQmCC"
+        },
+        "done": {
+          "n": 6,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAMFBMVEUAAAAAAAAUFBQ4vfhY1nSMFCDkPDj6zBX///8AAAAAAAAAAAAAAAAAAAAAAAAAAABP5q+UAAAACXRSTlMARv/////////+u1ZYAAAC3ElEQVR42r2WMW7bMBSGv8iytHSo96IIcgIDRrcMRpEDGCi8pCigLpp9hBzBSxdOmroEAXwADx4yFDAMZOxk5AbtVEC07HYgKVEUGTsJ0DfY9E/qPf3/+0kaTo4UpjAjvrpyZk5FeqcX29P//ObnDz7C+8fWzKlIFMw9Y0raQvoT+hNioP3aJyPhYvPpaFq2kE8jRh8gJl7V2FRlshDCSLhYf8Ro0kLugDVU40tr0YQ2osKPxMFiu4fhfuFBKu6ryhZ2YSM6sx+JTjfIrD+kN0lZVazawlqIDj/iL5ZnABuAJDefc9hASXXxzhV2uXRFaxBttGq55Ak33g3WabPFgN1msHGFxZH6SaNFbV/Zi3YsjBtnMwBuuXVMNKQ3ObZhGqPVBpmOrEzFdZIBOcjvEpiXOTkKQVAASSYANiOAXBYND+eNLKNFAaNn+jsBoDQDe8orbHfDWBGF1FfOXYUQLVVHWF8XN/Yx4o17xlBdhpBZ+ccVNmS0b1/XaekU2wytFQljPZtJI55BElQXvcI6eYA5LFxmd1/XR7d1dL41wxKgigFWYz8PyGXRsE8yUVt/x+JosaaWFnaFJfXM3TC4tooBkszU1xaWIjc8hForkozooCYLr7Bp2slTXNvspXJj5nmTLo8mmhs3uqiHZenNY7OPQkY3PFTctIoNh74XmnvzjMdAHNsG6Rq9HTcAB9Pgh71f2E6eJKttlWTSFBsTnW/jYwZ5vNjqfyMdYfdunt6+yz4KdujQvhAkcNgCegN3hVWXkc6TfwGkKOp2SFEQG66Hemu4PHSIXBb6/E1Lr7CdTofORjcKzUP6JktLWGphj1/6oT5JFI8nDj1X2AAnqx2Rv0MnhUAKIQqEOj6ksPKIosMeIr3IQKLgRTHvpu6yj8xAQZLXhCePzV71TFpOe00cyxM/p0UYzV8YEf8x4tfweC7XMwAG5uevemLgApy9Bfj7m/Cabh71kH7sH7KiSyxq+PESAAAAAElFTkSuQmCC"
+        },
+        "fail": {
+          "n": 6,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAMFBMVEUAAAAAAAAUFBR9xPWMFCCMjJbkPDj6zBX///8AAAAAAAAAAAAAAAAAAAAAAAAAAABDLClAAAAACXRSTlMARv/////////+u1ZYAAAB6UlEQVR42u2Wv2rbQBjAf5ZkN2P6BsZD6SjwmkE0R+mYxXuGojkP0Gcp2bX4AUTR0CEUDIZAyBCM3qAdS3yndpBOPunOkWPLhkK1WPfT9/n7/0nw//p3L3F8E35tS7A6lbHgMxOZH9mYV/3KDJl1yEaBAwbR7saCV4iKs9+ZDS/IXhsZpJ0Ou5iIArFbCszIUin3cTiNWl46UiDSdmSy8ecuh8XO49FMgbgUVhqbDpdpfdNgmUxtyXZb3dhxDkTUmjNmD2YpP/CUgzK1itzRr0WRNcfzDj6OGX/bSARj+fXFyJxzILNmqAA3mbTT4kwBMCij0sekbqjvcv/hDS5MVz/J6IuRxuF7/eDdY3WTFwdsiqKxivInffZe0In7ITLOmt2olgCLI+/GQVkxdR8Ci6mu2uhaCzzf0hupIvNDfwrT2odahgeLjPYmdc1Cdw6VjZYHv2J8ZQ2LN6ExLxVRtsyyW6texMnwSj9azzebcLwiEIQ/WkSZ23ILMcybZHvre4Wb+GG3jHITbUz522Yl7iR+GO+mVUe2nPb5ZRM6iQewBtQCYG7sHCvDBxOv2r/rJEnmmz0MkE/aeoeSLQ1yCxQrgOeeCTC7AoYzs57XwCjulXin/MI/qbHyTT04L09/fmn+Vt/87JH8BcEkxoLY15W2AAAAAElFTkSuQmCC"
+        },
+        "walk_sol": {
+          "n": 6,
+          "fps": 10,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAMFBMVEUAAAAAAAAUFBSMFCC+xNLkPDj///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIgCQyAAAAB3RSTlMARv//////mLrkRgAAAZdJREFUeNrtlr9ugzAQxj+M2ZNX6AsUyWuHSH0BFj+lFz9Ch3a0RKW+Q7sl6koQHQDHf4LPbtShUm6IyOl+33eHjQG4xz3+Z9TtTVRtU+KTpkQ7ffmpIopZSghyDtHWQVEZxaw9RBt2FGYMYIKSImo1G3uMPTVHFIUU21aK5kCkXEgxt4qK8dv0sXY+Zc3MgwE9xxh6FVH8kujjjlxtuf4oT6aE4ttC/hyNvep0yj5F8Wyh8eMRgHk+Fdl71Lxm4zsAmN21juzVGQDw4oxQSrFMIdld2We0vXNDZfScNXJTqBao9s6BkWfvUdymdkfqvMDuODekkEnJC7WaBak5swpZaaCa0vYkxSihJZS+1jlFOTGoaM0GlRLyIts+6yCOYqrChqhQ2lKrWZDyu3alT/ukPUkxSsjiAKYjALi3r4ziKSFvrZUcNCAHTdl7lO4UgKZTzqk/SzRdWihcEchBLzpZFN8QmjuCHIo+2lTTKW/63+/GmyOYjJ+p3oP/h7d0vfecBJM9HQp7fS2pnndqtbwUJvtm/JPMD3jb3LxIme8BAAAAAElFTkSuQmCC"
+        }
+      },
+      "model": "EVREN",
+      "yon": "walk saga bakar. walk_sol.png sola yuruyus: ayni kareler aynali, yalniz gogusteki ay aynalanmadan yeniden cizildi. Sahne sola giderken scaleX(-1) yerine walk_sol kullanmali; kullanmazsa ay ters doner.",
+      "amblem_aynalanmaz": true,
+      "simgeler_spritta": {
+        "idle": "nefes (1 px basik, kollar iner), yildiza bakis + yildiz parlamasi, goz kirpma",
+        "walk": "6 kare adim dongusu, govde 1 px iner/kalkar, yildiz geriden gelir, arka ayakta toz",
+        "wave": "L bicimli kol sallanir (yatay+dikey bloklar), ^ ^ gozler, goz kirpma, yildiz parlar",
+        "work": "sagda kod ekrani (satirlar tek tek yazilir, imlec), onde alcak klavye, sirayla inen koyu eller",
+        "think": "govde 1 px geri yatik, el cenede, gozler yukari-saga, konturlu balon 1->3 nokta, yildiz iki karelik ritimle solar",
+        "read": "kitap govdenin altinda, gozler satirda soldan saga, son karede sayfa cevirme",
+        "wait": "kol dik yukari, sari ?, saga sola bakis, ayak vurma",
+        "done": "comel (22x12) - kalk (18x15 uzama) - tepe - in - comel - toparlan; kollar yukari, ^ ^ gozler, tepede yildiz 8x7 parlamaya buyur, yesil onay rozeti, birkac parilti",
+        "fail": "gri flas + kucuk gozler, yildiz sapindan firlar; sonra govde 2 px yassilir ve 2 px coker, cizgi gozler, sarkik kollar, yildiz basin ustunde elips cizerek doner (sersem), ter damlasi kayar. Yildirim/bulut yok"
+      }
+    },
+    "diger": {
+      "w": 36,
+      "h": 34,
+      "olcek_onerisi": 2,
+      "anker": {
+        "x": 16,
+        "y": 34
+      },
+      "durumlar": {
+        "idle": {
+          "n": 6,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAG1BMVEUAAAAyHTa4wMyKlKb4+v/ybJJ94PBLUnAsj7gJAFAMAAAAAXRSTlMAQObYZgAAAbJJREFUeNrt1kFu3DAMBVDyBiIVZK/P5ACSbzDRRYICs5/eoJueuwuNbVmKbKdosiiGywfyS5AF20SPetSj/rNiaUWOhcUdygfJ9Hxtuvj6TkfyfJVD6ZP/erFfncQzi/1wRCzrKfDvdyJiWc+uF391tJ2STvrkcrKiQFiSxBWxsbBQM1XE1zl9MhERJwAIrhU7IeGTQh4AgPgdQho9EGTdAKt4IIrtCGkJqrat0QNRWqmTiSeVhCeZXCt+T1JZrNpQehrkTNViJpIgou5TAhEgStr06MEUyUzrzZ4l7khIIcHbBz0yTiaFiFkUDatEb1M4EMAMqKXPaYX1FQiKwDNJegVMEXh+IL30U6xzTxgmk+BeCre5Z4AijKSfOiOkBuScL7Al2hJyzhmWdqSfwr0Hwx7SkF5yzvkSlqaInHPOF9Ox9FMnhPw9KC8Xi/0sNzeSfmoVH0c9xPrSBNEiy7XupJ9inaOjGyafif5nQnzf0XRr5FK9eDqRWW5djoyTictjtCr65wkpU2+d2J4QSQJg1fIk02mRRrDp6ZKJpdR3CDECka8/cV8n5Z+Ptz8mXyF/AGCvuJ4teB+dAAAAAElFTkSuQmCC"
+        },
+        "walk": {
+          "n": 4,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAG1BMVEUAAAAyHTa4wMyKlKb4+v/ybJJ94PBLUnAsj7gJAFAMAAAAAXRSTlMAQObYZgAAAaZJREFUeNrtlV1uwyAMx8MNbJDWZ2A7AFhqn9PmItWkXWB32LkHTgkG1A+tL3uopUTKT38bYxwzTS972b8yhdARxOkPZHr7gntE/QxkP3g9FGj/SCD8hJwp1mTNuSdv5+kuSTVKT3TOEfTEDiRsBHoNm3bZwtNEudXgScKhEaPHG8Q8oFnRrO08kFqB62TeCBcNUVtssmYCg+Y6KW4iyUqgC32LcI4WjTWhOQ8mIErUklHDCNICsQ2dlwToSBzJR+vGryYjLdutkkHjRdVS3d6X5ViKpKJPZGECvQY2L128NmSZLEtJoBLvCvH6QsJ0RZOQcZ7RaXMzjjJYyNXQdnWzxYucZ40vtVXaOMNoLrELOYayNZ0CscaWIumDw0aTUEC9irAjvh526g/WSKLlXrlHiHd73JDyxLWmjeBFcxJtzERouNmzSHT2eiCy+y9HdKjEZHIMO/H37ygSOaotOuE3JTNiRGD6jp7Er44moYMJzZXAZsSsCRlEOWuQMhPAUNbUDuUiBW5VObRs3jI208+DbiJnL7Q4XG1yOcVDvbnxMsLBSxXyCwY9dgGoaEKZAAAAAElFTkSuQmCC"
+        },
+        "wave": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAG1BMVEUAAAAyHTa4wMyKlKb4+v/ybJJ94PBLUnAsj7gJAFAMAAAAAXRSTlMAQObYZgAAAcBJREFUeNrtlUtuAyEMQOEG2ERtt0CqrAGpB0jmIt1kH/UEuXkNw8cBTVJF6i5ePvkZMD8hXvGK/wl4ypKgRhKnSgAPLaHP32PSH8jb+ToW+niykJ+WdlZ5qn2u8gtWAp1c1wXCtrW2FtBaAyNxnahkJaJqjyYr42ApjBqJ4x3FTOCeJbTN4QfrhsiVMG+2ZPAEPfQkiZAJm5I2kBYSxhzNSsuIEOwOohqJVq1tiNQSb5Dl7Kg0t4R0QBoASxoIjR4gFQLtty2hK4KJ+Nogh6WQ2baosxdwzgOaurea1u6c6QRtMBDdAbC1DakIt3IWtRGtkVWz5pN2mhEBeYOAiFUbVk0iKstoZacpsGm6EdiwaI7O2v2yHK2uZyJZC4V17ZRAzlksLXHLEmhCylmOxvaWDIRmmclia5Nmi+5iHn5ZDthqF+JwKqRLoWaZZgncF+2iNoks2snDmNNfgIZaaT2RViiqTUvUScbLqDESqqZGy7NLm4s7dtdwJGWSx64V6xT52xbpaXF9+EbY6wM/6dRE37X3mMnl9t+g4NpK+Och4TFJdyKdQn+XBNp32c5MzWlnv/9SN1/VTNa/7XZGPOcXyTd6e21KNXgAAAAASUVORK5CYII="
+        },
+        "work": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAG1BMVEUAAAAyHTa4wMyKlKb4+v/ybJJ94PBLUnAsj7gJAFAMAAAAAXRSTlMAQObYZgAAAbZJREFUeNrt1bFOxDAMBuD6DWLndLDaATEnlY5bD/EiLOxMNyNeHCdt0jS5cggY8VR9+uO2SZoOw3/9118U9mK+kekEXrET30nbGjvR0MtV2b++d4IbjRB7MU2jKjM3qmSAD80DjmMZB3YWX+TYZXwr07RZ0fI/ktUrQhRxphUx1zO1DDQN49/KQIj61Fg17wTClvAyCsYdBtmhNV8J6bCVOGoySqiESNiJ78Rsi87+RKEMs+6SyJWMzpq3PLKlMm/E2MqFTCsg97qKJAx5uSEYaKRkXBFD4kKVmfZVLMr7zQpTK21GmzaS9sOz1rInsrBtpc4grUXJ3UV6qkKTWA68meHg1xKnP/XWZUFI33xcRoVTcORnWTJZWHi3kgGU9HYnvYcB3MfPWp9EQyeJ8n5rLmdIYoacirdTI9ItoZ15NDAeTNq0EsVaMXA8mIsZQT9JmGUAQnc+n9/Est4tnqEQvLtRwvBQJGcWcbiW+LqRdNibno6JbAqd48pmyZlFhJNQET0SfSSrp16etlkesZU+40tGz01MVX3Zm4JfZHTektnlQPyecCP5Z1D/EqZrqI/2jUx+xk/lV4tYqernHQAAAABJRU5ErkJggg=="
+        },
+        "think": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAGFBMVEUAAAAyHTa4wMyKlKb4+v/ybJJ94PBLUnA8AsHZAAAAAXRSTlMAQObYZgAAAeRJREFUeNrN1UtSwzAMBmD7BpGdYW+5HMAOA2uKT8ANGGa6Z1j0+kh2GikxtHToguz6zW/FD8U15vRAe4z5o9yqEJTTA3+SmxaCLgTNNgLn5HaF/t+p3eLp6/1GbC9374MawfL4thHTZczdYSv2sKVv5PGyzAQwtPMElveN1PfbC8Lrt4CYhoVmgU7SOam1kJ60TPJngfMZm5lwELITUZy01EzWwrDKGB+oeIAku+cdiQ9aEi8krcQjOj3KuBEyjvPO1ZfNhUQoEzL655XwPqpRNGugQgBOCk1QQ1kEu0ys4iZVCL8ZRtMOHpW05a/E0SbtRIynIXGiYUmEBk2nM7kgutArRof3EnIsWUuf6cU6hHb+QSTASoxrP/1WdIYWm1Mpe2qKYekQH8eCK0EsxdPJKYlQUK3NYsRAN6oQl8ZxLY7qFIdehI6svW2Qvo6OUvu4hDJgeCAJi3i3owitLIlQ8ZEyadltQOBUiUtvAb2aRToSMv9+zlH+LvgjGnmUuuzG+v+BINuGc2mRFomqj6gXOKM7u44q0qOz7M8L4sNKqCVq6GXSrVUn9KS+rDbF1GWSvin50sBJXef2qV4jsMnETy1dhk4AjscPPccqcK3ULxLUFzqLu1ZolgOf3bD5I7soetQXCUOgu0xbCnUAAAAASUVORK5CYII="
+        },
+        "read": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAG1BMVEUAAAAyHTa4wMyKlKb4+v/ybJJ94PBLUnAsj7gJAFAMAAAAAXRSTlMAQObYZgAAAX9JREFUeNrt1LFuwyAQAFD4Aw4qxytY/QCwlMz5hf5BVMl71cFzpvize4ctfJjESeoOHXKSl5e7A18wQrziFf8rAP5G5L5TC+k+1d2cailYVjbq7jcqRIgK15cAiq12ErmUOVeE3laCc149JbIQCuMw/HaRLobaKkKPZAvxz4kMUyN1W9JiayID4NjwYY08DdIwod+dh8BywJCwd5PuDQI+WdkxOF0IHHNxmeD0ARvhin4Wb2MjLuOuS+Eva2mTep72LcHHzo2i6Lm11O6D8D0lPSKiFDwPDY2/TWfiQWlzIQLQDc1JrUq4KqxRaOrO6u6iG5WOUd2dchlzziGJniTl4Bfp/YBhfLqrwKJUgzG5DJlMVeyGw0nWSKy1bFHqIdhchgsX3WDROTvZpomNWJL31MgAk5ZyzG4WiDsK/GrZARG/pQxKPUA/l5kx56CWVV/s84cDYHyz6xz6QmJOD2tVtFzfQ6u2Cp4Ji+cmv7R+I7hLRcPjSfSnLmSZk1f9AEorfC2lUWdBAAAAAElFTkSuQmCC"
+        },
+        "wait": {
+          "n": 4,
+          "fps": 4,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiBAMAAABCak31AAAAHlBMVEUAAAAyHTa4wMyKlKb4+v/ybJJ94PBLUnD/z0B9xPX9A5pxAAAAAXRSTlMAQObYZgAAAaxJREFUeNqt1EGOwiAUBmC4AQ+S2fPQA0AX7k1PYDIHcOMFZtEr9Aredh60lgc4dbQl0ZjP//1BSysEX0NcO8h+RfdxHO+liFHUIl7KfkXU9JE0PfsVPZHxH9JObSqSqt7k2zL9WOPr0NuSiuTtpsoLWcpYSzoirexXJL6uSkgAtRx2+XUVpYhnUk3FgJAG0auF6OsoNotUdaadilUacZp7rM9ESEwL1gQmUU2GF+mOoEPLBBP51YwLiC6wjASr0Vmddym1BYPWQBZjTZ3RtEsN7LdJ62mKXjmEqQiMWsm4WGQAeRFojK+mSLOiqZlngIqAFxmEEAIE9FlmYgI6YJnx8fIbXnSkOcRvHooU8OKLTCC2OXNB+m+PeUponJfdJuk89Gd6c/MuJV1XPPRcUqZn5yZlCqFQR0LmlhB9TGKzhElyUTNFZA6RzmzMN6IbeUy55d8G3adll/MH01jvmLSZfs6wm2YmtU2Ipk12apvQlUzkToqdiErknPGqnmIioIv38cAfGkOUHy6nKCeop7jQrQ3DAHyP0vhG4KWke5Tfj3+KXpf0kKanktoiv+0r1xXQUotFAAAAAElFTkSuQmCC"
+        },
+        "done": {
+          "n": 6,
+          "fps": 8,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAANgAAAAiBAMAAADPBwqhAAAAHlBMVEUAAAAyHTa4wMyKlKb4+v/ybJJ94PBLUnA2sWP/z0CFz9pVAAAAAXRSTlMAQObYZgAAAi9JREFUeNq9lMFt4zAURD874FBA7hzuFiAayN4NVrBACggW8D0nt6AW3O0eaIq0Pik7AWze8vBn/vwxIhG5yPqWZRF5Jnnpsku6NGRZnkleu0xuSVqeSV67rP0Rl7QsPQLcJ4/4PDT0drJ3yTeXpSUtt6mvxLyv1kOiVR3nnvXn1ujtZEUAu0PM+7/76+uQXG81p9OGCCAG5GzHRKu083AIsHVIRECS85jkYltVJ3RjXT4qNfX6TRNDkqQdE6XqOHetZcqpK0G2nvdIuXUvdB1a35q6/A0XDmQ4eNgR0aqec2doKqmvzxGYHYGZfkS0qrteDZltasfgGBlDLFOaiGRV9DvOIo6RDDWhgQMiMfsyZiLJEEgGOySIQCTAWuzWWcREgASKShynyMgYDuvYxA/6ib/bzjbEBZdVfr1NOYtBdCGG6ENJNLGkXtu+lt80oki+IjSXaGeZ6LKqLe2D3rV3mEimdCQxJGBRFaSdZSL/5kJapO9IKaXjDjGrytuhs4ll6Ka0zR38pZZpQqbEquo4iytDfpOa/NpYJ7UsqVsblXauQzp1XRazddgjWqWcu4WknPqr/i9m64MdE63Szr1CYpYFNN+ClFIKsx0TrdLOvUS5omNzhzlHMpwhY6JVnYbW9puK1B1mwvmMZnuH5GJvblXOeuia+k97Bz0wtd/vDlEq7Sw4R5I3FanUAogY7BKt0s69ilTqR56hBxx31/cKgd3e8chTql7on1l/e/1/GVi3mSLF9oAAAAAASUVORK5CYII="
+        },
+        "fail": {
+          "n": 4,
+          "fps": 6,
+          "b64": "iVBORw0KGgoAAAANSUhEUgAAAJAAAAAiCAMAAACHmqD0AAAAIVBMVEUAAAAyHTa4wMyKlKb4+v/ybJJ94PBLUnAsj7jlSE19xPWI3mMfAAAAAXRSTlMAQObYZgAAAixJREFUeNrtl92u2zAMg0PSsZe+/wPvwv+x5AbbMOTiGCiaAh8oSpYd9Tg267qu67qO4y3M2wxdVwj58w7mjYYyshf6f8wbDf30UGUA4MtR9JD5uDrUyDyIdUAxai8ExfhMyKLGxDyhSSfGGLG9kx4g/1BoqJBXUCjGX3tkph7E2lE5BgBJMgM+QAazKOvPkI6yLL8EDdll+UhIKjrwi0ka4T4fG+EgNDKe0MSMCOxYczBbyEN2Qi2cm9jgaNYhUUCgUZ/PaIjT6qHuQis1M7bQjRER8uYjADX/EYIoFAQdWYW4FnJOzERW01AuEQRYmYGTZzmZcbStIrSrtFlFqKRd018zuyMyM4OoYlsKTehWaSpNnp0qAir9Y51rdK+T54VSLnH9XoWKZ7F+G0IgedaGzo+WIUrVLw1ktK2aviWk1h7DtjoXnpxLDd1zap4doWo7i1lC2XMt9Sq0tNma/wOkUidJpv5oCJ3d80mniiJDWSRh6UgdEVxDrEp+ZmffDc8QerAQLEO5B9vKv833DzhCd6r0TjbtnaADwOAnBK4vYpDSbMhpalbfMF+wkNAYkJBzXCdDshoWIwJnTNFsaKXK+eqIkpPZ6Me5GsZdtScQANBQZyszkpURnFkGY4koy/Qd8WbL70Ii2+ZLbmbtCpIT7AFSqIIpJXdqRL3t3KkRUp5Pk91lFUlbpFEpJfhCpDJiH43p0ocPPUAmit+FuDHUaodvM/z2r8dfCv0G8lkbZW09I/EAAAAASUVORK5CYII="
+        }
+      },
+      "model": "Bilinmeyen veya baska model",
+      "yon": "walk saga bakar; simgeli durumlari aynalama",
+      "simgeler_spritta": {
+        "work": "Kucuk laptop/klavye ve yaninda soyut kod ekrani; eller sirayla vurur.",
+        "think": "Sag ustte ortak dusunce balonu, 1-3 nokta; el cenede.",
+        "read": "gorsel uretim araci kaynagindaki acik kitap; gozler asagida.",
+        "wait": "Sag ustte 2px modullu kum saati, bakis yonu degisir.",
+        "done": "Yesil onay kuresi ve parilti; yapilandirilmis ziplama egrisi, yay gozler.",
+        "fail": "Kirmizi X rozeti ve mavi ter; kasitli 1px sarsilma/cokme."
+      }
+    }
+  }
+}

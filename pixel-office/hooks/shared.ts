@@ -1,4 +1,4 @@
-// Auto compact, shared by two mods that both offer it (kota-bandi and piksel-ofis):
+// Auto compact, shared by two mods that both offer it (a shared usage band and pixel-office):
 // one setting per chat in a folder both read and write, and one runner. With both
 // installed the chat compacts once, set from either; with either alone it still works.
 // The folder holds small files only: `<chat>.json` (the setting) and `<mod>.alive`

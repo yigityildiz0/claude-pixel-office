@@ -4,21 +4,21 @@
     "name": "yigityildiz0"
   },
   "metadata": {
-    "description": "Claude Office: Claude's work as a live pixel office in a side pane, with limit forecasts and daily cost. English (pixel-office) and Turkish (piksel-ofis)."
+    "description": "Claude Office: a live pixel office with original characters, per-task activities, limit forecasts and daily cost. English (pixel-office) and Turkish (piksel-ofis)."
   },
   "plugins": [
     {
       "name": "pixel-office",
       "source": "./pixel-office",
-      "description": "English: Claude's work as a live pixel office in a side pane: limit forecast (when your 5-hour and weekly limits will fill), today's cost across chats, a context tank, auto-compact and a lively animated team.",
-      "version": "0.4.0",
+      "description": "English: a live pixel office with original characters, a crowned boss, subagents walking between desks, per-task activities, a context water cooler, a limits battery, forecasts, daily cost and auto-compact.",
+      "version": "0.9.0",
       "license": "MIT"
     },
     {
       "name": "piksel-ofis",
       "source": "./piksel-ofis",
-      "description": "Türkçe: Claude'un çalışmasını yan panelde canlı bir piksel ofis olarak gösterir: limit tahmini (5 saatlik ve haftalık limit ne zaman dolar), bugünün toplam maliyeti, bağlam tankı, oto-sıkıştırma ve hareketli ekip.",
-      "version": "0.4.0",
+      "description": "Türkçe: özgün karakterlerle canlı piksel ofis: taçlı patron, masalar arasında yürüyen alt ajanlar, her işe özel etkinlikler, bağlam su sebili, kullanım hakkı bataryası, limit tahmini, günlük maliyet ve oto-sıkıştırma.",
+      "version": "0.9.0",
       "license": "MIT"
     }
   ]

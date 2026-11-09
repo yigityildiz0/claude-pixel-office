@@ -1,7 +1,7 @@
 {
   "name": "piksel-ofis",
-  "version": "0.4.0",
-  "description": "Claude'un çalışmasını yan panelde canlı bir neon piksel ofis olarak gösterir: taçlı patron Clawd, alt ajanlar, düşünme türleri, bağlam ve kullanım limitleri.",
+  "version": "0.9.0",
+  "description": "Claude'un çalışmasını paneli kaplayan canlı bir piksel ofis olarak gösterir: taçlı patron, masalarda yürüyerek yer değiştiren alt ajanlar, su sebilinde bağlam, bataryada kullanım hakkı.",
   "author": {
     "name": "yigityildiz0",
     "url": "https://github.com/yigityildiz0"

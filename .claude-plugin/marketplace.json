@@ -1,0 +1,15 @@
+{
+  "name": "claude-pixel-office",
+  "description": "Pixel Office, a live pixel-art office pane for Claude Code.",
+  "owner": {
+    "name": "yigityildiz0",
+    "url": "https://github.com/yigityildiz0"
+  },
+  "plugins": [
+    {
+      "name": "piksel-ofis",
+      "source": "./",
+      "description": "A live pixel-art office for Claude Code: the main model, its subagents and outside CLI agents work at their desks, with activity and error animations, a usage gauge and auto-compaction."
+    }
+  ]
+}

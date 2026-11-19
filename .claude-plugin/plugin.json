@@ -1,0 +1,21 @@
+{
+  "name": "piksel-ofis",
+  "version": "1.2.0",
+  "description": "Claude'un çalışmasını paneli kaplayan canlı bir piksel ofis olarak gösterir: taçlı patron, masalarda yürüyerek yer değiştiren alt ajanlar, su sebilinde bağlam, bataryada kullanım hakkı.",
+  "author": {
+    "name": "yigityildiz0",
+    "url": "https://github.com/yigityildiz0"
+  },
+  "homepage": "https://github.com/yigityildiz0/claude-pixel-office",
+  "repository": "https://github.com/yigityildiz0/claude-pixel-office",
+  "license": "MIT",
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "otomatikAc": {
+      "type": "boolean",
+      "title": "Paneli otomatik aç",
+      "description": "Oturum başlarken ofis panelini kendiliğinden açar.",
+      "default": true
+    }
+  }
+}
